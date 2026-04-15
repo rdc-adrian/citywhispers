@@ -1,0 +1,18 @@
+{
+  "name": "citywhispers",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=@citywhispers/api",
+    "dev:mobile": "npm run start --workspace=@citywhispers/mobile",
+    "build:api": "npm run build --workspace=@citywhispers/api",
+    "lint": "npm run lint --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

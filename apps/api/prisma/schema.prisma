@@ -1,0 +1,231 @@
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model City {
+  id          String   @id @default(uuid())
+  name        String
+  countryCode String   @map("country_code")
+  timezone    String
+  status      String   @default("draft")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  pois              Poi[]
+  cityPacks         CityPack[]
+  generatedWhispers GeneratedWhisper[]
+  trails            Trail[]
+
+  @@map("cities")
+}
+
+model Poi {
+  id        String   @id @default(uuid())
+  cityId    String   @map("city_id")
+  name      String
+  category  String
+  geohash6  String   @map("geohash6")
+  address   String?
+  latitude  Float
+  longitude Float
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  city              City               @relation(fields: [cityId], references: [id])
+  poiFacts          PoiFact[]
+  generatedWhispers GeneratedWhisper[]
+
+  @@index([cityId, geohash6])
+  @@map("pois")
+}
+
+model PoiFact {
+  id        String   @id @default(uuid())
+  poiId     String   @map("poi_id")
+  factType  String   @map("fact_type")
+  body      String
+  sourceUrl String?  @map("source_url")
+  verified  Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  poi Poi @relation(fields: [poiId], references: [id], onDelete: Cascade)
+
+  @@index([poiId, factType])
+  @@map("poi_facts")
+}
+
+model Persona {
+  id         String   @id @default(uuid())
+  slug       String   @unique
+  name       String
+  tonePrompt String   @map("tone_prompt")
+  active     Boolean  @default(true)
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  generatedWhispers GeneratedWhisper[]
+  userPreferences   UserPreference[]
+  trails            Trail[]
+
+  @@map("personas")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  clerkId   String   @unique @map("clerk_id")
+  email     String   @unique
+  plan      String   @default("free")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  preferences   UserPreference?
+  purchases     Purchase[]
+  whisperEvents UserWhisperEvent[]
+
+  @@map("users")
+}
+
+model UserPreference {
+  id                  String   @id @default(uuid())
+  userId              String   @unique @map("user_id")
+  personaId           String?  @map("persona_id")
+  languageCode        String   @default("en") @map("language_code")
+  preferredCategories String[] @default([]) @map("preferred_categories")
+  notificationsOn     Boolean  @default(true) @map("notifications_on")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  persona Persona? @relation(fields: [personaId], references: [id])
+
+  @@map("user_preferences")
+}
+
+model CityPack {
+  id          String   @id @default(uuid())
+  cityId      String   @map("city_id")
+  name        String
+  description String?
+  priceUsd    Decimal  @map("price_usd") @db.Decimal(8, 2)
+  tier        String   @default("base")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  city      City       @relation(fields: [cityId], references: [id])
+  purchases Purchase[]
+
+  @@map("city_packs")
+}
+
+model Purchase {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  cityPackId  String   @map("city_pack_id")
+  status      String   @default("pending")
+  paymentRef  String?  @unique @map("payment_ref")
+  platform    String   @default("web")
+  purchasedAt DateTime @default(now()) @map("purchased_at")
+
+  user     User     @relation(fields: [userId], references: [id])
+  cityPack CityPack @relation(fields: [cityPackId], references: [id])
+
+  @@index([userId, status])
+  @@index([cityPackId])
+  @@map("purchases")
+}
+
+model GeneratedWhisper {
+  id          String    @id @default(uuid())
+  poiId       String?   @map("poi_id")
+  cityId      String    @map("city_id")
+  personaId   String    @map("persona_id")
+  geohash6    String    @map("geohash6")
+  timeSlot    String    @map("time_slot")
+  whisperText String    @map("whisper_text")
+  audioUrl    String?   @map("audio_url")
+  modelUsed   String    @map("model_used")
+  promptHash  String    @map("prompt_hash")
+  tokenCount  Int?      @map("token_count")
+  source      String    @default("ai")
+  isStale     Boolean   @default(false) @map("is_stale")
+  expiresAt   DateTime? @map("expires_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  poi            Poi?               @relation(fields: [poiId], references: [id])
+  city           City               @relation(fields: [cityId], references: [id])
+  persona        Persona            @relation(fields: [personaId], references: [id])
+  trailStops     TrailStop[]
+  whisperEvents  UserWhisperEvent[]
+  generationJobs GenerationJob[]
+
+  @@index([cityId, isStale])
+  @@index([promptHash])
+  @@index([geohash6, personaId, timeSlot])
+  @@map("generated_whispers")
+}
+
+model Trail {
+  id               String   @id @default(uuid())
+  cityId           String   @map("city_id")
+  personaId        String?  @map("persona_id")
+  title            String
+  description      String?
+  estimatedMinutes Int?     @map("estimated_minutes")
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  city    City        @relation(fields: [cityId], references: [id])
+  persona Persona?    @relation(fields: [personaId], references: [id])
+  stops   TrailStop[]
+
+  @@map("trails")
+}
+
+model TrailStop {
+  id             String  @id @default(uuid())
+  trailId        String  @map("trail_id")
+  whisperId      String  @map("whisper_id")
+  stopOrder      Int     @map("stop_order")
+  transitionText String? @map("transition_text")
+
+  trail   Trail            @relation(fields: [trailId], references: [id], onDelete: Cascade)
+  whisper GeneratedWhisper @relation(fields: [whisperId], references: [id])
+
+  @@unique([trailId, stopOrder])
+  @@index([trailId, stopOrder])
+  @@map("trail_stops")
+}
+
+model UserWhisperEvent {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  whisperId       String   @map("whisper_id")
+  listened        Boolean  @default(false)
+  listenDurationS Int?     @map("listen_duration_s")
+  triggeredAt     DateTime @default(now()) @map("triggered_at")
+
+  user    User             @relation(fields: [userId], references: [id])
+  whisper GeneratedWhisper @relation(fields: [whisperId], references: [id])
+
+  @@index([userId, triggeredAt(sort: Desc)])
+  @@index([whisperId])
+  @@map("user_whisper_events")
+}
+
+model GenerationJob {
+  id           String    @id @default(uuid())
+  whisperId    String?   @map("whisper_id")
+  jobType      String    @map("job_type")
+  status       String    @default("pending")
+  queueName    String    @map("queue_name")
+  attemptCount Int       @default(0) @map("attempt_count")
+  errorMessage String?   @map("error_message")
+  scheduledAt  DateTime  @default(now()) @map("scheduled_at")
+  completedAt  DateTime? @map("completed_at")
+
+  whisper GeneratedWhisper? @relation(fields: [whisperId], references: [id])
+
+  @@index([whisperId, jobType])
+  @@index([status, scheduledAt])
+  @@map("generation_jobs")
+}
