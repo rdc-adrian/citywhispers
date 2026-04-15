@@ -1,7 +1,12 @@
 import 'dotenv/config'
 import Fastify from 'fastify'
+import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import { cityRoutes } from './routes/city/index'
+import { whisperRoutes } from './routes/whisper/index'
+import { userRoutes } from './routes/user/index'
+import { errorHandler } from './middleware/errorHandler'
 
 const adapter = new PrismaPg({
   connectionString: process.env.DATABASE_URL!,
@@ -11,6 +16,18 @@ export const prisma = new PrismaClient({ adapter })
 
 const app = Fastify({ logger: true })
 
+// Middleware
+app.register(cors, { origin: true })
+
+// Routes
+app.register(cityRoutes, { prefix: '/cities' })
+app.register(whisperRoutes, { prefix: '/whispers' })
+app.register(userRoutes, { prefix: '/users' })
+
+// Error handler
+app.setErrorHandler(errorHandler)
+
+// Health checks
 app.get('/health', async () => {
   return { status: 'ok', service: 'citywhispers-api' }
 })
