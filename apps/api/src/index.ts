@@ -6,6 +6,7 @@ import { PrismaPg } from '@prisma/adapter-pg'
 import { cityRoutes } from './routes/city/index'
 import { whisperRoutes } from './routes/whisper/index'
 import { userRoutes } from './routes/user/index'
+import { adminRoutes } from './routes/admin/index'
 import { errorHandler } from './middleware/errorHandler'
 
 const adapter = new PrismaPg({
@@ -23,6 +24,7 @@ app.register(cors, { origin: true })
 app.register(cityRoutes, { prefix: '/cities' })
 app.register(whisperRoutes, { prefix: '/whispers' })
 app.register(userRoutes, { prefix: '/users' })
+app.register(adminRoutes, { prefix: '/admin' })
 
 // Error handler
 app.setErrorHandler(errorHandler)

@@ -24,22 +24,27 @@ model City {
 }
 
 model Poi {
-  id        String   @id @default(uuid())
-  cityId    String   @map("city_id")
-  name      String
-  category  String
-  geohash6  String   @map("geohash6")
-  address   String?
-  latitude  Float
-  longitude Float
-  active    Boolean  @default(true)
-  createdAt DateTime @default(now()) @map("created_at")
+  id              String   @id @default(uuid())
+  cityId          String   @map("city_id")
+  name            String
+  category        String
+  tags            String[] @default([])
+  geohash6        String   @map("geohash6")
+  address         String?
+  latitude        Float
+  longitude       Float
+  active          Boolean  @default(true)
+  importanceScore Int      @default(0) @map("importance_score")
+  triggerRadius   Int      @default(80) @map("trigger_radius")
+  cooldownMinutes Int      @default(60) @map("cooldown_minutes")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   city              City               @relation(fields: [cityId], references: [id])
   poiFacts          PoiFact[]
   generatedWhispers GeneratedWhisper[]
 
   @@index([cityId, geohash6])
+  @@index([cityId, importanceScore])
   @@map("pois")
 }
 
@@ -93,6 +98,7 @@ model UserPreference {
   personaId           String?  @map("persona_id")
   languageCode        String   @default("en") @map("language_code")
   preferredCategories String[] @default([]) @map("preferred_categories")
+  preferredTags       String[] @default([]) @map("preferred_tags")
   notificationsOn     Boolean  @default(true) @map("notifications_on")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
@@ -136,21 +142,23 @@ model Purchase {
 }
 
 model GeneratedWhisper {
-  id          String    @id @default(uuid())
-  poiId       String?   @map("poi_id")
-  cityId      String    @map("city_id")
-  personaId   String    @map("persona_id")
-  geohash6    String    @map("geohash6")
-  timeSlot    String    @map("time_slot")
-  whisperText String    @map("whisper_text")
-  audioUrl    String?   @map("audio_url")
-  modelUsed   String    @map("model_used")
-  promptHash  String    @map("prompt_hash")
-  tokenCount  Int?      @map("token_count")
-  source      String    @default("ai")
-  isStale     Boolean   @default(false) @map("is_stale")
-  expiresAt   DateTime? @map("expires_at")
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id           String    @id @default(uuid())
+  poiId        String?   @map("poi_id")
+  cityId       String    @map("city_id")
+  personaId    String    @map("persona_id")
+  geohash6     String    @map("geohash6")
+  timeSlot     String    @map("time_slot")
+  whisperText  String    @map("whisper_text")
+  audioUrl     String?   @map("audio_url")
+  modelUsed    String    @map("model_used")
+  promptHash   String    @map("prompt_hash")
+  tokenCount   Int?      @map("token_count")
+  source       String    @default("ai")
+  qualityScore Float?    @map("quality_score")
+  isFeatured   Boolean   @default(false) @map("is_featured")
+  isStale      Boolean   @default(false) @map("is_stale")
+  expiresAt    DateTime? @map("expires_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   poi            Poi?               @relation(fields: [poiId], references: [id])
   city           City               @relation(fields: [cityId], references: [id])
@@ -162,6 +170,8 @@ model GeneratedWhisper {
   @@index([cityId, isStale])
   @@index([promptHash])
   @@index([geohash6, personaId, timeSlot])
+  @@index([cityId, isFeatured])
+  @@index([cityId, qualityScore])
   @@map("generated_whispers")
 }
 
