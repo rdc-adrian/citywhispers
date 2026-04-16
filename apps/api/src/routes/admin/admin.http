@@ -1,0 +1,176 @@
+### Variables
+@baseUrl = http://localhost:3000
+@adminKey = citywhispers-admin-local-dev
+@singaporeId = city-singapore
+
+### ─── CITIES ───────────────────────────────
+
+### List all cities
+GET {{baseUrl}}/admin/cities
+x-admin-key: {{adminKey}}
+
+### Create a new city
+POST {{baseUrl}}/admin/cities
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "name": "Kuala Lumpur",
+  "countryCode": "MY",
+  "timezone": "Asia/Kuala_Lumpur",
+  "status": "draft"
+}
+
+### ─── POIs ──────────────────────────────────
+
+### List all Singapore POIs
+GET {{baseUrl}}/admin/pois?cityId={{singaporeId}}
+x-admin-key: {{adminKey}}
+
+### Create a single POI (geohash auto-calculated)
+POST {{baseUrl}}/admin/pois
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "cityId": "city-singapore",
+  "name": "SkyVille @ Dawson",
+  "category": "landmark",
+  "tags": ["modern", "local", "iconic", "instagrammable"],
+  "latitude": 1.2936,
+  "longitude": 103.8118,
+  "address": "1 Dawson Road, Singapore 142001",
+  "importanceScore": 70,
+  "triggerRadius": 100,
+  "cooldownMinutes": 90
+}
+
+### Bulk create POIs
+POST {{baseUrl}}/admin/pois/bulk
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "pois": [
+    {
+      "cityId": "city-singapore",
+      "name": "Kampong Glam",
+      "category": "cultural",
+      "tags": ["historic", "cultural", "local", "food"],
+      "latitude": 1.3024,
+      "longitude": 103.8590,
+      "address": "Kampong Glam, Singapore 198501",
+      "importanceScore": 86,
+      "triggerRadius": 120,
+      "cooldownMinutes": 60
+    },
+    {
+      "cityId": "city-singapore",
+      "name": "Little India",
+      "category": "cultural",
+      "tags": ["historic", "cultural", "food", "local", "iconic"],
+      "latitude": 1.3066,
+      "longitude": 103.8518,
+      "address": "Little India, Singapore 218169",
+      "importanceScore": 89,
+      "triggerRadius": 150,
+      "cooldownMinutes": 90
+    }
+  ]
+}
+
+### ─── POI FACTS ─────────────────────────────
+
+### Add a single fact
+POST {{baseUrl}}/admin/poi-facts
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "poiId": "poi-raffles-hotel",
+  "factType": "historical",
+  "body": "During World War II, Raffles Hotel was used as a transit camp for British prisoners of war before they were sent to Changi Prison.",
+  "verified": true
+}
+
+### Bulk add facts
+POST {{baseUrl}}/admin/poi-facts/bulk
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "facts": [
+    {
+      "poiId": "0f7cc503-7f6c-4c2b-b471-0b2a643ff03d",
+      "factType": "historical",
+      "body": "This alley contains one of the few remaining Old Wells of 19th-century Singapore. Before the 1890s, when piped water was introduced, residents of the Telok Ayer Hills would queue here daily to draw fresh water.",
+      "verified": true
+    },
+    {
+      "poiId": "c4e7b091-0661-4eca-aff5-7c2e49d04e08",
+      "factType": "historical",
+      "body": "This path sits on what was once Charles Scott's nutmeg and clove estate in the 1830s. The Musical name comes from traditional bird-singing competitions held here, where residents hung ornate cages from the trees.",
+      "verified": true
+    },
+    {
+      "poiId": "2afe35b4-52cd-42a4-8ea9-ab582a8914a6",
+      "factType": "architectural",
+      "body": "Located on the 47th floor, this is one of Singapore's highest public housing rooftops. It represents the New Generation of HDB living, designed with a 360-degree panoramic view that is free and open to all citizens.",
+      "verified": true
+    }
+  ]
+}
+
+### Verify a fact
+PATCH {{baseUrl}}/admin/poi-facts/FACT_ID_HERE/verify
+x-admin-key: {{adminKey}}
+
+### ─── WHISPERS ───────────────────────────────
+
+### List all whispers for Singapore
+GET {{baseUrl}}/admin/whispers?cityId={{singaporeId}}
+x-admin-key: {{adminKey}}
+
+### Create a curated whisper
+POST {{baseUrl}}/admin/whispers
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "poiId": "2afe35b4-52cd-42a4-8ea9-ab582a8914a6",
+  "cityId": "city-singapore",
+  "personaId": "3968712e-6ff9-43c3-b1eb-0211c4703784",
+  "geohash6": "w21z67",
+  "timeSlot": "evening",
+  "whisperText": "The view from up here feels... unclaimed. No ticket booths. No crowds. Just wind, sky, and the quiet rhythm of daily life below. This is public housing — built not for spectacle, but for living. And yet, it offers one of the most complete views of the city. At sunset, locals come here not to capture the moment — but simply to sit in it.",
+  "source": "curated",
+  "qualityScore": 0.87,
+  "isFeatured": false
+}
+
+### Feature a whisper
+PATCH {{baseUrl}}/admin/whispers/WHISPER_ID_HERE/feature
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "isFeatured": true
+}
+
+### ─── PERSONAS ───────────────────────────────
+
+### List all personas
+GET {{baseUrl}}/admin/personas
+x-admin-key: {{adminKey}}
+
+### Create a new persona
+POST {{baseUrl}}/admin/personas
+x-admin-key: {{adminKey}}
+Content-Type: application/json
+
+{
+  "slug": "architect",
+  "name": "The Architect",
+  "tonePrompt": "You are a passionate architect who sees buildings as living stories. Speak with precision and wonder, revealing the hidden language of structures, materials, and the humans who designed them.",
+  "active": true
+}
