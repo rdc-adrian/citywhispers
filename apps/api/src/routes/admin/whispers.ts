@@ -79,7 +79,7 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
 
   // PATCH /admin/whispers/:id/stale — mark as stale
   app.patch<{ Params: { id: string } }>('/:id/stale', async (_, reply) => {
-    const { id } = _ .params as { id: string }
+    const { id } = _.params as { id: string }
     const whisper = await prisma.generatedWhisper.update({
       where: { id },
       data: { isStale: true },

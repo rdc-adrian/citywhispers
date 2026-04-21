@@ -32,7 +32,6 @@ export default function MapScreen() {
   })
   const { setActiveWhisper, discoveredIds } = useWhisperStore()
 
-  // Center map when location first resolves
   useEffect(() => {
     if (location.latitude && location.longitude) {
       mapRef.current?.animateToRegion(
@@ -49,7 +48,7 @@ export default function MapScreen() {
 
   function handlePoiPress(poi: PoiSummary) {
     setActiveWhisper({
-      poi: { ...poi, visited: discoveredIds.has(poi.id) },
+      poi: { ...poi, visited: discoveredIds.includes(poi.id) },
       whisper: null as any,
     })
   }
@@ -58,7 +57,6 @@ export default function MapScreen() {
     <View style={{ flex: 1, backgroundColor: '#0f0e0c' }}>
       <StatusBar style="light" />
 
-      {/* Map */}
       <MapView
         ref={mapRef}
         provider={PROVIDER_DEFAULT}
@@ -77,13 +75,12 @@ export default function MapScreen() {
         {pois?.map((poi) => (
           <PoiMarker
             key={poi.id}
-            poi={{ ...poi, visited: discoveredIds.has(poi.id) }}
+            poi={{ ...poi, visited: discoveredIds.includes(poi.id) }}
             onPress={handlePoiPress}
           />
         ))}
       </MapView>
 
-      {/* Top overlay */}
       <View
         style={{
           position: 'absolute',
@@ -94,7 +91,6 @@ export default function MapScreen() {
           paddingHorizontal: 20,
         }}
       >
-        {/* Search bar */}
         <View
           style={{
             flexDirection: 'row',
@@ -109,18 +105,13 @@ export default function MapScreen() {
             marginBottom: 12,
           }}
         >
-          <Text style={{ fontSize: 14 }}>🔍</Text>
-          <Text style={{ color: '#5c5650', fontSize: 14 }}>
-            Search places…
-          </Text>
+          <Text style={{ color: '#5c5650', fontSize: 14 }}>Search places...</Text>
         </View>
 
-        {/* Nearby badge */}
         {!poisLoading && pois && pois.length > 0 && (
           <NearbyBadge count={pois.filter((p) => p.hasWhisper).length} />
         )}
 
-        {/* Loading indicator */}
         {poisLoading && location.latitude !== null && (
           <View
             style={{
@@ -135,13 +126,10 @@ export default function MapScreen() {
             }}
           >
             <ActivityIndicator size="small" color="#c8a96e" />
-            <Text style={{ color: '#5c5650', fontSize: 11 }}>
-              Finding whispers…
-            </Text>
+            <Text style={{ color: '#5c5650', fontSize: 11 }}>Finding whispers...</Text>
           </View>
         )}
 
-        {/* Location error */}
         {location.error && (
           <View
             style={{
@@ -159,7 +147,6 @@ export default function MapScreen() {
         )}
       </View>
 
-      {/* Whisper card */}
       <WhisperCard />
     </View>
   )

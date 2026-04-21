@@ -116,7 +116,7 @@ export function AudioPlayer({ audioUrl, poiName }: Props) {
       >
         {/* Skip back 15s */}
         <Pressable onPress={() => audio.seekBy(-15000)} style={{ padding: 8 }}>
-          <Text style={{ color: '#a09890', fontSize: 12 }}>−15s</Text>
+          <Text style={{ color: '#a09890', fontSize: 12 }}>-15s</Text>
         </Pressable>
 
         {/* Play / Pause */}
@@ -134,7 +134,7 @@ export function AudioPlayer({ audioUrl, poiName }: Props) {
           {audio.isLoading ? (
             <ActivityIndicator color="#1a1610" size="small" />
           ) : (
-            <Text style={{ color: '#1a1610', fontSize: 18 }}>{audio.isPlaying ? '⏸' : '▶'}</Text>
+            <Text style={{ color: '#1a1610', fontSize: 18 }}>{audio.isPlaying ? 'Pause' : 'Play'}</Text>
           )}
         </Pressable>
 

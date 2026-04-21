@@ -7,12 +7,15 @@
   ],
   "scripts": {
     "dev:api": "npm run dev --workspace=@citywhispers/api",
-    "dev:mobile": "npm run start --workspace=@citywhispers/mobile",
+    "dev:mobile": "npm run start --workspace=mobile",
     "build:api": "npm run build --workspace=@citywhispers/api",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "react": "19.1.0"
   }
 }

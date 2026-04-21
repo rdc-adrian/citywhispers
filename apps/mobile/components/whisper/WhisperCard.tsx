@@ -102,7 +102,7 @@ export function WhisperCard() {
               marginBottom: 4,
             }}
           >
-            📍 Whisper
+            Whisper
           </Text>
           <Text style={{ color: '#e8e4dc', fontSize: 20, lineHeight: 26 }} numberOfLines={2}>
             {poiName}
@@ -123,7 +123,7 @@ export function WhisperCard() {
             justifyContent: 'center',
           }}
         >
-          <Text style={{ color: '#a09890', fontSize: 14 }}>✕</Text>
+          <Text style={{ color: '#a09890', fontSize: 14 }}>X</Text>
         </Pressable>
       </View>
 
@@ -196,7 +196,7 @@ export function WhisperCard() {
               }}
             >
               <Text style={{ color: '#1a1610', fontSize: 13, fontWeight: '500' }}>
-                ▶ Play whisper
+                Play whisper
               </Text>
             </Pressable>
           )}

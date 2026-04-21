@@ -1,0 +1,7 @@
+env: load .env
+env: export EXPO_PUBLIC_API_URL EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY
+Starting project at D:\rdc-projects\citywhispers\apps\mobile
+Starting Metro Bundler
+warning: Bundler cache is empty, rebuilding (this may take a minute)
+Waiting on http://localhost:8081
+Logs for your project will appear below.

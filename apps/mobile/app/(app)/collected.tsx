@@ -79,7 +79,7 @@ function EmptyState() {
           marginBottom: 16,
         }}
       >
-        <Text style={{ fontSize: 20 }}>📖</Text>
+        <Text style={{ fontSize: 20 }}>Stop</Text>
       </View>
       <Text
         style={{
