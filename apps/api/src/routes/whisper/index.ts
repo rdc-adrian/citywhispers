@@ -12,7 +12,7 @@ const TriggerSchema = z.object({
 })
 
 export async function whisperRoutes(app: FastifyInstance) {
-  // GET /whispers/:id — get a single whisper
+  // GET /whisper/:id — get a single whisper by whisper id
   app.get<{ Params: { id: string } }>('/:id', async (request) => {
     const whisper = await prisma.generatedWhisper.findUnique({
       where: { id: request.params.id },
@@ -22,36 +22,61 @@ export async function whisperRoutes(app: FastifyInstance) {
     return { data: whisper }
   })
 
-  // POST /whispers/trigger — GPS trigger entry point
-  // This will connect to the AI layer in the next phase
-  app.post('/trigger', async (request) => {
-    const body = TriggerSchema.parse(request.body)
+  // GET /whisper/poi/:poiId — get whisper for a specific POI
+  app.get<{
+    Params: { poiId: string }
+    Querystring: { time_slot?: string }
+  }>('/poi/:poiId', async (request) => {
+    const { poiId } = request.params
+    const timeSlot = request.query.time_slot ?? 'morning'
 
-    // Phase 1: return nearest existing whisper for this location
-    // Phase 2: this will call WhisperOrchestrator
-    const whisper = await prisma.generatedWhisper.findFirst({
+    // Try to find an exact time slot match first
+    let whisper = await prisma.generatedWhisper.findFirst({
       where: {
-        cityId: body.cityId,
+        poiId,
+        timeSlot,
         isStale: false,
       },
       include: { persona: true },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { qualityScore: 'desc' },
     })
 
+    // Fall back to any whisper for this POI
+    if (!whisper) {
+      whisper = await prisma.generatedWhisper.findFirst({
+        where: { poiId, isStale: false },
+        include: { persona: true },
+        orderBy: { qualityScore: 'desc' },
+      })
+    }
+
+    if (!whisper) throw new NotFoundError('Whisper')
+
     return {
-      data: whisper,
-      cached: true,
+      whisperId: whisper.id,
+      whisperText: whisper.whisperText,
+      audioUrl: whisper.audioUrl,
+      personaId: whisper.personaId,
       unlocked: true,
+      cached: true,
     }
   })
 
-  // GET /whispers/city/:cityId — all whispers for a city
+  // POST /whispers/trigger
+  app.post('/trigger', async (request) => {
+    const body = TriggerSchema.parse(request.body)
+    const whisper = await prisma.generatedWhisper.findFirst({
+      where: { cityId: body.cityId, isStale: false },
+      include: { persona: true },
+      orderBy: { createdAt: 'desc' },
+    })
+    return { data: whisper, cached: true, unlocked: true }
+  })
+
+  // GET /whispers/city/:cityId
   app.get<{ Params: { cityId: string } }>('/city/:cityId', async (request) => {
     const whispers = await prisma.generatedWhisper.findMany({
-      where: {
-        cityId: request.params.cityId,
-        isStale: false,
-      },
+      where: { cityId: request.params.cityId, isStale: false },
       include: { persona: true, poi: true },
       orderBy: { createdAt: 'desc' },
     })

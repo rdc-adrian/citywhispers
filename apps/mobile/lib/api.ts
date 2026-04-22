@@ -54,7 +54,8 @@ export function fetchNearbyPois({
     radius: String(radiusMeters),
     limit: String(limit),
   })
-  return request<PoiSummary[]>(`/pois/nearby?${qs}`, { token })
+  return request<{ data: PoiSummary[] }>(`/pois/nearby?${qs}`, { token })
+    .then((res) => res.data)
 }
 
 export interface FetchWhisperParams {
@@ -69,7 +70,7 @@ export function fetchWhisper({
   token,
 }: FetchWhisperParams): Promise<WhisperResponse> {
   const qs = new URLSearchParams({ time_slot: timeSlot })
-  return request<WhisperResponse>(`/whisper/${poiId}?${qs}`, { token })
+  return request<WhisperResponse>(`/whisper/poi/${poiId}?${qs}`, { token })
 }
 
 export interface AudioUrlResponse {
@@ -101,7 +102,8 @@ export function fetchDiscoveredWhispers({
 }: {
   token: string
 }): Promise<DiscoveredWhisper[]> {
-  return request<DiscoveredWhisper[]>('/user/discovered', { token })
+  return request<{ data: DiscoveredWhisper[] }>('/user/discovered', { token })
+    .then((res) => res.data)
 }
 
 export interface UserPreferences {

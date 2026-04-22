@@ -22,9 +22,12 @@ app.register(cors, { origin: true })
 
 // Routes
 app.register(cityRoutes, { prefix: '/cities' })
-app.register(whisperRoutes, { prefix: '/whispers' })
-app.register(userRoutes, { prefix: '/users' })
+app.register(whisperRoutes, { prefix: '/whisper' })
+app.register(userRoutes, { prefix: '/user' })
 app.register(adminRoutes, { prefix: '/admin' })
+
+// Standalone POI nearby route — matches mobile GET /pois/nearby
+app.register(cityRoutes, { prefix: '/pois' })
 
 // Error handler
 app.setErrorHandler(errorHandler)
