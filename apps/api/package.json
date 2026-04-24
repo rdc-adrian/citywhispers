@@ -12,7 +12,8 @@
     "db:studio": "prisma studio",
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
-    "db:seed": "tsx prisma/seed.ts"
+    "db:seed": "tsx prisma/seed.ts",
+    "db:seed-all": "tsx prisma/seed-all.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
