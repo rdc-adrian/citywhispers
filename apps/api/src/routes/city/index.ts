@@ -23,67 +23,6 @@ function haversineDistance(
 export async function cityRoutes(app: FastifyInstance) {
   // Register specific routes FIRST (before dynamic /:id routes)
   
-  // GET /pois/nearby — fetch POIs near a coordinate
-  app.get<{
-    Querystring: {
-      lat: string
-      lng: string
-      radius?: string
-      limit?: string
-    }
-  }>('/pois/nearby', async (request) => {
-    const lat = parseFloat(request.query.lat)
-    const lng = parseFloat(request.query.lng)
-    const radius = parseInt(request.query.radius ?? '500')
-    const limit = parseInt(request.query.limit ?? '20')
-
-    if (isNaN(lat) || isNaN(lng)) {
-      throw new Error('Invalid lat/lng')
-    }
-
-    const centerHash = ngeohash.encode(lat, lng, 6)
-    const neighbours = ngeohash.neighbors(centerHash)
-    const searchHashes = [centerHash, ...Object.values(neighbours)]
-
-    const pois = await prisma.poi.findMany({
-      where: {
-        active: true,
-        geohash6: { in: searchHashes },
-      },
-      include: {
-        generatedWhispers: {
-          where: { isStale: false },
-          select: { id: true },
-          take: 1,
-        },
-      },
-      orderBy: { importanceScore: 'desc' },
-      take: limit * 2,
-    })
-
-    const nearby = pois
-      .map((poi) => {
-        const distanceMeters = Math.round(
-          haversineDistance(lat, lng, poi.latitude, poi.longitude)
-        )
-        return {
-          id: poi.id,
-          name: poi.name,
-          latitude: poi.latitude,
-          longitude: poi.longitude,
-          category: poi.category,
-          hasWhisper: poi.generatedWhispers.length > 0,
-          distanceMeters,
-          visited: false,
-        }
-      })
-      .filter((poi) => poi.distanceMeters <= radius)
-      .sort((a, b) => a.distanceMeters - b.distanceMeters)
-      .slice(0, limit)
-
-    return { data: nearby }
-  })
-
   // NOW register the general routes AFTER specific ones
   
   // GET /cities — list all active cities

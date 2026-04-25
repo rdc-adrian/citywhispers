@@ -4,6 +4,7 @@ import cors from '@fastify/cors'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
 import { cityRoutes } from './routes/city/index'
+import { poisRoutes } from './routes/pois/index'
 import { whisperRoutes } from './routes/whisper/index'
 import { userRoutes } from './routes/user/index'
 import { adminRoutes } from './routes/admin/index'
@@ -25,9 +26,7 @@ app.register(cityRoutes, { prefix: '/cities' })
 app.register(whisperRoutes, { prefix: '/whisper' })
 app.register(userRoutes, { prefix: '/user' })
 app.register(adminRoutes, { prefix: '/admin' })
-
-// Standalone POI nearby route — matches mobile GET /pois/nearby
-app.register(cityRoutes, { prefix: '/pois' })
+app.register(poisRoutes, { prefix: '/pois' })
 
 // Error handler
 app.setErrorHandler(errorHandler)
