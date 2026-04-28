@@ -9,7 +9,7 @@ import { useWhisperStore } from '../../store/useWhisperStore'
 import { PoiMarker } from '../../components/map/PoiMarker'
 import { NearbyBadge } from '../../components/map/NearbyBadge'
 import { WhisperCard } from '../../components/whisper/WhisperCard'
-import { PoiSummary } from '../../lib/api'
+import type { PoiSummary } from '@citywhispers/types'
 
 const MAP_STYLE = [
   { elementType: 'geometry', stylers: [{ color: '#0f0e0c' }] },
@@ -26,11 +26,21 @@ export default function MapScreen() {
   const insets = useSafeAreaInsets()
   const mapRef = useRef<MapView>(null)
   const location = useLocation()
-  const { data: pois, isLoading: poisLoading } = useNearbyPois({
-    lat: location.latitude,
-    lng: location.longitude,
+  const { data: pois, isLoading: poisLoading, error: poisError } = useNearbyPois({
+    latitude: location.latitude,
+    longitude: location.longitude,
   })
-  const { setActiveWhisper, discoveredIds } = useWhisperStore()
+  const { activeWhisper, setActiveWhisper, discoveredIds } = useWhisperStore()
+
+  // Debug logging
+  useEffect(() => {
+    console.log('🗺️ Map state:', {
+      location: { lat: location.latitude, lng: location.longitude },
+      poisCount: pois?.length ?? 0,
+      poisLoading,
+      poisError: poisError?.message,
+    })
+  }, [location.latitude, location.longitude, pois, poisLoading, poisError])
 
   useEffect(() => {
     if (location.latitude && location.longitude) {
@@ -47,6 +57,7 @@ export default function MapScreen() {
   }, [location.latitude, location.longitude])
 
   function handlePoiPress(poi: PoiSummary) {
+    console.log('📍 POI tapped:', poi.name)
     setActiveWhisper({
       poi: { ...poi, visited: discoveredIds.includes(poi.id) },
       whisper: null as any,
@@ -109,7 +120,7 @@ export default function MapScreen() {
         </View>
 
         {!poisLoading && pois && pois.length > 0 && (
-          <NearbyBadge count={pois.filter((p) => p.hasWhisper).length} />
+          <NearbyBadge count={pois.length} />
         )}
 
         {poisLoading && location.latitude !== null && (
@@ -145,9 +156,31 @@ export default function MapScreen() {
             </Text>
           </View>
         )}
+
+        {poisError && (
+          <View
+            style={{
+              backgroundColor: 'rgba(139,0,0,0.8)',
+              borderWidth: 1,
+              borderColor: 'rgba(255,0,0,0.3)',
+              borderRadius: 12,
+              padding: 16,
+              marginTop: 12,
+            }}
+          >
+            <Text style={{ color: '#ffcccc', fontSize: 13, textAlign: 'center' }}>
+              Error loading POIs: {poisError.message}
+            </Text>
+          </View>
+        )}
       </View>
 
-      <WhisperCard />
+      {activeWhisper && (
+        <WhisperCard
+          poi={activeWhisper.poi}
+          onClose={() => setActiveWhisper(null as any)}
+        />
+      )}
     </View>
   )
 }

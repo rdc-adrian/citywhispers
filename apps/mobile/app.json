@@ -29,6 +29,7 @@
       "favicon": "./assets/favicon.png"
     },
     "scheme": "citywhispers",
+    "hostType": "tunnel",
     "plugins": [
       "expo-router",
       "expo-location",

@@ -1,209 +1,160 @@
-import React from 'react'
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  ActivityIndicator,
-} from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useQuery } from '@tanstack/react-query'
-import { useAuth } from '@clerk/clerk-expo'
-import { StatusBar } from 'expo-status-bar'
-import { fetchDiscoveredWhispers, DiscoveredWhisper } from '../../lib/api'
-
-function WhisperListItem({ item }: { item: DiscoveredWhisper }) {
-  const date = new Date(item.discoveredAt)
-  const label = date.toLocaleDateString('en-SG', {
-    day: 'numeric',
-    month: 'short',
-  })
-
-  return (
-    <View
-      style={{
-        backgroundColor: '#171613',
-        borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.06)',
-        borderRadius: 16,
-        padding: 16,
-        marginBottom: 12,
-      }}
-    >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
-          marginBottom: 8,
-        }}
-      >
-        <Text
-          style={{
-            color: '#e8e4dc',
-            fontSize: 16,
-            lineHeight: 22,
-            flex: 1,
-            marginRight: 12,
-          }}
-          numberOfLines={2}
-        >
-          {item.poiName}
-        </Text>
-        <Text style={{ color: '#5c5650', fontSize: 10, marginTop: 2 }}>
-          {label}
-        </Text>
-      </View>
-      <Text
-        style={{ color: '#a09890', fontSize: 13, lineHeight: 20 }}
-        numberOfLines={2}
-      >
-        {item.whisperText}
-      </Text>
-    </View>
-  )
-}
-
-function EmptyState() {
-  return (
-    <View style={{ alignItems: 'center', paddingVertical: 80, paddingHorizontal: 40 }}>
-      <View
-        style={{
-          width: 48,
-          height: 48,
-          borderRadius: 24,
-          borderWidth: 1,
-          borderColor: 'rgba(255,255,255,0.1)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          marginBottom: 16,
-        }}
-      >
-        <Text style={{ fontSize: 20 }}>Stop</Text>
-      </View>
-      <Text
-        style={{
-          color: '#a09890',
-          fontSize: 18,
-          textAlign: 'center',
-          marginBottom: 8,
-        }}
-      >
-        Nothing collected yet
-      </Text>
-      <Text
-        style={{
-          color: '#5c5650',
-          fontSize: 13,
-          textAlign: 'center',
-          lineHeight: 20,
-        }}
-      >
-        Tap a marker on the map to discover your first whisper.
-      </Text>
-    </View>
-  )
-}
+// apps/mobile/app/(app)/collected.tsx
+import { View, Text, FlatList, StyleSheet, Pressable } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
+import { useAuth } from '@clerk/clerk-expo';
+import { fetchDiscoveredWhispers } from '../../lib/api';
+import type { DiscoveredWhisper } from '@citywhispers/types';
 
 export default function CollectedScreen() {
-  const insets = useSafeAreaInsets()
-  const { getToken } = useAuth()
+  const { getToken } = useAuth();
 
-  const { data, isLoading, isError, refetch } = useQuery<DiscoveredWhisper[]>({
-    queryKey: ['user', 'discovered'],
+  const { data: whispers, isLoading, error } = useQuery<DiscoveredWhisper[]>({
+    queryKey: ['discovered-whispers'],
     queryFn: async () => {
-      const token = await getToken()
-      return fetchDiscoveredWhispers({ token: token ?? '' })
+      const token = await getToken();
+      return fetchDiscoveredWhispers(token);
     },
-  })
+    staleTime: 1000 * 60 * 5,
+  });
+
+  if (isLoading) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.loadingText}>Loading your collection...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>Failed to load whispers</Text>
+        <Text style={styles.errorSubtext}>{(error as Error).message}</Text>
+      </View>
+    );
+  }
+
+  if (!whispers || whispers.length === 0) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.emptyTitle}>No whispers yet</Text>
+        <Text style={styles.emptySubtext}>
+          Explore the map to discover stories
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: '#0f0e0c',
-        paddingTop: insets.top,
-        paddingBottom: insets.bottom,
-      }}
-    >
-      <StatusBar style="light" />
-
-      {/* Header */}
-      <View style={{ paddingHorizontal: 24, paddingTop: 20, paddingBottom: 16 }}>
-        <Text
-          style={{
-            color: '#c8a96e',
-            fontSize: 10,
-            textTransform: 'uppercase',
-            letterSpacing: 2,
-            marginBottom: 4,
-          }}
-        >
-          Your discoveries
-        </Text>
-        <Text style={{ color: '#e8e4dc', fontSize: 28 }}>
-          Collected
-        </Text>
-        {data && (
-          <Text style={{ color: '#5c5650', fontSize: 13, marginTop: 4 }}>
-            {data.length} whisper{data.length !== 1 ? 's' : ''} found
-          </Text>
-        )}
-      </View>
-
-      {/* Loading */}
-      {isLoading && (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-          <ActivityIndicator color="#c8a96e" />
-        </View>
-      )}
-
-      {/* Error */}
-      {isError && (
-        <View
-          style={{
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            paddingHorizontal: 40,
-          }}
-        >
-          <Text
-            style={{
-              color: '#5c5650',
-              fontSize: 14,
-              textAlign: 'center',
-              marginBottom: 16,
-            }}
-          >
-            Could not load your collection.
-          </Text>
-          <Pressable
-            onPress={() => refetch()}
-            style={{
-              borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.1)',
-              borderRadius: 12,
-              paddingHorizontal: 20,
-              paddingVertical: 10,
-            }}
-          >
-            <Text style={{ color: '#a09890', fontSize: 14 }}>Try again</Text>
+    <View style={styles.container}>
+      <Text style={styles.header}>Your Collection</Text>
+      <Text style={styles.subheader}>{whispers.length} whispers discovered</Text>
+      
+      <FlatList
+        data={whispers}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable style={styles.whisperCard}>
+            <View style={styles.cardHeader}>
+              <Text style={styles.poiName}>{item.poiName}</Text>
+              <Text style={styles.cityName}>{item.cityName}</Text>
+            </View>
+            <Text style={styles.whisperText} numberOfLines={3}>
+              {item.whisperText}
+            </Text>
+            <Text style={styles.discoveredDate}>
+              {new Date(item.discoveredAt).toLocaleDateString()}
+            </Text>
           </Pressable>
-        </View>
-      )}
-
-      {/* List */}
-      {!isLoading && !isError && (
-        <FlatList
-          data={data ?? []}
-          keyExtractor={(item) => item.whisperId}
-          renderItem={({ item }) => <WhisperListItem item={item} />}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 16 }}
-          ListEmptyComponent={<EmptyState />}
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+        )}
+        contentContainerStyle={styles.listContent}
+      />
     </View>
-  )
+  );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#000000',
+    paddingTop: 60,
+  },
+  centerContainer: {
+    flex: 1,
+    backgroundColor: '#000000',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  header: {
+    fontSize: 32,
+    fontWeight: '700',
+    color: '#ffffff',
+    paddingHorizontal: 20,
+    marginBottom: 8,
+  },
+  subheader: {
+    fontSize: 16,
+    color: '#999999',
+    paddingHorizontal: 20,
+    marginBottom: 20,
+  },
+  loadingText: {
+    fontSize: 16,
+    color: '#999999',
+  },
+  errorText: {
+    fontSize: 18,
+    color: '#ff6b6b',
+    marginBottom: 8,
+  },
+  errorSubtext: {
+    fontSize: 14,
+    color: '#999999',
+    textAlign: 'center',
+  },
+  emptyTitle: {
+    fontSize: 24,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 8,
+  },
+  emptySubtext: {
+    fontSize: 16,
+    color: '#999999',
+  },
+  listContent: {
+    padding: 20,
+    gap: 16,
+  },
+  whisperCard: {
+    backgroundColor: '#1a1a1a',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#2a2a2a',
+  },
+  cardHeader: {
+    marginBottom: 12,
+  },
+  poiName: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#ffffff',
+    marginBottom: 4,
+  },
+  cityName: {
+    fontSize: 14,
+    color: '#D4AF37',
+  },
+  whisperText: {
+    fontSize: 15,
+    lineHeight: 22,
+    color: '#cccccc',
+    marginBottom: 12,
+  },
+  discoveredDate: {
+    fontSize: 12,
+    color: '#666666',
+  },
+});

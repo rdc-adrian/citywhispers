@@ -1,130 +1,155 @@
-import { WhisperResponse } from '@citywhispers/types'
+// apps/mobile/lib/api.ts
+import type { 
+  PoiSummary, 
+  WhisperResponse, 
+  DiscoveredWhisper,
+  UserPreferences 
+} from '@citywhispers/types';
 
-const BASE_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:3000'
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
-async function request<T>(
-  path: string,
-  options: RequestInit & { token?: string } = {}
-): Promise<T> {
-  const { token, ...init } = options
-  const res = await fetch(`${BASE_URL}${path}`, {
-    ...init,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...init.headers,
-    },
-  })
-  if (!res.ok) {
-    const body = await res.json().catch(() => ({}))
-    throw new Error(body?.message ?? `Request failed: ${res.status}`)
-  }
-  return res.json()
+function getAuthHeaders(token?: string | null): HeadersInit {
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
 }
 
-export interface PoiSummary {
-  id: string
-  name: string
-  latitude: number
-  longitude: number
-  category: string
-  hasWhisper: boolean
-  distanceMeters: number
-  visited: boolean
+// ========================================
+// POI Endpoints
+// ========================================
+
+interface FetchNearbyPoisParams {
+  lat: number;
+  lng: number;
+  radius?: number;
+  limit?: number;
+  token?: string | null;
 }
 
-export interface NearbyPoisParams {
-  lat: number
-  lng: number
-  radiusMeters?: number
-  limit?: number
-  token: string
-}
-
-export function fetchNearbyPois({
+export async function fetchNearbyPois({
   lat,
   lng,
-  radiusMeters = 500,
-  limit = 20,
+  radius = 2000,
+  limit = 10,
   token,
-}: NearbyPoisParams): Promise<PoiSummary[]> {
-  const qs = new URLSearchParams({
-    lat: String(lat),
-    lng: String(lng),
-    radius: String(radiusMeters),
-    limit: String(limit),
-  })
-  return request<{ data: PoiSummary[] }>(`/pois/nearby?${qs}`, { token })
-    .then((res) => res.data)
+}: FetchNearbyPoisParams): Promise<PoiSummary[]> {
+  const params = new URLSearchParams({
+    lat: lat.toString(),
+    lng: lng.toString(),
+    radius: radius.toString(),
+    limit: limit.toString(),
+  });
+
+  const response = await fetch(`${BASE_URL}/pois/nearby?${params}`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch nearby POIs: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  return result.data;
 }
 
-export interface FetchWhisperParams {
-  poiId: string
-  timeSlot: string
-  token: string
+// ========================================
+// Whisper Endpoints
+// ========================================
+
+export async function fetchWhisper(
+  poiId: string,
+  timeSlot?: 'morning' | 'afternoon' | 'evening' | 'night',
+  token?: string | null
+): Promise<WhisperResponse> {
+  const params = timeSlot ? `?time_slot=${timeSlot}` : '';
+  
+  const response = await fetch(`${BASE_URL}/whisper/poi/${poiId}${params}`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch whisper: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
-export function fetchWhisper({
-  poiId,
-  timeSlot,
-  token,
-}: FetchWhisperParams): Promise<WhisperResponse> {
-  const qs = new URLSearchParams({ time_slot: timeSlot })
-  return request<WhisperResponse>(`/whisper/poi/${poiId}?${qs}`, { token })
+export async function fetchAudioUrl(
+  whisperId: string,
+  token?: string | null
+): Promise<{ url: string; durationSeconds: number }> {
+  const response = await fetch(`${BASE_URL}/whisper/${whisperId}/audio`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch audio URL: ${response.statusText}`);
+  }
+
+  return response.json();
 }
 
-export interface AudioUrlResponse {
-  url: string
-  durationSeconds: number
+// ========================================
+// User Endpoints
+// ========================================
+
+export async function fetchDiscoveredWhispers(
+  token?: string | null
+): Promise<DiscoveredWhisper[]> {
+  const response = await fetch(`${BASE_URL}/user/discovered`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch discovered whispers: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  return result.data;
 }
 
-export function fetchAudioUrl({
-  whisperId,
-  token,
-}: {
-  whisperId: string
-  token: string
-}): Promise<AudioUrlResponse> {
-  return request<AudioUrlResponse>(`/whisper/${whisperId}/audio`, { token })
-}
-
-export interface DiscoveredWhisper {
-  whisperId: string
-  poiId: string
-  poiName: string
-  whisperText: string
-  audioUrl: string | null
-  discoveredAt: string
-}
-
-export function fetchDiscoveredWhispers({
-  token,
-}: {
-  token: string
-}): Promise<DiscoveredWhisper[]> {
-  return request<{ data: DiscoveredWhisper[] }>('/user/discovered', { token })
-    .then((res) => res.data)
-}
-
-export interface UserPreferences {
-  autoplay: boolean
-  radiusMeters: number
-  showVisited: boolean
-  darkMode: boolean
-  language: string
-  notifications: boolean
-}
-
-export function patchUserPreferences({
-  prefs,
-  token,
-}: {
-  prefs: Partial<UserPreferences>
-  token: string
-}): Promise<UserPreferences> {
-  return request<UserPreferences>('/user/preferences', {
+export async function patchUserPreferences(
+  preferences: Partial<UserPreferences>,
+  token?: string | null
+): Promise<{ success: boolean }> {
+  const response = await fetch(`${BASE_URL}/user/preferences`, {
     method: 'PATCH',
-    body: JSON.stringify(prefs),
-    token,
-  })
+    headers: getAuthHeaders(token),
+    body: JSON.stringify(preferences),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to update preferences: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+// ========================================
+// City Endpoints
+// ========================================
+
+export async function fetchCities(token?: string | null) {
+  const response = await fetch(`${BASE_URL}/cities`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch cities: ${response.statusText}`);
+  }
+
+  return response.json();
+}
+
+export async function fetchCityById(cityId: string, token?: string | null) {
+  const response = await fetch(`${BASE_URL}/cities/${cityId}`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch city: ${response.statusText}`);
+  }
+
+  return response.json();
 }
