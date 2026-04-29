@@ -20,7 +20,7 @@ const app = Fastify({ logger: true })
 
 // CORS configuration - allows Expo tunnel in development
 app.register(cors, {
-  origin: (origin, cb) => {
+  origin: (origin: string | undefined, cb: (err: Error | null, allow?: boolean) => void) => {
     // In development, allow Expo tunnel domains
     const allowedOrigins = [
       /^https:\/\/.*\.exp\.direct$/,  // Expo tunnel
