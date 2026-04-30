@@ -1,6 +1,6 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
-import MapView, { PROVIDER_DEFAULT } from 'react-native-maps'
+import MapView, { PROVIDER_DEFAULT, Region } from 'react-native-maps'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
 import { useLocation } from '../../hooks/useLocation'
@@ -26,9 +26,16 @@ export default function MapScreen() {
   const insets = useSafeAreaInsets()
   const mapRef = useRef<MapView>(null)
   const location = useLocation()
+  
+  // Track map center position for fetching POIs
+  const [mapCenter, setMapCenter] = useState({
+    latitude: 37.5665,   // Seoul
+    longitude: 126.9780, // Seoul
+  })
+  
   const { data: pois, isLoading: poisLoading, error: poisError } = useNearbyPois({
-    latitude: location.latitude,
-    longitude: location.longitude,
+    latitude: mapCenter.latitude,
+    longitude: mapCenter.longitude,
   })
   const { activeWhisper, setActiveWhisper, discoveredIds } = useWhisperStore()
 
@@ -36,14 +43,16 @@ export default function MapScreen() {
   useEffect(() => {
     console.log('🗺️ Map state:', {
       location: { lat: location.latitude, lng: location.longitude },
+      mapCenter: { lat: mapCenter.latitude, lng: mapCenter.longitude },
       poisCount: pois?.length ?? 0,
       poisLoading,
       poisError: poisError?.message,
     })
-  }, [location.latitude, location.longitude, pois, poisLoading, poisError])
+  }, [location.latitude, location.longitude, mapCenter, pois, poisLoading, poisError])
 
+  // Animate to user's location when available (but don't force it)
   useEffect(() => {
-    if (location.latitude && location.longitude) {
+    if (location.latitude && location.longitude && !mapCenter.latitude) {
       mapRef.current?.animateToRegion(
         {
           latitude: location.latitude,
@@ -53,8 +62,18 @@ export default function MapScreen() {
         },
         800
       )
+      setMapCenter({ latitude: location.latitude, longitude: location.longitude })
     }
   }, [location.latitude, location.longitude])
+
+  // Handle map region changes (when user pans)
+  function handleRegionChangeComplete(region: Region) {
+    console.log('🗺️ Region changed to:', region.latitude, region.longitude)
+    setMapCenter({
+      latitude: region.latitude,
+      longitude: region.longitude,
+    })
+  }
 
   function handlePoiPress(poi: PoiSummary) {
     console.log('📍 POI tapped:', poi.name)
@@ -77,11 +96,12 @@ export default function MapScreen() {
         showsMyLocationButton={false}
         showsCompass={false}
         initialRegion={{
-          latitude: 1.2966,
-          longitude: 103.852,
+          latitude: 37.5665,   // Seoul instead of Singapore
+          longitude: 126.9780, // Seoul instead of Singapore
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
+        onRegionChangeComplete={handleRegionChangeComplete}
       >
         {pois?.map((poi) => (
           <PoiMarker
@@ -123,7 +143,7 @@ export default function MapScreen() {
           <NearbyBadge count={pois.length} />
         )}
 
-        {poisLoading && location.latitude !== null && (
+        {poisLoading && (
           <View
             style={{
               flexDirection: 'row',
