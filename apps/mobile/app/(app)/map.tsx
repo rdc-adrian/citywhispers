@@ -29,8 +29,8 @@ export default function MapScreen() {
   
   // Track map center position for fetching POIs
   const [mapCenter, setMapCenter] = useState({
-    latitude: 37.5665,   // Seoul
-    longitude: 126.9780, // Seoul
+    latitude: 1.2966,    // Singapore
+    longitude: 103.852,  // Singapore
   })
   
   const { data: pois, isLoading: poisLoading, error: poisError } = useNearbyPois({
@@ -50,9 +50,9 @@ export default function MapScreen() {
     })
   }, [location.latitude, location.longitude, mapCenter, pois, poisLoading, poisError])
 
-  // Animate to user's location when available (but don't force it)
+  // Animate to user's location when available
   useEffect(() => {
-    if (location.latitude && location.longitude && !mapCenter.latitude) {
+    if (location.latitude && location.longitude) {
       mapRef.current?.animateToRegion(
         {
           latitude: location.latitude,
@@ -96,8 +96,8 @@ export default function MapScreen() {
         showsMyLocationButton={false}
         showsCompass={false}
         initialRegion={{
-          latitude: 37.5665,   // Seoul instead of Singapore
-          longitude: 126.9780, // Seoul instead of Singapore
+          latitude: 1.2966,    // Singapore
+          longitude: 103.852,  // Singapore
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
