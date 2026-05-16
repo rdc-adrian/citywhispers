@@ -1,102 +1,129 @@
-import { useEffect, useRef, useState, useCallback } from 'react'
+import { useEffect, useRef, useCallback, useState } from 'react'
 import { Audio } from 'expo-av'
 
-interface AudioState {
-  isPlaying: boolean
-  positionMs: number
-  durationMs: number
-  isLoading: boolean
-  error: string | null
+export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'error'
+
+type UseAudioOptions = {
+  uri: string | null
+  onEnd?: () => void
 }
 
-interface UseAudioReturn extends AudioState {
+export type UseAudioReturn = {
+  playbackState: PlaybackState
+  positionSeconds: number
+  durationSeconds: number
+  progress: number // 0–1
   play: () => Promise<void>
   pause: () => Promise<void>
-  togglePlay: () => Promise<void>
-  seekTo: (ms: number) => Promise<void>
-  seekBy: (deltaMs: number) => Promise<void>
-  unload: () => Promise<void>
+  replay: () => Promise<void>
 }
 
-export function useAudio(url: string | null): UseAudioReturn {
+export function useAudio({ uri, onEnd }: UseAudioOptions): UseAudioReturn {
   const soundRef = useRef<Audio.Sound | null>(null)
-  const [state, setState] = useState<AudioState>({
-    isPlaying: false,
-    positionMs: 0,
-    durationMs: 0,
-    isLoading: false,
-    error: null,
-  })
+  const [playbackState, setPlaybackState] = useState<PlaybackState>('idle')
+  const [positionSeconds, setPositionSeconds] = useState(0)
+  const [durationSeconds, setDurationSeconds] = useState(0)
 
-  const load = useCallback(async (audioUrl: string) => {
-    try {
-      setState((s) => ({ ...s, isLoading: true, error: null }))
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true })
-
-      if (soundRef.current) {
-        await soundRef.current.unloadAsync()
-        soundRef.current = null
-      }
-
-      const { sound } = await Audio.Sound.createAsync(
-        { uri: audioUrl },
-        { shouldPlay: false },
-        (status) => {
-          if (!status.isLoaded) return
-          setState({
-            isPlaying: status.isPlaying,
-            positionMs: status.positionMillis,
-            durationMs: status.durationMillis ?? 0,
-            isLoading: false,
-            error: null,
-          })
-        }
-      )
-      soundRef.current = sound
-      setState((s) => ({ ...s, isLoading: false }))
-    } catch (e) {
-      setState((s) => ({ ...s, isLoading: false, error: 'Failed to load audio' }))
-    }
-  }, [])
-
+  // Unload when uri changes or component unmounts
   useEffect(() => {
-    if (url) load(url)
     return () => {
-      soundRef.current?.unloadAsync()
+      soundRef.current?.unloadAsync().catch(() => {})
       soundRef.current = null
     }
-  }, [url, load])
+  }, [uri])
+
+  // Reset position when a new uri is set
+  useEffect(() => {
+    setPlaybackState('idle')
+    setPositionSeconds(0)
+    setDurationSeconds(0)
+  }, [uri])
+
+  const loadSound = useCallback(async (): Promise<Audio.Sound | null> => {
+    if (!uri) return null
+    try {
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        staysActiveInBackground: true,
+        playsInSilentModeIOS: true,
+      })
+
+      const { sound } = await Audio.Sound.createAsync(
+        { uri },
+        { shouldPlay: false, progressUpdateIntervalMillis: 500 },
+        (status) => {
+          if (!status.isLoaded) return
+          setPositionSeconds(status.positionMillis / 1000)
+          if (status.durationMillis) {
+            setDurationSeconds(status.durationMillis / 1000)
+          }
+          if (status.didJustFinish) {
+            setPlaybackState('idle')
+            setPositionSeconds(0)
+            onEnd?.()
+          }
+        }
+      )
+
+      soundRef.current = sound
+      return sound
+    } catch {
+      setPlaybackState('error')
+      return null
+    }
+  }, [uri, onEnd])
 
   const play = useCallback(async () => {
-    await soundRef.current?.playAsync()
-  }, [])
+    try {
+      setPlaybackState('loading')
+      let sound = soundRef.current
+
+      if (!sound) {
+        sound = await loadSound()
+        if (!sound) return
+      }
+
+      await sound.playAsync()
+      setPlaybackState('playing')
+    } catch {
+      setPlaybackState('error')
+    }
+  }, [loadSound])
 
   const pause = useCallback(async () => {
-    await soundRef.current?.pauseAsync()
+    try {
+      await soundRef.current?.pauseAsync()
+      setPlaybackState('paused')
+    } catch {
+      setPlaybackState('error')
+    }
   }, [])
 
-  const togglePlay = useCallback(async () => {
-    if (state.isPlaying) await pause()
-    else await play()
-  }, [state.isPlaying, play, pause])
+  const replay = useCallback(async () => {
+    try {
+      if (soundRef.current) {
+        await soundRef.current.setPositionAsync(0)
+        await soundRef.current.playAsync()
+        setPlaybackState('playing')
+        setPositionSeconds(0)
+      } else {
+        await play()
+      }
+    } catch {
+      setPlaybackState('error')
+    }
+  }, [play])
 
-  const seekTo = useCallback(async (ms: number) => {
-    await soundRef.current?.setPositionAsync(ms)
-  }, [])
+  const progress =
+    durationSeconds > 0 ? Math.min(positionSeconds / durationSeconds, 1) : 0
 
-  const seekBy = useCallback(
-    async (deltaMs: number) => {
-      const next = Math.max(0, Math.min(state.durationMs, state.positionMs + deltaMs))
-      await soundRef.current?.setPositionAsync(next)
-    },
-    [state.positionMs, state.durationMs]
-  )
-
-  const unload = useCallback(async () => {
-    await soundRef.current?.unloadAsync()
-    soundRef.current = null
-    setState({ isPlaying: false, positionMs: 0, durationMs: 0, isLoading: false, error: null })
-  }, [])
-
-  return { ...state, play, pause, togglePlay, seekTo, seekBy, unload }
+  return {
+    playbackState,
+    positionSeconds,
+    durationSeconds,
+    progress,
+    play,
+    pause,
+    replay,
+  }
 }

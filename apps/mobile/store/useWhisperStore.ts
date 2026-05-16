@@ -1,37 +1,35 @@
 import { create } from 'zustand'
-import { PoiSummary } from '../lib/api'
-import { WhisperResponse } from '@citywhispers/types'
+import type { WhisperResponse } from '@citywhispers/types'
 
-interface ActiveWhisper {
-  poi: PoiSummary
-  whisper: WhisperResponse
+// Combined shape built from PoiSummary + WhisperResponse after marker tap
+export interface ActiveWhisper {
+  // From PoiSummary
+  poiId: string
+  poiName: string
+  category: string
+  // From WhisperResponse
+  whisperId: string
+  whisperText: string
+  audioUrl: string | null
+  timeSlot: WhisperResponse['timeSlot']
+  personaSlug: string
+  // Derived at call site
+  ambientLabel: string
+  nearby: Array<{ id: string; name: string; distanceMeters: number }>
 }
 
-interface WhisperStore {
+type WhisperStore = {
   activeWhisper: ActiveWhisper | null
-  setActiveWhisper: (w: ActiveWhisper | null) => void
-
-  audioOpen: boolean
-  setAudioOpen: (open: boolean) => void
-
-  discoveredIds: string[]
-  markDiscovered: (poiId: string) => void
-  isDiscovered: (poiId: string) => boolean
+  isOpen: boolean
+  openWhisper: (whisper: ActiveWhisper) => void
+  closeWhisper: () => void
 }
 
-export const useWhisperStore = create<WhisperStore>((set, get) => ({
+export const useWhisperStore = create<WhisperStore>((set) => ({
   activeWhisper: null,
-  setActiveWhisper: (w) => set({ activeWhisper: w }),
+  isOpen: false,
 
-  audioOpen: false,
-  setAudioOpen: (open) => set({ audioOpen: open }),
+  openWhisper: (whisper) => set({ activeWhisper: whisper, isOpen: true }),
 
-  discoveredIds: [],
-  markDiscovered: (poiId) =>
-    set((s) => ({
-      discoveredIds: s.discoveredIds.includes(poiId)
-        ? s.discoveredIds
-        : [...s.discoveredIds, poiId],
-    })),
-  isDiscovered: (poiId) => get().discoveredIds.includes(poiId),
+  closeWhisper: () => set({ isOpen: false }),
 }))

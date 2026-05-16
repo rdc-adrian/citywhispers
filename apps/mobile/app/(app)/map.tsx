@@ -1,14 +1,17 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
 import { View, Text, ActivityIndicator } from 'react-native'
 import MapView, { PROVIDER_DEFAULT, Region } from 'react-native-maps'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
+import { useAuth } from '@clerk/clerk-expo'
 import { useLocation } from '../../hooks/useLocation'
 import { useNearbyPois } from '../../hooks/useNearbyPois'
 import { useWhisperStore } from '../../store/useWhisperStore'
 import { PoiMarker } from '../../components/map/PoiMarker'
 import { NearbyBadge } from '../../components/map/NearbyBadge'
 import { WhisperCard } from '../../components/whisper/WhisperCard'
+import { fetchWhisper } from '../../lib/api'
+import { getCurrentTimeSlot } from '../../lib/time'
 import type { PoiSummary } from '@citywhispers/types'
 
 const MAP_STYLE = [
@@ -22,35 +25,41 @@ const MAP_STYLE = [
   { featureType: 'transit', stylers: [{ visibility: 'off' }] },
 ]
 
+// Subtle time-of-day label shown as the gold eyebrow on the card
+function getAmbientLabel(): string {
+  const hour = new Date().getHours()
+  if (hour >= 22 || hour < 2) return 'Near midnight'
+  if (hour >= 2 && hour < 5) return 'Dead of night'
+  if (hour >= 5 && hour < 7) return 'Before dawn'
+  if (hour >= 7 && hour < 11) return 'Morning light'
+  if (hour >= 11 && hour < 14) return 'High noon'
+  if (hour >= 14 && hour < 17) return 'Afternoon heat'
+  if (hour >= 17 && hour < 20) return 'Golden hour'
+  return 'After dark'
+}
+
 export default function MapScreen() {
   const insets = useSafeAreaInsets()
   const mapRef = useRef<MapView>(null)
   const location = useLocation()
-  
-  // Track map center position for fetching POIs
+  const { getToken } = useAuth()
+
   const [mapCenter, setMapCenter] = useState({
-    latitude: 1.2966,    // Singapore
-    longitude: 103.852,  // Singapore
+    latitude: 1.2966,
+    longitude: 103.852,
   })
-  
+
+  // Track which POI is currently loading so we can show a spinner on the marker
+  const [loadingPoiId, setLoadingPoiId] = useState<string | null>(null)
+
   const { data: pois, isLoading: poisLoading, error: poisError } = useNearbyPois({
     latitude: mapCenter.latitude,
     longitude: mapCenter.longitude,
   })
-  const { activeWhisper, setActiveWhisper, discoveredIds } = useWhisperStore()
 
-  // Debug logging
-  useEffect(() => {
-    console.log('🗺️ Map state:', {
-      location: { lat: location.latitude, lng: location.longitude },
-      mapCenter: { lat: mapCenter.latitude, lng: mapCenter.longitude },
-      poisCount: pois?.length ?? 0,
-      poisLoading,
-      poisError: poisError?.message,
-    })
-  }, [location.latitude, location.longitude, mapCenter, pois, poisLoading, poisError])
+  const { openWhisper } = useWhisperStore()
 
-  // Animate to user's location when available
+  // Animate to user location on first GPS fix
   useEffect(() => {
     if (location.latitude && location.longitude) {
       mapRef.current?.animateToRegion(
@@ -62,26 +71,75 @@ export default function MapScreen() {
         },
         800
       )
-      setMapCenter({ latitude: location.latitude, longitude: location.longitude })
+      setMapCenter({
+        latitude: location.latitude,
+        longitude: location.longitude,
+      })
     }
   }, [location.latitude, location.longitude])
 
-  // Handle map region changes (when user pans)
   function handleRegionChangeComplete(region: Region) {
-    console.log('🗺️ Region changed to:', region.latitude, region.longitude)
-    setMapCenter({
-      latitude: region.latitude,
-      longitude: region.longitude,
-    })
+    setMapCenter({ latitude: region.latitude, longitude: region.longitude })
   }
 
-  function handlePoiPress(poi: PoiSummary) {
+  // Tap a marker → fetch whisper → open card
+  const handlePoiPress = useCallback(async (poi: PoiSummary) => {
+    if (loadingPoiId === poi.id) return // already loading this one
     console.log('📍 POI tapped:', poi.name)
-    setActiveWhisper({
-      poi: { ...poi, visited: discoveredIds.includes(poi.id) },
-      whisper: null as any,
-    })
-  }
+
+    try {
+      setLoadingPoiId(poi.id)
+      const token = await getToken()
+      const timeSlot = getCurrentTimeSlot()
+      const whisper = await fetchWhisper(poi.id, timeSlot, token)
+
+      // Build nearby list from the other visible POIs (closest 2, excluding self)
+      const nearby = (pois ?? [])
+        .filter((p) => p.id !== poi.id)
+        .slice(0, 2)
+        .map((p) => ({
+          id: p.id,
+          name: p.name,
+          distanceMeters: p.distance ?? 150,
+        }))
+
+      openWhisper({
+        poiId: poi.id,
+        poiName: poi.name,
+        category: poi.category,
+        whisperId: whisper.id,
+        whisperText: whisper.whisperText,
+        audioUrl: whisper.audioUrl,
+        timeSlot: whisper.timeSlot,
+        personaSlug: whisper.personaSlug,
+        ambientLabel: getAmbientLabel(),
+        nearby,
+      })
+    } catch (err) {
+      console.warn('⚠️ Failed to fetch whisper for', poi.name, err)
+      // Open card with text-only fallback so the user sees something
+      openWhisper({
+        poiId: poi.id,
+        poiName: poi.name,
+        category: poi.category,
+        whisperId: '',
+        whisperText: 'No whisper available for this location yet.',
+        audioUrl: null,
+        timeSlot: getCurrentTimeSlot(),
+        personaSlug: '',
+        ambientLabel: getAmbientLabel(),
+        nearby: [],
+      })
+    } finally {
+      setLoadingPoiId(null)
+    }
+  }, [pois, getToken, openWhisper, loadingPoiId])
+
+  // Nearby whisper tap inside the card — look up and open
+  const handleNearbyPress = useCallback(async (poiId: string) => {
+    const target = pois?.find((p) => p.id === poiId)
+    if (target) handlePoiPress(target)
+  }, [pois, handlePoiPress])
 
   return (
     <View style={{ flex: 1, backgroundColor: '#0f0e0c' }}>
@@ -96,8 +154,8 @@ export default function MapScreen() {
         showsMyLocationButton={false}
         showsCompass={false}
         initialRegion={{
-          latitude: 1.2966,    // Singapore
-          longitude: 103.852,  // Singapore
+          latitude: 1.2966,
+          longitude: 103.852,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
@@ -106,12 +164,14 @@ export default function MapScreen() {
         {pois?.map((poi) => (
           <PoiMarker
             key={poi.id}
-            poi={{ ...poi, visited: discoveredIds.includes(poi.id) }}
+            poi={poi}
             onPress={handlePoiPress}
+            isLoading={loadingPoiId === poi.id} // to enable after we add isLoading state to marker
           />
         ))}
       </MapView>
 
+      {/* Top bar */}
       <View
         style={{
           position: 'absolute',
@@ -195,12 +255,8 @@ export default function MapScreen() {
         )}
       </View>
 
-      {activeWhisper && (
-        <WhisperCard
-          poi={activeWhisper.poi}
-          onClose={() => setActiveWhisper(null as any)}
-        />
-      )}
+      {/* Whisper card — always mounted, animates in/out internally */}
+      <WhisperCard onNearbyPress={handleNearbyPress} />
     </View>
   )
 }
