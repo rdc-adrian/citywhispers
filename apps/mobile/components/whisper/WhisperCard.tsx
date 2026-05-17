@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import React, { useEffect, useCallback, useRef } from 'react'
 import {
   View,
   Text,
@@ -8,6 +8,7 @@ import {
   ScrollView,
   Dimensions,
   Platform,
+  PanResponder,
 } from 'react-native'
 import Animated, {
   useSharedValue,
@@ -24,6 +25,10 @@ import { useAudio } from '../../hooks/useAudio'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 const SHEET_MAX_HEIGHT = SCREEN_HEIGHT * 0.82
+
+// ─── Phase 2: Height expansion constants ──────────────────────────────────────
+// The progress bar reveal adds ~68px: bar height (4) + vertical padding (32) + time labels (20) + gap (12)
+const PROGRESS_REVEAL_HEIGHT = 68
 
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
@@ -45,6 +50,7 @@ const TIMING = {
   stagger: 80,
   overlayOut: 250,
   sheetOut: 360,
+  progressReveal: 300,
 }
 
 // ─── Waveform ─────────────────────────────────────────────────────────────────
@@ -141,6 +147,65 @@ function BreathRing({ active }: { active: boolean }) {
   return <Animated.View pointerEvents="none" style={[s.breathRing, style]} />
 }
 
+// ─── Progress bar reveal ──────────────────────────────────────────────────────
+// Mounted always (when audioUrl exists), hidden via opacity + translateY.
+// Sheet grows to accommodate it when isPlaying becomes true.
+
+type ProgressRevealProps = {
+  visible: boolean
+  progress: number
+  positionSeconds: number
+  durationSeconds: number
+  onReplay: () => void
+}
+
+function ProgressReveal({
+  visible,
+  progress,
+  positionSeconds,
+  durationSeconds,
+  onReplay,
+}: ProgressRevealProps) {
+  const opacity = useSharedValue(0)
+  const translateY = useSharedValue(10)
+
+  useEffect(() => {
+    if (visible) {
+      opacity.value = withTiming(1, { duration: TIMING.progressReveal })
+      translateY.value = withSpring(0, { damping: 20, stiffness: 180 })
+    } else {
+      opacity.value = withTiming(0, { duration: 180 })
+      translateY.value = withTiming(10, { duration: 180 })
+    }
+  }, [visible])
+
+  const style = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }))
+
+  return (
+    <Animated.View style={[s.progressReveal, style]} pointerEvents={visible ? 'auto' : 'none'}>
+      <TouchableOpacity
+        onPress={onReplay}
+        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+      >
+        <Text style={s.replayIcon}>↺</Text>
+      </TouchableOpacity>
+
+      <Text style={s.timeText}>{formatTime(positionSeconds)}</Text>
+
+      <View style={s.progressLine}>
+        <View style={[s.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
+      </View>
+
+      <Text style={s.timeText}>
+        {durationSeconds > 0 ? formatTime(durationSeconds) : '--:--'}
+      </Text>
+    </Animated.View>
+  )
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatTime(secs: number): string {
@@ -165,12 +230,17 @@ export function WhisperCard({ onNearbyPress }: Props) {
   const { activeWhisper, isOpen, closeWhisper } = useWhisperStore()
   const insets = useSafeAreaInsets()
 
-  // Animation values
+  // ── Animation values ────────────────────────────────────────────────────────
   const overlayOpacity = useSharedValue(0)
   const sheetY = useSharedValue(SHEET_MAX_HEIGHT)
   const contentOpacity = useSharedValue(0)
   const titleY = useSharedValue(12)
   const whisperY = useSharedValue(16)
+
+  // Phase 2: extra bottom padding that grows when progress bar reveals.
+  // Animating the ScrollView's contentContainer paddingBottom means the sheet
+  // itself doesn't need a fixed height — content grows downward naturally.
+  const extraPadding = useSharedValue(0)
 
   const { playbackState, positionSeconds, durationSeconds, progress, play, pause, replay } =
     useAudio({ uri: activeWhisper?.audioUrl ?? null })
@@ -178,7 +248,24 @@ export function WhisperCard({ onNearbyPress }: Props) {
   const isPlaying = playbackState === 'playing'
   const isLoading = playbackState === 'loading'
 
-  // ── Animations ──────────────────────────────────────────────────────────────
+  // ── Phase 2: Expand / collapse sheet padding on playback state ──────────────
+  useEffect(() => {
+    if (isPlaying) {
+      extraPadding.value = withSpring(PROGRESS_REVEAL_HEIGHT, {
+        damping: 22,
+        stiffness: 140,
+        mass: 0.8,
+      })
+    } else {
+      extraPadding.value = withSpring(0, {
+        damping: 22,
+        stiffness: 180,
+        mass: 0.8,
+      })
+    }
+  }, [isPlaying])
+
+  // ── Open / close animations ─────────────────────────────────────────────────
 
   const animateOpen = useCallback(() => {
     overlayOpacity.value = withTiming(1, { duration: TIMING.overlayIn })
@@ -193,6 +280,8 @@ export function WhisperCard({ onNearbyPress }: Props) {
     contentOpacity.value = withTiming(0, { duration: 200 })
     titleY.value = withTiming(8, { duration: 200 })
     whisperY.value = withTiming(12, { duration: 200 })
+    // Collapse extra padding immediately on close
+    extraPadding.value = withTiming(0, { duration: 200 })
     sheetY.value = withTiming(
       SHEET_MAX_HEIGHT,
       { duration: TIMING.sheetOut, easing: Easing.in(Easing.ease) },
@@ -219,6 +308,26 @@ export function WhisperCard({ onNearbyPress }: Props) {
     isPlaying ? pause() : play()
   }, [isPlaying, play, pause])
 
+  // ── Phase 2: Drag-down dismiss via PanResponder on the drag pill ─────────────
+  // Using a ref for handleClose so the PanResponder (created once) always calls
+  // the latest version and avoids stale closure over isPlaying / pause.
+  const handleCloseRef = useRef(handleClose)
+  useEffect(() => {
+    handleCloseRef.current = handleClose
+  }, [handleClose])
+
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: (_, g) => Math.abs(g.dy) > 4,
+      onPanResponderRelease: (_, g) => {
+        if (g.dy > 48) {
+          handleCloseRef.current()
+        }
+      },
+    })
+  ).current
+
   // ── Animated styles ─────────────────────────────────────────────────────────
 
   const overlayStyle = useAnimatedStyle(() => ({ opacity: overlayOpacity.value }))
@@ -231,6 +340,9 @@ export function WhisperCard({ onNearbyPress }: Props) {
   const whisperStyle = useAnimatedStyle(() => ({
     opacity: contentOpacity.value,
     transform: [{ translateY: whisperY.value }],
+  }))
+  const scrollContentStyle = useAnimatedStyle(() => ({
+    paddingBottom: 8 + extraPadding.value,
   }))
 
   if (!activeWhisper) return null
@@ -252,12 +364,15 @@ export function WhisperCard({ onNearbyPress }: Props) {
           sheetStyle,
         ]}
       >
-        <View style={s.dragPill} />
+        {/* Drag pill — owns top padding; pan responder for dismiss gesture */}
+        <View style={s.dragPillWrap} {...panResponder.panHandlers}>
+          <View style={s.dragPill} />
+        </View>
 
-        <ScrollView
+        <Animated.ScrollView
           bounces={false}
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={s.scrollContent}
+          contentContainerStyle={scrollContentStyle}
         >
           {/* Header */}
           <Animated.View style={[s.header, titleStyle]}>
@@ -295,25 +410,14 @@ export function WhisperCard({ onNearbyPress }: Props) {
                 <WaveformBars active={isPlaying} />
               </View>
 
-              {/* Progress row */}
-              <View style={s.timeRow}>
-                <TouchableOpacity
-                  onPress={replay}
-                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                >
-                  <Text style={s.replayIcon}>↺</Text>
-                </TouchableOpacity>
-
-                <Text style={s.timeText}>{formatTime(positionSeconds)}</Text>
-
-                <View style={s.progressLine}>
-                  <View style={[s.progressFill, { width: `${Math.round(progress * 100)}%` }]} />
-                </View>
-
-                <Text style={s.timeText}>
-                  {durationSeconds > 0 ? formatTime(durationSeconds) : '--:--'}
-                </Text>
-              </View>
+              {/* Phase 2: Progress bar slides in below play row when playing */}
+              <ProgressReveal
+                visible={isPlaying}
+                progress={progress}
+                positionSeconds={positionSeconds}
+                durationSeconds={durationSeconds}
+                onReplay={replay}
+              />
             </Animated.View>
           ) : (
             // No audio — show a quiet placeholder
@@ -340,7 +444,7 @@ export function WhisperCard({ onNearbyPress }: Props) {
               ))}
             </Animated.View>
           )}
-        </ScrollView>
+        </Animated.ScrollView>
       </Animated.View>
     </View>
   )
@@ -364,21 +468,24 @@ const s = StyleSheet.create({
     borderTopWidth: 0.5,
     borderColor: 'rgba(255,255,255,0.06)',
   },
-  scrollContent: { paddingBottom: 8 },
+
+  // Drag pill — larger hit area so the gesture is easy to trigger
+  dragPillWrap: {
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
   dragPill: {
     width: 28,
     height: 2.5,
     borderRadius: 2,
     backgroundColor: C.textMuted,
-    alignSelf: 'center',
-    marginTop: 14,
     opacity: 0.5,
   },
 
   // Header
   header: {
     paddingHorizontal: 26,
-    paddingTop: 22,
+    paddingTop: 10, // reduced — dragPillWrap now owns top spacing
     paddingBottom: 24,
   },
   locationLine: {
@@ -477,9 +584,13 @@ const s = StyleSheet.create({
     height: 20,
     flex: 1,
   },
-  timeRow: {
+
+  // Phase 2: Progress reveal row (slides in below play row)
+  progressReveal: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginTop: 4,
+    marginBottom: 4,
   },
   timeText: {
     fontSize: 10.5,
