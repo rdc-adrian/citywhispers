@@ -100,6 +100,8 @@ model UserPreference {
   preferredCategories String[] @default([]) @map("preferred_categories")
   preferredTags       String[] @default([]) @map("preferred_tags")
   notificationsOn     Boolean  @default(true) @map("notifications_on")
+  // Stores autoplay, radiusMeters, showVisited, darkMode as JSON
+  prefsJson           Json     @default("{}") @map("prefs_json")
   updatedAt           DateTime @updatedAt @map("updated_at")
 
   user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)

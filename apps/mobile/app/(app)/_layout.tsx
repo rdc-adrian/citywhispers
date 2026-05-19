@@ -1,8 +1,62 @@
+// apps/mobile/app/(app)/_layout.tsx
 import React from 'react'
-import { Stack } from 'expo-router'
+import { Tabs } from 'expo-router'
+import { Text } from 'react-native'
 
-export default function RootLayout() {
+function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return (
-    <Stack screenOptions={{ headerShown: false }} />
+    <Text style={{ fontSize: 20, opacity: focused ? 1 : 0.4 }}>{emoji}</Text>
+  )
+}
+
+export default function AppLayout() {
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarStyle: {
+          backgroundColor: '#0f0e0c',
+          borderTopColor: 'rgba(255,255,255,0.08)',
+          borderTopWidth: 1,
+          height: 60,
+          paddingBottom: 8,
+        },
+        tabBarActiveTintColor: '#c8a96e',
+        tabBarInactiveTintColor: '#5c5650',
+        tabBarLabelStyle: {
+          fontSize: 10,
+          letterSpacing: 1,
+          textTransform: 'uppercase',
+        },
+      }}
+    >
+      <Tabs.Screen
+        name="map"
+        options={{
+          title: 'Explore',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="🗺" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="collected"
+        options={{
+          title: 'Collected',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="✦" focused={focused} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="settings"
+        options={{
+          title: 'Settings',
+          tabBarIcon: ({ focused }) => (
+            <TabIcon emoji="⚙" focused={focused} />
+          ),
+        }}
+      />
+    </Tabs>
   )
 }

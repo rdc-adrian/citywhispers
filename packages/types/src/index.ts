@@ -1,9 +1,7 @@
 // packages/types/src/index.ts
-
 // ========================================
 // POI Types
 // ========================================
-
 export interface PoiSummary {
   id: string;
   name: string;
@@ -13,7 +11,6 @@ export interface PoiSummary {
   distance?: number; // Distance from user in meters
   importanceScore: number;
 }
-
 export interface PoiDetail extends PoiSummary {
   cityId: string;
   geohash6: string;
@@ -21,11 +18,9 @@ export interface PoiDetail extends PoiSummary {
   createdAt: Date;
   updatedAt: Date;
 }
-
 // ========================================
 // Whisper Types
 // ========================================
-
 export interface WhisperResponse {
   id: string;
   poiId: string;
@@ -35,7 +30,6 @@ export interface WhisperResponse {
   personaSlug: string;
   createdAt: Date;
 }
-
 export interface WhisperContext {
   poiName: string;
   cityName: string;
@@ -44,19 +38,17 @@ export interface WhisperContext {
   weather?: string;
   nearbyPois?: string[];
 }
-
 // ========================================
 // User Types
 // ========================================
-
 export interface UserPreferences {
   autoplay: boolean;
-  searchRadius: number; // in meters
+  radiusMeters: number;
+  showVisited: boolean;
   darkMode: boolean;
   language: string;
-  notificationsEnabled: boolean;
+  notifications: boolean;
 }
-
 export interface DiscoveredWhisper {
   id: string;
   whisperId: string;
@@ -66,14 +58,12 @@ export interface DiscoveredWhisper {
   whisperText: string;
   audioUrl: string | null;
   discoveredAt: Date;
-  latitude: number;
-  longitude: number;
+  latitude?: number;
+  longitude?: number;
 }
-
 // ========================================
 // City Types
 // ========================================
-
 export interface City {
   id: string;
   name: string;
@@ -83,32 +73,26 @@ export interface City {
   createdAt: Date;
   updatedAt: Date;
 }
-
 export interface CityWithPois extends City {
   pois: PoiSummary[];
 }
-
 // ========================================
 // Persona Types
 // ========================================
-
 export interface Persona {
   id: string;
   slug: string;
   name: string;
   tonePrompt: string;
 }
-
 // ========================================
 // API Response Types
 // ========================================
-
 export interface ApiResponse<T> {
   data: T;
   success: boolean;
   error?: string;
 }
-
 export interface PaginatedResponse<T> {
   data: T[];
   total: number;

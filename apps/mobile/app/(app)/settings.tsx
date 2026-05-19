@@ -1,17 +1,20 @@
-import React, { useState } from 'react'
+// apps/mobile/app/(app)/settings.tsx
+import React from 'react'
 import {
   View,
   Text,
   Pressable,
   ScrollView,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useAuth, useUser } from '@clerk/clerk-expo'
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { StatusBar } from 'expo-status-bar'
 import { Toggle } from '../../components/ui/Toggle'
-import { patchUserPreferences, UserPreferences } from '../../lib/api'
+import { fetchUserPreferences, patchUserPreferences } from '../../lib/api'
+import type { UserPreferences } from '@citywhispers/types'
 
 const DEFAULT_PREFS: UserPreferences = {
   autoplay: false,
@@ -43,11 +46,11 @@ function SettingsRow({ label, sublabel, right }: RowProps) {
     >
       <View style={{ flex: 1, marginRight: 16 }}>
         <Text style={{ color: '#e8e4dc', fontSize: 15 }}>{label}</Text>
-        {sublabel && (
+        {sublabel ? (
           <Text style={{ color: '#5c5650', fontSize: 12, marginTop: 2 }}>
             {sublabel}
           </Text>
-        )}
+        ) : null}
       </View>
       {right}
     </View>
@@ -76,21 +79,46 @@ export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
   const { signOut, getToken } = useAuth()
   const { user } = useUser()
-  const [prefs, setPrefs] = useState<UserPreferences>(DEFAULT_PREFS)
+  const queryClient = useQueryClient()
+
+  const { data: rawPrefs, isLoading } = useQuery<UserPreferences>({
+    queryKey: ['user-preferences'],
+    queryFn: async () => {
+      const token = await getToken()
+      return fetchUserPreferences(token)
+    },
+    staleTime: 1000 * 60 * 5,
+  })
+
+  // Always safe — never null or undefined
+  const prefs: UserPreferences = rawPrefs ?? DEFAULT_PREFS
 
   const { mutate: savePrefs } = useMutation({
     mutationFn: async (next: Partial<UserPreferences>) => {
       const token = await getToken()
-      return patchUserPreferences({ prefs: next, token: token ?? '' })
+      return patchUserPreferences(next, token)
     },
-    onSuccess: (updated) => setPrefs(updated),
+    onSuccess: (updated) => {
+      queryClient.setQueryData(['user-preferences'], updated)
+    },
+    onError: (err) => {
+      console.error('[Settings] Failed to save preference:', err)
+      Alert.alert('Error', 'Could not save your preference. Please try again.')
+    },
   })
 
   function updatePref<K extends keyof UserPreferences>(
     key: K,
     value: UserPreferences[K]
   ) {
-    setPrefs((prev) => ({ ...prev, [key]: value }))
+    // Optimistic update so toggle feels instant
+    queryClient.setQueryData(
+      ['user-preferences'],
+      (prev: UserPreferences | undefined) => ({
+        ...(prev ?? DEFAULT_PREFS),
+        [key]: value,
+      })
+    )
     savePrefs({ [key]: value })
   }
 
@@ -107,6 +135,21 @@ export default function SettingsScreen() {
     'W'
   const displayName = user?.firstName ?? 'Wanderer'
   const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
+
+  if (isLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#0f0e0c',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ActivityIndicator color="#c8a96e" />
+      </View>
+    )
+  }
 
   return (
     <View

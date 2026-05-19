@@ -66,17 +66,17 @@ packages/
 
 ## Key Models (Prisma)
 
-| Model                 | Purpose                                              |
-| --------------------- | ---------------------------------------------------- |
-| `City`                | Top-level geographic unit                            |
-| `Poi`                 | Points of interest with geohash + trigger radius     |
-| `PoiFact`             | Curated facts attached to a POI (factType, verified) |
-| `Persona`             | Narrator voice/tone for whisper generation           |
-| `GeneratedWhisper`    | AI or curated whisper text + audio URL               |
-| `UserWhisperEvent`    | Records when a user encounters a whisper             |
-| `UserPreference`      | Per-user settings (language, notifications, persona) |
-| `Trail` / `TrailStop` | Ordered sequence of whispers forming a walk          |
-| `GenerationJob`       | Queue tracking for AI generation jobs                |
+| Model                 | Purpose                                                         |
+| --------------------- | --------------------------------------------------------------- |
+| `City`                | Top-level geographic unit                                       |
+| `Poi`                 | Points of interest with geohash + trigger radius                |
+| `PoiFact`             | Curated facts attached to a POI (factType, verified)            |
+| `Persona`             | Narrator voice/tone for whisper generation                      |
+| `GeneratedWhisper`    | AI or curated whisper text + audio URL                          |
+| `UserWhisperEvent`    | Records when a user encounters a whisper                        |
+| `UserPreference`      | Per-user settings (language, notifications, persona, prefsJson) |
+| `Trail` / `TrailStop` | Ordered sequence of whispers forming a walk                     |
+| `GenerationJob`       | Queue tracking for AI generation jobs                           |
 
 ---
 
@@ -113,6 +113,16 @@ packages/
 - Public routes: `/cities`, `/pois/nearby`, `/whisper/poi/:poiId`, `/user/discovered`, `/user/preferences`.
 - Whisper fetch supports `?time_slot=morning|afternoon|evening|night` (auto-detected from device time via `getCurrentTimeSlot()`).
 - `UserPreferences` on mobile includes: `autoplay`, `radiusMeters`, `showVisited`, `darkMode`, `language`, `notifications` — patched via `PATCH /user/preferences`.
+- `GET /user/preferences` — returns full preferences for hydration on app launch.
+
+---
+
+## Known Issues / Gotchas
+
+- **Prisma v7 + monorepo:** Generated client outputs to root `node_modules/.prisma/client`, not `apps/api/node_modules/.prisma/client`. Type resolution can break in VS Code — use `as any` casts for new JSON fields as workaround.
+- **Supabase migrations:** Must use session mode pooler (port 5432 on pooler host) or direct URL. Transaction mode (port 6543) blocks migrations. Add `DIRECT_URL` to `.env` and `directUrl` to `schema.prisma` datasource.
+- **`packages/types` must be rebuilt** after any changes: `cd packages/types && npm run build`. The mobile app and API both consume `dist/index.d.ts` — editing `src/index.ts` alone is not enough.
+- **`UserPreference.prefsJson`** — stores `autoplay`, `radiusMeters`, `showVisited`, `darkMode` as JSONB. Column exists in DB. Prisma schema has it. Access via `(record as any).prefsJson` due to type path issue.
 
 ---
 
@@ -129,6 +139,9 @@ npm run dev                 # Start Fastify dev server (port 3001)
 npx prisma studio           # Open Prisma Studio
 npx prisma migrate dev      # Run migrations
 npx tsx prisma/seed.ts      # Seed database
+
+# Types package (from packages/types) — MUST run after any type changes
+npm run build               # Rebuild shared types
 
 # Monorepo root
 npm run build               # Build all packages

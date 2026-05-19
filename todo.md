@@ -1,14 +1,19 @@
 # Project Feature Tracker
 
-## Sprint A — Active Now
+## Sprint A — In Progress
 
 > Fix all broken functionality before building anything new.
 
-- [ ] Fix `patchUserPreferences` signature mismatch — `settings.tsx` passes `{ prefs, token }`, `api.ts` expects `(preferences, token)`
-- [ ] Fix collected screen missing `cityName` — add city field to API response in `user/index.ts`
-- [ ] Fix preferences API only persisting `notifications` + `language` — add `autoplay`, `radiusMeters`, `showVisited`, `darkMode`
-- [ ] Add preference hydration on app launch
+- [x] Fix `patchUserPreferences` signature mismatch — corrected to `(preferences, token)`
+- [x] Fix collected screen missing `cityName` — added city include in `user/index.ts`
+- [x] Fix preferences API only persisting `notifications` + `language` — added `prefsJson` JSONB column, all fields now persist
+- [x] Add `GET /user/preferences` endpoint for hydration on app launch
+- [x] Add `GET /user/preferences` call in `settings.tsx` via `useQuery`
+- [x] Fix `UserPreferences` type in `packages/types/src/index.ts` — corrected field names
+- [x] Add tab navigation to `app/(app)/_layout.tsx` — Settings was unreachable
+- [x] **BLOCKER:** `packages/types` rebuild not clearing TS errors in `settings.tsx` — `radiusMeters`, `showVisited`, `notifications` still not recognised despite `src/index.ts` being correct. Needs resolution in next session.
 - [ ] Add settings persistence validation + error handling
+- [ ] Verify preferences round-trip end to end (toggle → DB → reload)
 
 ---
 
@@ -63,13 +68,14 @@
 ## Phase 4: User Preferences & Settings
 
 - [x] Build Settings screen UI
-- [ ] Fix preferences save API mismatch
-- [ ] Persist autoplay preference
-- [ ] Persist nearby radius preference
-- [ ] Persist show visited markers preference
-- [ ] Persist dark mode preference
-- [ ] Add preference hydration on app launch
+- [x] Fix preferences save API mismatch
+- [x] Add tab navigation so Settings is reachable
+- [x] Add `prefsJson` JSONB column to `user_preferences` table
+- [x] Persist autoplay, radiusMeters, showVisited, darkMode via prefsJson
+- [x] Add preference hydration on app launch via GET /user/preferences
+- [ ] **BLOCKER:** Resolve `packages/types` rebuild not propagating to mobile TS server
 - [ ] Add settings persistence validation + error handling
+- [ ] Verify full round-trip: toggle → PATCH → DB → reload → GET → correct state
 
 ---
 
@@ -77,7 +83,7 @@
 
 - [x] Build Collected screen UI
 - [x] Fetch whisper history from API
-- [ ] Fix missing city name in collected entries
+- [x] Fix missing city name in collected entries
 - [ ] Implement persistent discovered-state tracking
 - [ ] Persist playback completion state
 - [ ] Add discovered marker visual states
@@ -151,7 +157,7 @@
 
 | Sprint          | Focus                                                                 |
 | --------------- | --------------------------------------------------------------------- |
-| **A** — current | Fix broken functionality — settings, collected city name, preferences |
+| **A** — current | Fix broken functionality — settings blocker remaining (types rebuild) |
 | **B**           | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions     |
 | **C**           | Whisper Card Phase 4 — Cormorant, typography, readability             |
 | **D**           | Persistent discovery state                                            |

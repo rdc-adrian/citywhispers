@@ -1,9 +1,9 @@
 // apps/mobile/lib/api.ts
-import type { 
-  PoiSummary, 
-  WhisperResponse, 
+import type {
+  PoiSummary,
+  WhisperResponse,
   DiscoveredWhisper,
-  UserPreferences 
+  UserPreferences,
 } from '@citywhispers/types';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
@@ -63,7 +63,7 @@ export async function fetchWhisper(
   token?: string | null
 ): Promise<WhisperResponse> {
   const params = timeSlot ? `?time_slot=${timeSlot}` : '';
-  
+
   const response = await fetch(`${BASE_URL}/whisper/poi/${poiId}${params}`, {
     headers: getAuthHeaders(token),
   });
@@ -109,10 +109,28 @@ export async function fetchDiscoveredWhispers(
   return result.data;
 }
 
+// FIX: fetch saved preferences on app launch
+export async function fetchUserPreferences(
+  token?: string | null
+): Promise<UserPreferences> {
+  const response = await fetch(`${BASE_URL}/user/preferences`, {
+    headers: getAuthHeaders(token),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch preferences: ${response.statusText}`);
+  }
+
+  const result = await response.json();
+  return result.data;
+}
+
+// FIX: correct signature — (preferences, token) not ({ prefs, token })
+// FIX: returns full UserPreferences so the client can sync state
 export async function patchUserPreferences(
   preferences: Partial<UserPreferences>,
   token?: string | null
-): Promise<{ success: boolean }> {
+): Promise<UserPreferences> {
   const response = await fetch(`${BASE_URL}/user/preferences`, {
     method: 'PATCH',
     headers: getAuthHeaders(token),
@@ -123,7 +141,8 @@ export async function patchUserPreferences(
     throw new Error(`Failed to update preferences: ${response.statusText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  return result.data;
 }
 
 // ========================================
