@@ -135,14 +135,16 @@ export async function patchUserPreferences(
     method: 'PATCH',
     headers: getAuthHeaders(token),
     body: JSON.stringify(preferences),
-  });
+  })
 
   if (!response.ok) {
-    throw new Error(`Failed to update preferences: ${response.statusText}`);
+    const body = await response.text()
+    console.error('[api] PATCH error — status:', response.status, '| body:', body)
+    throw new Error(`Failed to update preferences: ${response.status} — ${body}`)
   }
 
-  const result = await response.json();
-  return result.data;
+  const result = await response.json()
+  return result.data
 }
 
 // ========================================

@@ -77,32 +77,63 @@ function SectionLabel({ label }: { label: string }) {
 
 export default function SettingsScreen() {
   const insets = useSafeAreaInsets()
-  const { signOut, getToken } = useAuth()
+  const { signOut, getToken, isLoaded, isSignedIn } = useAuth()
   const { user } = useUser()
   const queryClient = useQueryClient()
 
-  const { data: rawPrefs, isLoading } = useQuery<UserPreferences>({
+  const {
+    data: rawPrefs,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<UserPreferences>({
     queryKey: ['user-preferences'],
     queryFn: async () => {
+      console.log('[Settings] ── queryFn START ──')
       const token = await getToken()
-      return fetchUserPreferences(token)
+      console.log('[Settings] Token:', token ? `obtained (${token.slice(0, 20)}...)` : 'NULL')
+      const result = await fetchUserPreferences(token)
+      console.log('[Settings] fetchUserPreferences SUCCESS:', JSON.stringify(result))
+      return result
     },
     staleTime: 1000 * 60 * 5,
+    retry: 1,
+    // Only run once Clerk has confirmed the user is loaded and signed in
+    enabled: isLoaded && isSignedIn === true,
   })
 
-  // Always safe — never null or undefined
   const prefs: UserPreferences = rawPrefs ?? DEFAULT_PREFS
 
-  const { mutate: savePrefs } = useMutation({
+  const { mutate: savePrefs, isPending: isSaving } = useMutation({
     mutationFn: async (next: Partial<UserPreferences>) => {
-      const token = await getToken()
-      return patchUserPreferences(next, token)
+      console.log('[Settings] PATCH payload:', JSON.stringify(next))
+
+      // Retry token fetch up to 3 times — Clerk can occasionally
+      // return null briefly even when the user is signed in
+      let token: string | null = null
+      for (let i = 0; i < 3; i++) {
+        token = await getToken()
+        if (token) break
+        console.warn(`[Settings] Token null on attempt ${i + 1}, retrying...`)
+        await new Promise((resolve) => setTimeout(resolve, 300))
+      }
+
+      if (!token) {
+        console.error('[Settings] Token still null after retries — aborting PATCH')
+        throw new Error('Not authenticated')
+      }
+
+      console.log('[Settings] PATCH token obtained, firing request...')
+      const result = await patchUserPreferences(next, token)
+      console.log('[Settings] PATCH response:', JSON.stringify(result))
+      return result
     },
     onSuccess: (updated) => {
+      console.log('[Settings] PATCH success — cache updated')
       queryClient.setQueryData(['user-preferences'], updated)
     },
     onError: (err) => {
-      console.error('[Settings] Failed to save preference:', err)
+      console.error('[Settings] PATCH failed:', err)
       Alert.alert('Error', 'Could not save your preference. Please try again.')
     },
   })
@@ -136,7 +167,8 @@ export default function SettingsScreen() {
   const displayName = user?.firstName ?? 'Wanderer'
   const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
 
-  if (isLoading) {
+  // ── Clerk not ready or query in flight ──
+  if (!isLoaded || isLoading) {
     return (
       <View
         style={{
@@ -144,9 +176,52 @@ export default function SettingsScreen() {
           backgroundColor: '#0f0e0c',
           alignItems: 'center',
           justifyContent: 'center',
+          gap: 12,
         }}
       >
         <ActivityIndicator color="#c8a96e" />
+        <Text style={{ color: '#5c5650', fontSize: 12 }}>
+          {!isLoaded ? 'Authenticating...' : 'Loading preferences...'}
+        </Text>
+      </View>
+    )
+  }
+
+  // ── Error state ──
+  if (isError) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#0f0e0c',
+          alignItems: 'center',
+          justifyContent: 'center',
+          paddingHorizontal: 32,
+          gap: 12,
+        }}
+      >
+        <Text style={{ color: '#c06060', fontSize: 15 }}>
+          Failed to load preferences
+        </Text>
+        <Text style={{ color: '#5c5650', fontSize: 12, textAlign: 'center' }}>
+          {error instanceof Error ? error.message : 'Unknown error'}
+        </Text>
+        <Pressable
+          onPress={() =>
+            queryClient.invalidateQueries({ queryKey: ['user-preferences'] })
+          }
+          style={{
+            marginTop: 8,
+            paddingHorizontal: 24,
+            paddingVertical: 12,
+            backgroundColor: '#171613',
+            borderWidth: 1,
+            borderColor: 'rgba(255,255,255,0.1)',
+            borderRadius: 12,
+          }}
+        >
+          <Text style={{ color: '#c8a96e', fontSize: 14 }}>Retry</Text>
+        </Pressable>
       </View>
     )
   }
@@ -216,6 +291,34 @@ export default function SettingsScreen() {
             ) : null}
           </View>
         </View>
+
+        {/* Dev debug strip — remove before Sprint B */}
+        {__DEV__ && (
+          <View
+            style={{
+              marginHorizontal: 24,
+              marginBottom: 8,
+              padding: 12,
+              backgroundColor: '#1f1d19',
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: 'rgba(200,169,110,0.2)',
+            }}
+          >
+            <Text style={{ color: '#c8a96e', fontSize: 10, marginBottom: 4 }}>
+              DEBUG — remove before Sprint B
+            </Text>
+            <Text style={{ color: '#5c5650', fontSize: 10 }}>
+              source: {rawPrefs ? 'server' : 'default fallback'}
+            </Text>
+            <Text style={{ color: '#5c5650', fontSize: 10 }}>
+              saving: {isSaving ? 'yes' : 'no'}
+            </Text>
+            <Text style={{ color: '#5c5650', fontSize: 10 }}>
+              prefs: {JSON.stringify(prefs)}
+            </Text>
+          </View>
+        )}
 
         {/* Playback */}
         <SectionLabel label="Playback" />
@@ -307,6 +410,27 @@ export default function SettingsScreen() {
           />
         </View>
 
+        {__DEV__ && (
+  <Pressable
+    onPress={async () => {
+      console.log('[TokenTest] isLoaded:', isLoaded, '| isSignedIn:', isSignedIn)
+      const t1 = await getToken()
+      console.log('[TokenTest] getToken():', t1 ? t1.slice(0, 30) : 'NULL')
+      const t2 = await getToken({ template: 'default' })
+      console.log('[TokenTest] getToken({ template: default }):', t2 ? t2.slice(0, 30) : 'NULL')
+    }}
+    style={{
+      marginHorizontal: 24,
+      marginTop: 8,
+      paddingVertical: 12,
+      backgroundColor: '#1f1d19',
+      borderRadius: 12,
+      alignItems: 'center',
+    }}
+  >
+    <Text style={{ color: '#c8a96e', fontSize: 12 }}>DEV: Test token</Text>
+  </Pressable>
+)}
         {/* Sign out */}
         <Pressable
           onPress={handleSignOut}
