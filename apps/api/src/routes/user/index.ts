@@ -1,4 +1,5 @@
 import { FastifyInstance } from 'fastify'
+import { getAuth } from '@clerk/fastify'
 import { prisma } from '../../lib/prisma'
 import { z } from 'zod'
 
@@ -30,7 +31,7 @@ function asPrefsJson(val: unknown): PrefsJson {
 export async function userRoutes(app: FastifyInstance) {
   // GET /user/discovered — whisper history for current user
   app.get('/discovered', async (request) => {
-    const clerkId = (request as any).user?.sub
+    const { userId: clerkId } = getAuth(request)
     if (!clerkId) return { data: [] }
 
     const user = await prisma.user.findUnique({
@@ -70,7 +71,7 @@ export async function userRoutes(app: FastifyInstance) {
 
   // GET /user/preferences — fetch current user's saved preferences
   app.get('/preferences', async (request) => {
-    const clerkId = (request as any).user?.sub
+    const { userId: clerkId } = getAuth(request)
     if (!clerkId) throw new Error('Unauthorized')
 
     const user = await prisma.user.findUnique({
@@ -109,7 +110,7 @@ export async function userRoutes(app: FastifyInstance) {
   // PATCH /user/preferences — save all preference fields
   app.patch('/preferences', async (request) => {
     const prefs = PreferencesSchema.parse(request.body)
-    const clerkId = (request as any).user?.sub
+    const { userId: clerkId } = getAuth(request)
     if (!clerkId) throw new Error('Unauthorized')
 
     const user = await prisma.user.findUnique({
