@@ -1,12 +1,12 @@
 import { FastifyInstance } from 'fastify'
 import { getAuth, type SessionAuthObject } from '@clerk/fastify'
+import { prisma } from '../../lib/prisma'
+import { z } from 'zod'
 
 function getClerkId(request: Parameters<typeof getAuth>[0]): string | null {
   const auth = getAuth(request) as SessionAuthObject
   return auth.userId ?? null
 }
-import { prisma } from '../../lib/prisma'
-import { z } from 'zod'
 
 const PreferencesSchema = z.object({
   autoplay: z.boolean().optional(),
@@ -34,6 +34,16 @@ function asPrefsJson(val: unknown): PrefsJson {
 }
 
 export async function userRoutes(app: FastifyInstance) {
+  // Temporary auth debug endpoint — remove after confirming Clerk works on Render
+  app.get('/auth-check', async (request) => {
+    const auth = getAuth(request) as SessionAuthObject
+    return {
+      userId: auth.userId ?? null,
+      hasAuthHeader: !!(request.headers.authorization),
+      authHeaderPrefix: request.headers.authorization?.slice(0, 15) ?? null,
+    }
+  })
+
   // GET /user/discovered — whisper history for current user
   app.get('/discovered', async (request) => {
     const clerkId = getClerkId(request)
@@ -77,6 +87,7 @@ export async function userRoutes(app: FastifyInstance) {
   // GET /user/preferences — fetch current user's saved preferences
   app.get('/preferences', async (request) => {
     const clerkId = getClerkId(request)
+    request.log.info({ clerkId, hasAuth: !!request.headers.authorization }, 'GET /user/preferences')
     if (!clerkId) throw new Error('Unauthorized')
 
     const user = await prisma.user.findUnique({
