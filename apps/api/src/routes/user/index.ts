@@ -131,11 +131,21 @@ export async function userRoutes(app: FastifyInstance) {
     request.log.info({ clerkId, hasAuth: !!request.headers.authorization, body: request.body }, 'PATCH /user/preferences')
     if (!clerkId) throw new UnauthorizedError()
 
-    const user = await prisma.user.findUnique({
+    let user = await prisma.user.findUnique({
       where: { clerkId },
       include: { preferences: true },
     })
-    if (!user) throw new NotFoundError('User')
+
+    if (!user) {
+      request.log.info({ clerkId }, 'Authenticated user missing from DB, creating record')
+      user = await prisma.user.create({
+        data: {
+          clerkId,
+          email: `${clerkId}@clerk.local`,
+        },
+        include: { preferences: true },
+      })
+    }
 
     const existingJson = asPrefsJson((user.preferences as any)?.prefsJson)
     const updatedJson: PrefsJson = {
