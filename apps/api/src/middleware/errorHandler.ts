@@ -28,9 +28,11 @@ export function errorHandler(
 
   // Unknown errors
   request.log.error(error)
+  const isDev = process.env.NODE_ENV !== 'production'
   return reply.status(500).send({
     status: 'error',
     code: 'INTERNAL_ERROR',
-    message: 'An unexpected error occurred',
+    message: isDev ? error.message : 'An unexpected error occurred',
+    ...(isDev ? { detail: error.stack } : {}),
   })
 }

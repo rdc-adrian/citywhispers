@@ -1,6 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { getAuth, type SessionAuthObject } from '@clerk/fastify'
 import { prisma } from '../../lib/prisma'
+import { UnauthorizedError, NotFoundError } from '../../lib/errors'
 import { z } from 'zod'
 
 function getClerkId(request: Parameters<typeof getAuth>[0]): string | null {
@@ -88,7 +89,7 @@ export async function userRoutes(app: FastifyInstance) {
   app.get('/preferences', async (request) => {
     const clerkId = getClerkId(request)
     request.log.info({ clerkId, hasAuth: !!request.headers.authorization }, 'GET /user/preferences')
-    if (!clerkId) throw new Error('Unauthorized')
+    if (!clerkId) throw new UnauthorizedError()
 
     const user = await prisma.user.findUnique({
       where: { clerkId },
@@ -127,13 +128,14 @@ export async function userRoutes(app: FastifyInstance) {
   app.patch('/preferences', async (request) => {
     const prefs = PreferencesSchema.parse(request.body)
     const clerkId = getClerkId(request)
-    if (!clerkId) throw new Error('Unauthorized')
+    request.log.info({ clerkId, hasAuth: !!request.headers.authorization, body: request.body }, 'PATCH /user/preferences')
+    if (!clerkId) throw new UnauthorizedError()
 
     const user = await prisma.user.findUnique({
       where: { clerkId },
       include: { preferences: true },
     })
-    if (!user) throw new Error('User not found')
+    if (!user) throw new NotFoundError('User')
 
     const existingJson = asPrefsJson((user.preferences as any)?.prefsJson)
     const updatedJson: PrefsJson = {
@@ -150,16 +152,21 @@ export async function userRoutes(app: FastifyInstance) {
       prefsJson: updatedJson as any,
     }
 
-    await prisma.userPreference.upsert({
-      where: { userId: user.id },
-      update: prefsData,
-      create: {
-        userId: user.id,
-        notificationsOn: prefs.notifications ?? true,
-        languageCode: prefs.language ?? 'en',
-        prefsJson: updatedJson as any,
-      },
-    })
+    try {
+      await prisma.userPreference.upsert({
+        where: { userId: user.id },
+        update: prefsData,
+        create: {
+          userId: user.id,
+          notificationsOn: prefs.notifications ?? true,
+          languageCode: prefs.language ?? 'en',
+          prefsJson: updatedJson as any,
+        },
+      })
+    } catch (error) {
+      request.log.error({ err: error, prefs, userId: user.id }, 'PATCH /user/preferences failed')
+      throw error
+    }
 
     return {
       data: {

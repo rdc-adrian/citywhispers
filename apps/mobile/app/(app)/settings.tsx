@@ -410,27 +410,6 @@ export default function SettingsScreen() {
           />
         </View>
 
-        {__DEV__ && (
-  <Pressable
-    onPress={async () => {
-      console.log('[TokenTest] isLoaded:', isLoaded, '| isSignedIn:', isSignedIn)
-      const t1 = await getToken()
-      console.log('[TokenTest] getToken():', t1 ? t1.slice(0, 30) : 'NULL')
-      const t2 = await getToken({ template: 'default' })
-      console.log('[TokenTest] getToken({ template: default }):', t2 ? t2.slice(0, 30) : 'NULL')
-    }}
-    style={{
-      marginHorizontal: 24,
-      marginTop: 8,
-      paddingVertical: 12,
-      backgroundColor: '#1f1d19',
-      borderRadius: 12,
-      alignItems: 'center',
-    }}
-  >
-    <Text style={{ color: '#c8a96e', fontSize: 12 }}>DEV: Test token</Text>
-  </Pressable>
-)}
         {/* Sign out */}
         <Pressable
           onPress={handleSignOut}
