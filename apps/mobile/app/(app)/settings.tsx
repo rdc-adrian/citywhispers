@@ -89,12 +89,8 @@ export default function SettingsScreen() {
   } = useQuery<UserPreferences>({
     queryKey: ['user-preferences'],
     queryFn: async () => {
-      console.log('[Settings] ── queryFn START ──')
       const token = await getToken()
-      console.log('[Settings] Token:', token ? `obtained (${token.slice(0, 20)}...)` : 'NULL')
-      const result = await fetchUserPreferences(token)
-      console.log('[Settings] fetchUserPreferences SUCCESS:', JSON.stringify(result))
-      return result
+      return fetchUserPreferences(token)
     },
     staleTime: 1000 * 60 * 5,
     retry: 1,
@@ -106,27 +102,18 @@ export default function SettingsScreen() {
 
   const { mutate: savePrefs, isPending: isSaving } = useMutation({
     mutationFn: async (next: Partial<UserPreferences>) => {
-      console.log('[Settings] PATCH payload:', JSON.stringify(next))
-
-      // Retry token fetch up to 3 times — Clerk can occasionally
-      // return null briefly even when the user is signed in
       let token: string | null = null
       for (let i = 0; i < 3; i++) {
         token = await getToken()
         if (token) break
-        console.warn(`[Settings] Token null on attempt ${i + 1}, retrying...`)
         await new Promise((resolve) => setTimeout(resolve, 300))
       }
 
       if (!token) {
-        console.error('[Settings] Token still null after retries — aborting PATCH')
         throw new Error('Not authenticated')
       }
 
-      console.log('[Settings] PATCH token obtained, firing request...')
-      const result = await patchUserPreferences(next, token)
-      console.log('[Settings] PATCH response:', JSON.stringify(result))
-      return result
+      return patchUserPreferences(next, token)
     },
     onSuccess: (updated) => {
       console.log('[Settings] PATCH success — cache updated')
@@ -291,34 +278,6 @@ export default function SettingsScreen() {
             ) : null}
           </View>
         </View>
-
-        {/* Dev debug strip — remove before Sprint B */}
-        {__DEV__ && (
-          <View
-            style={{
-              marginHorizontal: 24,
-              marginBottom: 8,
-              padding: 12,
-              backgroundColor: '#1f1d19',
-              borderRadius: 8,
-              borderWidth: 1,
-              borderColor: 'rgba(200,169,110,0.2)',
-            }}
-          >
-            <Text style={{ color: '#c8a96e', fontSize: 10, marginBottom: 4 }}>
-              DEBUG — remove before Sprint B
-            </Text>
-            <Text style={{ color: '#5c5650', fontSize: 10 }}>
-              source: {rawPrefs ? 'server' : 'default fallback'}
-            </Text>
-            <Text style={{ color: '#5c5650', fontSize: 10 }}>
-              saving: {isSaving ? 'yes' : 'no'}
-            </Text>
-            <Text style={{ color: '#5c5650', fontSize: 10 }}>
-              prefs: {JSON.stringify(prefs)}
-            </Text>
-          </View>
-        )}
 
         {/* Playback */}
         <SectionLabel label="Playback" />
