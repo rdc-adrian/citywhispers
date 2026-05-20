@@ -153,18 +153,26 @@ export async function userRoutes(app: FastifyInstance) {
     }
 
     try {
-      await prisma.userPreference.upsert({
-        where: { userId: user.id },
-        update: prefsData,
-        create: {
-          userId: user.id,
-          notificationsOn: prefs.notifications ?? true,
-          languageCode: prefs.language ?? 'en',
-          prefsJson: updatedJson as any,
-        },
-      })
+      if (user.preferences) {
+        await prisma.userPreference.update({
+          where: { id: user.preferences.id },
+          data: prefsData,
+        })
+      } else {
+        await prisma.userPreference.create({
+          data: {
+            userId: user.id,
+            notificationsOn: prefs.notifications ?? true,
+            languageCode: prefs.language ?? 'en',
+            prefsJson: updatedJson as any,
+          },
+        })
+      }
     } catch (error) {
-      request.log.error({ err: error, prefs, userId: user.id }, 'PATCH /user/preferences failed')
+      request.log.error(
+        { err: error, prefs, clerkId, userId: user.id, hasPreferences: !!user.preferences },
+        'PATCH /user/preferences failed'
+      )
       throw error
     }
 
