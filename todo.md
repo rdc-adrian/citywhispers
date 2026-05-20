@@ -14,6 +14,7 @@
 - [x] **BLOCKER:** `packages/types` rebuild not clearing TS errors in `settings.tsx` — `radiusMeters`, `showVisited`, `notifications` still not recognised despite `src/index.ts` being correct. Needs resolution in next session.
 - [ ] Add settings persistence validation + error handling
 - [ ] Verify preferences round-trip end to end (toggle → DB → reload)
+- [x] Remove debug endpoint and temporary request.log.info line after fix
 
 ---
 
