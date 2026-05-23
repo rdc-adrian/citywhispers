@@ -116,6 +116,18 @@ export async function fetchDiscoveredWhispers(
   return result.data;
 }
 
+export async function completeWhisper(whisperId: string, token: string): Promise<void> {
+  const res = await fetch(`${BASE_URL}/whisper/${whisperId}/complete`, {
+    method: 'PATCH',
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({}),
+  });
+  if (!res.ok) throw new Error('Failed to mark whisper complete');
+}
+
 export async function fetchUserPreferences(
   token?: string | null
 ): Promise<UserPreferences> {

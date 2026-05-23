@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import type { WhisperResponse } from '@citywhispers/types'
+import type { WhisperResponse, DiscoveredWhisper } from '@citywhispers/types'
 
 // Combined shape built from PoiSummary + WhisperResponse after marker tap
 export interface ActiveWhisper {
@@ -23,6 +23,12 @@ type WhisperStore = {
   isOpen: boolean
   openWhisper: (whisper: ActiveWhisper) => void
   closeWhisper: () => void
+
+  // — Discovery state —
+  discoveredPoiIds: Set<string>
+  completedWhisperIds: Set<string>
+  hydrateDiscovered: (whispers: DiscoveredWhisper[]) => void
+  markCompleted: (whisperId: string, poiId: string) => void
 }
 
 // Base store implementation (not exported under the public name)
@@ -33,6 +39,22 @@ const baseWhisperStore = create<WhisperStore>((set) => ({
   openWhisper: (whisper) => set({ activeWhisper: whisper, isOpen: true }),
 
   closeWhisper: () => set({ isOpen: false }),
+
+  // — Discovery state —
+  discoveredPoiIds: new Set<string>(),
+  completedWhisperIds: new Set<string>(),
+
+  hydrateDiscovered: (whispers) => set(() => ({
+    discoveredPoiIds: new Set(whispers.map(w => w.poiId)),
+    completedWhisperIds: new Set(
+      whispers.filter(w => w.completedAt !== null).map(w => w.whisperId)
+    ),
+  })),
+
+  markCompleted: (whisperId, poiId) => set((state) => ({
+    completedWhisperIds: new Set([...state.completedWhisperIds, whisperId]),
+    discoveredPoiIds: new Set([...state.discoveredPoiIds, poiId]),
+  })),
 }))
 
 // Backwards-compatibility: expose legacy names used across older components
@@ -44,11 +66,27 @@ export type WhisperStoreLegacy = WhisperStore & {
 }
 
 // Wrap original to include legacy helpers
-export const useWhisperStoreLegacy = create<WhisperStoreLegacy>((set, get) => ({
+export const useWhisperStoreLegacy = create<WhisperStoreLegacy>((set) => ({
   activeWhisper: null,
   isOpen: false,
   openWhisper: (whisper) => set({ activeWhisper: whisper, isOpen: true }),
   closeWhisper: () => set({ isOpen: false }),
+
+  // — Discovery state —
+  discoveredPoiIds: new Set<string>(),
+  completedWhisperIds: new Set<string>(),
+
+  hydrateDiscovered: (whispers) => set(() => ({
+    discoveredPoiIds: new Set(whispers.map(w => w.poiId)),
+    completedWhisperIds: new Set(
+      whispers.filter(w => w.completedAt !== null).map(w => w.whisperId)
+    ),
+  })),
+
+  markCompleted: (whisperId, poiId) => set((state) => ({
+    completedWhisperIds: new Set([...state.completedWhisperIds, whisperId]),
+    discoveredPoiIds: new Set([...state.discoveredPoiIds, poiId]),
+  })),
 
   // legacy
   audioOpen: false,
