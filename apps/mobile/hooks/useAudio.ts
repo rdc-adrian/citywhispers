@@ -1,11 +1,17 @@
 import { useEffect, useRef, useCallback, useState } from 'react'
 import { Audio } from 'expo-av'
+import { useAuth } from '@clerk/clerk-expo'
+import { useMutation } from '@tanstack/react-query'
+import { useWhisperStore } from '../store/useWhisperStore'
+import { completeWhisper } from '../lib/api'
 
 export type PlaybackState = 'idle' | 'loading' | 'playing' | 'paused' | 'error'
 
 type UseAudioOptions = {
   uri: string | null
   onEnd?: () => void
+  whisperId?: string
+  poiId?: string
 }
 
 export type UseAudioReturn = {
@@ -30,14 +36,53 @@ export type UseAudioReturnLegacy = UseAudioReturn & {
   unload: () => void
 }
 
+const COMPLETION_THRESHOLD = 0.85
+
 export function useAudio(input: UseAudioOptions | string | null): UseAudioReturnLegacy {
   const opts: UseAudioOptions =
     typeof input === 'string' || input === null ? { uri: input, onEnd: undefined } : input
-  const { uri, onEnd } = opts
+  const { uri, onEnd, whisperId, poiId } = opts
   const soundRef = useRef<Audio.Sound | null>(null)
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle')
   const [positionSeconds, setPositionSeconds] = useState(0)
   const [durationSeconds, setDurationSeconds] = useState(0)
+
+  // Completion tracking — ref to avoid re-renders and stale closures
+  const completionFiredRef = useRef(false)
+  const whisperIdRef = useRef(whisperId)
+  const poiIdRef = useRef(poiId)
+  const fireCompletionRef = useRef<((args: { whisperId: string; poiId: string }) => void) | null>(null)
+
+  // Keep identity refs in sync with latest props
+  useEffect(() => {
+    whisperIdRef.current = whisperId
+    poiIdRef.current = poiId
+  }, [whisperId, poiId])
+
+  // Auth + store
+  const { getToken } = useAuth()
+  const markCompleted = useWhisperStore((s) => s.markCompleted)
+
+  const { mutate: fireCompletion } = useMutation({
+    mutationFn: async ({ whisperId: wId, poiId: pId }: { whisperId: string; poiId: string }) => {
+      const token = await getToken()
+      if (!token) throw new Error('No token')
+      await completeWhisper(wId, token)
+      return { whisperId: wId, poiId: pId }
+    },
+    onSuccess: ({ whisperId: wId, poiId: pId }) => {
+      markCompleted(wId, pId)
+    },
+    onError: () => {
+      // Silent — completion event is best-effort
+      // Store stays unchanged; hydration on next launch self-corrects
+    },
+  })
+
+  // Keep fireCompletion ref in sync (mutate is stable from TanStack Query)
+  useEffect(() => {
+    fireCompletionRef.current = fireCompletion
+  }, [fireCompletion])
 
   // Unload when uri changes or component unmounts
   useEffect(() => {
@@ -47,11 +92,12 @@ export function useAudio(input: UseAudioOptions | string | null): UseAudioReturn
     }
   }, [uri])
 
-  // Reset position when a new uri is set
+  // Reset position + completion guard when a new uri loads
   useEffect(() => {
     setPlaybackState('idle')
     setPositionSeconds(0)
     setDurationSeconds(0)
+    completionFiredRef.current = false
   }, [uri])
 
   const loadSound = useCallback(async (): Promise<Audio.Sound | null> => {
@@ -76,6 +122,23 @@ export function useAudio(input: UseAudioOptions | string | null): UseAudioReturn
             setPlaybackState('idle')
             setPositionSeconds(0)
             onEnd?.()
+          }
+
+          // Completion threshold — fires exactly once per whisper session
+          if (
+            status.durationMillis &&
+            status.positionMillis &&
+            !completionFiredRef.current
+          ) {
+            const progress = status.positionMillis / status.durationMillis
+            if (progress >= COMPLETION_THRESHOLD) {
+              completionFiredRef.current = true
+              const wId = whisperIdRef.current
+              const pId = poiIdRef.current
+              if (wId && pId) {
+                fireCompletionRef.current?.({ whisperId: wId, poiId: pId })
+              }
+            }
           }
         }
       )

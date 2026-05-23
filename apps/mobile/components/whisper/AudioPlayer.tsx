@@ -22,8 +22,16 @@ interface Props {
 }
 
 export function AudioPlayer({ audioUrl, poiName }: Props) {
-  const { audioOpen, setAudioOpen } = useWhisperStore()
-  const audio = useAudio(audioOpen ? audioUrl : null)
+  const { audioOpen, setAudioOpen, activeWhisper } = useWhisperStore()
+  const audio = useAudio(
+    audioOpen
+      ? {
+          uri: audioUrl,
+          whisperId: activeWhisper?.whisperId,
+          poiId: activeWhisper?.poiId,
+        }
+      : null
+  )
 
   const translateY = useSharedValue(120)
   const animStyle = useAnimatedStyle(() => ({

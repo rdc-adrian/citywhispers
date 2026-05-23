@@ -243,7 +243,11 @@ export function WhisperCard({ onNearbyPress }: Props) {
   const extraPadding = useSharedValue(0)
 
   const { playbackState, positionSeconds, durationSeconds, progress, play, pause, replay } =
-    useAudio({ uri: activeWhisper?.audioUrl ?? null })
+    useAudio({
+      uri: activeWhisper?.audioUrl ?? null,
+      whisperId: activeWhisper?.whisperId,
+      poiId: activeWhisper?.poiId,
+    })
 
   const isPlaying = playbackState === 'playing'
   const isLoading = playbackState === 'loading'
