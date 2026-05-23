@@ -71,6 +71,7 @@ export async function userRoutes(app: FastifyInstance) {
         whisperText: e.whisper.whisperText,
         audioUrl: e.whisper.audioUrl,
         discoveredAt: e.triggeredAt,
+        completedAt: e.completedAt,
       })),
     }
   })

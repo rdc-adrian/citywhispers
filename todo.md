@@ -17,13 +17,32 @@
 
 ---
 
+## Sprint A.5 — Complete
+
+> Dev environment & infrastructure — get the app running end to end on a real device.
+
+- [x] Scope Clerk plugin to authenticated routes only — global registration caused JWKS hang on every public request
+- [x] Fix Supabase SSL (`rejectUnauthorized: false` in PrismaPg) — connections were failing silently
+- [x] Fix `DATABASE_URL` / `DIRECT_URL` to use pooler hostname — direct hostname unresolvable in dev
+- [x] Remove auth token from `useNearbyPois` — `/pois/nearby` is a public route; sending a token triggered Clerk JWKS on the server
+- [x] Add `keepPreviousData` and coordinate rounding (4 dp) to `useNearbyPois` — prevents spinner on every GPS tick
+- [x] Fix whisper route response shape to match `WhisperResponse` type (`id`, `poiId`, `timeSlot`, `personaSlug`, `createdAt`)
+- [x] Fix `UserWhisperEvent.create` removing non-existent `poiId` field — discovery writes were silently failing
+- [x] Add Windows Firewall inbound rule for port 3001 (LAN dev mode)
+- [x] Add `ngrok-free.app` to CORS allowed origins
+- [x] Add tap-to-retry on map POI error banner
+- [x] Document dev environment setup, tunnel vs LAN workflow, and gotchas in `CLAUDE.md`
+- [x] Delete old backup files (`*-old.ts/tsx`) and remove debug `console.log` calls
+
+---
+
 ## Sprint D — In Progress
 
 > Persistent Discovery Memory System — make the app remember the user emotionally.
 
 - [x] **Chunk 1** — Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
-- [ ] **Chunk 2** — Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
-- [ ] **Chunk 3** — Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
+- [x] **Chunk 2** — Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
+- [x] **Chunk 3** — Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
 - [ ] **Chunk 4** — Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
 - [ ] **Chunk 5** — Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
 - [ ] **Chunk 6** — Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
@@ -102,8 +121,8 @@
 - [x] Add `@@unique([userId, whisperId])` constraint to `UserWhisperEvent`
 - [x] Add `completedAt` field to `UserWhisperEvent`
 - [x] Write discovery record on whisper fetch (upsert on `GET /whisper/poi/:poiId`)
-- [ ] Add `PATCH /whisper/:whisperId/complete` endpoint
-- [ ] Update `GET /user/discovered` to return `completedAt`
+- [x] Add `PATCH /whisper/:whisperId/complete` endpoint
+- [x] Update `GET /user/discovered` to return `completedAt`
 - [ ] Add `DiscoveredWhisper` type to shared types package
 - [ ] Add discovery state to Zustand (`discoveredPoiIds`, `completedWhisperIds`)
 - [ ] Hydrate discovery state on app launch
@@ -157,6 +176,8 @@
 - [x] Seed Raffles Hotel
 - [x] Seed Ann Siang Hill
 - [x] Seed Amoy Street Alley
+- [x] Seed Hougang Central Hawker Centre (test POI near lat 1.362 for local dev)
+- [x] Seed Serangoon Gardens Estate (test POI near lat 1.359 for local dev)
 - [ ] Expand Singapore to 15–20 curated MVP POIs
 - [ ] Add more hidden gems + micro moments
 - [ ] Refine factual sourcing for whisper generation
@@ -181,6 +202,7 @@
 | Sprint | Focus                                                             | Status         |
 | ------ | ----------------------------------------------------------------- | -------------- |
 | **A**  | Fix broken functionality                                          | ✅ Complete    |
+| **A.5** | Dev environment & infrastructure — real device end-to-end        | ✅ Complete    |
 | **B**  | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending     |
 | **C**  | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
 | **D**  | Persistent discovery state                                        | 🔄 In Progress |

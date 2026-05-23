@@ -1,7 +1,7 @@
 import { FastifyInstance } from 'fastify'
 import { getAuth, type SessionAuthObject } from '@clerk/fastify'
 import { prisma } from '../../lib/prisma'
-import { NotFoundError } from '../../lib/errors'
+import { NotFoundError, UnauthorizedError } from '../../lib/errors'
 import { z } from 'zod'
 
 function getClerkId(request: Parameters<typeof getAuth>[0]): string | null {
@@ -110,5 +110,35 @@ export async function whisperRoutes(app: FastifyInstance) {
       orderBy: { createdAt: 'desc' },
     })
     return { data: whispers }
+  })
+
+  // PATCH /whisper/:whisperId/complete — mark a whisper as completed for the current user
+  app.patch<{ Params: { whisperId: string } }>('/:whisperId/complete', async (request) => {
+    const clerkId = getClerkId(request)
+    if (!clerkId) throw new UnauthorizedError()
+
+    const { whisperId } = request.params
+
+    // Resolve DB user from Clerk ID
+    const user = await prisma.user.findUnique({ where: { clerkId } })
+    if (!user) throw new UnauthorizedError()
+
+    // Verify the whisper exists before upserting
+    const whisperExists = await prisma.generatedWhisper.findUnique({
+      where: { id: whisperId },
+      select: { id: true },
+    })
+    if (!whisperExists) throw new NotFoundError('Whisper')
+
+    const completedAt = new Date()
+    await prisma.userWhisperEvent.upsert({
+      where: {
+        userId_whisperId: { userId: user.id, whisperId },
+      },
+      update: { completedAt },
+      create: { userId: user.id, whisperId, completedAt },
+    })
+
+    return { data: { whisperId, completedAt } }
   })
 }
