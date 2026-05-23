@@ -1,7 +1,10 @@
 // apps/mobile/app/(app)/_layout.tsx
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
 import { Text } from 'react-native'
+import { useAuth } from '@clerk/clerk-expo'
+import { useWhisperStore } from '../../store/useWhisperStore'
+import { fetchDiscoveredWhispers } from '../../lib/api'
 
 function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return (
@@ -10,6 +13,25 @@ function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
 }
 
 export default function AppLayout() {
+  const { getToken } = useAuth()
+  const hydrateDiscovered = useWhisperStore(s => s.hydrateDiscovered)
+
+  useEffect(() => {
+    const hydrate = async () => {
+      try {
+        const token = await getToken()
+        if (!token) return
+        const whispers = await fetchDiscoveredWhispers(token)
+        hydrateDiscovered(whispers)
+      } catch {
+        // Silent failure — store stays empty, markers stay full opacity
+        // Discovery state will self-correct on next launch
+      }
+    }
+
+    hydrate()
+  }, [])
+
   return (
     <Tabs
       screenOptions={{
