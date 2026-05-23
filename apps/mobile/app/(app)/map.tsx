@@ -61,7 +61,7 @@ export default function MapScreen() {
     longitude: mapCenter.longitude,
   })
 
-  const { openWhisper } = useWhisperStore()
+  const { openWhisper, activeWhisper, discoveredPoiIds } = useWhisperStore()
 
   // Animate to user location on first GPS fix
   useEffect(() => {
@@ -90,6 +90,8 @@ export default function MapScreen() {
   const handlePoiPress = useCallback(async (poi: PoiSummary) => {
     if (loadingPoiId === poi.id) return
 
+    const isRevisit = discoveredPoiIds.has(poi.id)
+
     try {
       setLoadingPoiId(poi.id)
       const token = await getToken()
@@ -117,6 +119,7 @@ export default function MapScreen() {
         personaSlug: whisper.personaSlug,
         ambientLabel: getAmbientLabel(),
         nearby,
+        isRevisit,
       })
     } catch (err) {
       console.warn('⚠️ Failed to fetch whisper for', poi.name, err)
@@ -132,11 +135,12 @@ export default function MapScreen() {
         personaSlug: '',
         ambientLabel: getAmbientLabel(),
         nearby: [],
+        isRevisit,
       })
     } finally {
       setLoadingPoiId(null)
     }
-  }, [pois, getToken, openWhisper, loadingPoiId])
+  }, [pois, getToken, openWhisper, loadingPoiId, discoveredPoiIds])
 
   // Nearby whisper tap inside the card — look up and open
   const handleNearbyPress = useCallback(async (poiId: string) => {
@@ -168,8 +172,9 @@ export default function MapScreen() {
           <PoiMarker
             key={poi.id}
             poi={poi}
+            isDiscovered={discoveredPoiIds.has(poi.id)}
             onPress={handlePoiPress}
-            isLoading={loadingPoiId === poi.id} // to enable after we add isLoading state to marker
+            isLoading={loadingPoiId === poi.id}
           />
         ))}
       </MapView>
@@ -260,7 +265,7 @@ export default function MapScreen() {
       </View>
 
       {/* Whisper card — always mounted, animates in/out internally */}
-      <WhisperCard onNearbyPress={handleNearbyPress} />
+      <WhisperCard onNearbyPress={handleNearbyPress} isRevisit={activeWhisper?.isRevisit ?? false} />
     </View>
   )
 }

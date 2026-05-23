@@ -36,18 +36,18 @@
 
 ---
 
-## Sprint D — In Progress
+## Sprint D — Complete
 
 > Persistent Discovery Memory System — make the app remember the user emotionally.
 
-- [x] **Chunk 1** — Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
-- [x] **Chunk 2** — Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
-- [x] **Chunk 3** — Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
-- [x] **Chunk 4** — Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
-- [x] **Chunk 5** — Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
-- [ ] **Chunk 6** — Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
-- [ ] **Chunk 7** — Completion event: fire `completeWhisper` + `markCompleted` when audio finishes
-- [ ] **Chunk 8** — Revisit guard + marker dimming: `isRevisit` flag in `handlePoiPress` + opacity on `PoiMarker`
+- [x] Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
+- [x] Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
+- [x] Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
+- [x] Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
+- [x] Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
+- [x] Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
+- [x] Completion event: fire `completeWhisper` + `markCompleted` when audio finishes
+- [x] Revisit guard + marker dimming: `isRevisit` flag in `handlePoiPress` + opacity on `PoiMarker`
 
 ---
 
@@ -123,12 +123,12 @@
 - [x] Write discovery record on whisper fetch (upsert on `GET /whisper/poi/:poiId`)
 - [x] Add `PATCH /whisper/:whisperId/complete` endpoint
 - [x] Update `GET /user/discovered` to return `completedAt`
-- [ ] Add `DiscoveredWhisper` type to shared types package
-- [ ] Add discovery state to Zustand (`discoveredPoiIds`, `completedWhisperIds`)
-- [ ] Hydrate discovery state on app launch
-- [ ] Fire completion event when audio finishes
-- [ ] Add revisit guard in `handlePoiPress`
-- [ ] Add discovered marker visual states (opacity dimming only)
+- [x] Add `DiscoveredWhisper` type to shared types package
+- [x] Add discovery state to Zustand (`discoveredPoiIds`, `completedWhisperIds`)
+- [x] Hydrate discovery state on app launch
+- [x] Fire completion event when audio finishes
+- [x] Add revisit guard in `handlePoiPress`
+- [x] Add discovered marker visual states (opacity dimming only)
 - [ ] Build Journal emotional layout redesign
 - [ ] Add replay from Journal
 - [ ] Add city grouping in Journal
@@ -199,13 +199,13 @@
 
 ## Sprint Reference
 
-| Sprint  | Focus                                                             | Status         |
-| ------- | ----------------------------------------------------------------- | -------------- |
-| **A**   | Fix broken functionality                                          | ✅ Complete    |
-| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete    |
-| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending     |
-| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
-| **D**   | Persistent discovery state                                        | 🔄 In Progress |
-| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending     |
-| **F**   | AI whisper generation pipeline                                    | ⏳ Pending     |
-| **G**   | TTS / audio generation system                                     | ⏳ Pending     |
+| Sprint  | Focus                                                             | Status      |
+| ------- | ----------------------------------------------------------------- | ----------- |
+| **A**   | Fix broken functionality                                          | ✅ Complete |
+| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete |
+| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending  |
+| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending  |
+| **D**   | Persistent discovery state                                        | ✅ Complete |
+| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending  |
+| **F**   | AI whisper generation pipeline                                    | ⏳ Pending  |
+| **G**   | TTS / audio generation system                                     | ⏳ Pending  |

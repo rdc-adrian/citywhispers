@@ -224,9 +224,10 @@ function formatDistance(meters: number): string {
 
 type Props = {
   onNearbyPress?: (poiId: string) => void
+  isRevisit?: boolean
 }
 
-export function WhisperCard({ onNearbyPress }: Props) {
+export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   const { activeWhisper, isOpen, closeWhisper } = useWhisperStore()
   const insets = useSafeAreaInsets()
 

@@ -16,6 +16,7 @@ export interface ActiveWhisper {
   // Derived at call site
   ambientLabel: string
   nearby: Array<{ id: string; name: string; distanceMeters: number }>
+  isRevisit?: boolean
 }
 
 type WhisperStore = {
