@@ -57,9 +57,12 @@ export interface DiscoveredWhisper {
   cityName: string;
   whisperText: string;
   audioUrl: string | null;
-  discoveredAt: Date;
-  latitude?: number;
-  longitude?: number;
+  discoveredAt: string;       // ISO 8601 — serialised from DB Date by Fastify
+  completedAt: string | null; // null until audio plays to end
+}
+export interface CompleteWhisperBody {
+  // currently empty — whisperId comes from the URL param
+  // reserved for future fields e.g. listenDurationSeconds
 }
 // ========================================
 // City Types

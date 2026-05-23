@@ -43,7 +43,7 @@
 - [x] **Chunk 1** — Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
 - [x] **Chunk 2** — Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
 - [x] **Chunk 3** — Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
-- [ ] **Chunk 4** — Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
+- [x] **Chunk 4** — Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
 - [ ] **Chunk 5** — Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
 - [ ] **Chunk 6** — Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
 - [ ] **Chunk 7** — Completion event: fire `completeWhisper` + `markCompleted` when audio finishes
@@ -199,13 +199,13 @@
 
 ## Sprint Reference
 
-| Sprint | Focus                                                             | Status         |
-| ------ | ----------------------------------------------------------------- | -------------- |
-| **A**  | Fix broken functionality                                          | ✅ Complete    |
-| **A.5** | Dev environment & infrastructure — real device end-to-end        | ✅ Complete    |
-| **B**  | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending     |
-| **C**  | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
-| **D**  | Persistent discovery state                                        | 🔄 In Progress |
-| **E**  | Journal / Collected emotional redesign                            | ⏳ Pending     |
-| **F**  | AI whisper generation pipeline                                    | ⏳ Pending     |
-| **G**  | TTS / audio generation system                                     | ⏳ Pending     |
+| Sprint  | Focus                                                             | Status         |
+| ------- | ----------------------------------------------------------------- | -------------- |
+| **A**   | Fix broken functionality                                          | ✅ Complete    |
+| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete    |
+| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending     |
+| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
+| **D**   | Persistent discovery state                                        | 🔄 In Progress |
+| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending     |
+| **F**   | AI whisper generation pipeline                                    | ⏳ Pending     |
+| **G**   | TTS / audio generation system                                     | ⏳ Pending     |
