@@ -18,7 +18,22 @@ export type UseAudioReturn = {
   replay: () => Promise<void>
 }
 
-export function useAudio({ uri, onEnd }: UseAudioOptions): UseAudioReturn {
+// Backwards-compatible audio API expected by older components
+export type UseAudioReturnLegacy = UseAudioReturn & {
+  // ms-based fields
+  positionMs: number
+  durationMs: number
+  isPlaying: boolean
+  isLoading: boolean
+  togglePlay: () => Promise<void>
+  seekBy: (ms: number) => Promise<void>
+  unload: () => void
+}
+
+export function useAudio(input: UseAudioOptions | string | null): UseAudioReturnLegacy {
+  const opts: UseAudioOptions =
+    typeof input === 'string' || input === null ? { uri: input, onEnd: undefined } : input
+  const { uri, onEnd } = opts
   const soundRef = useRef<Audio.Sound | null>(null)
   const [playbackState, setPlaybackState] = useState<PlaybackState>('idle')
   const [positionSeconds, setPositionSeconds] = useState(0)
@@ -117,6 +132,39 @@ export function useAudio({ uri, onEnd }: UseAudioOptions): UseAudioReturn {
   const progress =
     durationSeconds > 0 ? Math.min(positionSeconds / durationSeconds, 1) : 0
 
+  // Legacy helpers
+  const positionMs = Math.round(positionSeconds * 1000)
+  const durationMs = Math.round(durationSeconds * 1000)
+  const isPlaying = playbackState === 'playing'
+  const isLoading = playbackState === 'loading'
+
+  const togglePlay = async () => {
+    if (isPlaying) return pause()
+    return play()
+  }
+
+  const seekBy = async (ms: number) => {
+    try {
+      if (!soundRef.current) return
+      const status = await soundRef.current.getStatusAsync()
+          const posMs = (status as any).positionMillis || 0
+          const target = Math.max(0, posMs + ms)
+      await soundRef.current.setPositionAsync(target)
+      setPositionSeconds(target / 1000)
+    } catch {
+      setPlaybackState('error')
+    }
+  }
+
+  const unload = () => {
+    try {
+      soundRef.current?.unloadAsync().catch(() => {})
+      soundRef.current = null
+    } catch {
+      // ignore
+    }
+  }
+
   return {
     playbackState,
     positionSeconds,
@@ -125,5 +173,13 @@ export function useAudio({ uri, onEnd }: UseAudioOptions): UseAudioReturn {
     play,
     pause,
     replay,
+    // legacy
+    positionMs,
+    durationMs,
+    isPlaying,
+    isLoading,
+    togglePlay,
+    seekBy,
+    unload,
   }
 }

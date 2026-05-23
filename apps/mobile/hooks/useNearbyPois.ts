@@ -1,6 +1,5 @@
 // apps/mobile/hooks/useNearbyPois.ts
-import { useQuery } from '@tanstack/react-query';
-import { useAuth } from '@clerk/clerk-expo';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { fetchNearbyPois } from '../lib/api';
 import type { PoiSummary } from '@citywhispers/types';
 
@@ -19,8 +18,6 @@ export function useNearbyPois({
   limit = 10,
   enabled = true,
 }: UseNearbyPoisOptions) {
-  const { getToken } = useAuth();
-
   return useQuery<PoiSummary[], Error>({
     queryKey: ['pois', 'nearby', latitude, longitude, radius, limit],
     queryFn: async () => {
@@ -28,18 +25,12 @@ export function useNearbyPois({
         throw new Error('Location is required');
       }
 
-      const token = await getToken();
-
-      return await fetchNearbyPois({
-        lat: latitude,
-        lng: longitude,
-        radius,
-        limit,
-        token,
-      });
+      // POI lookup is public — no auth token, avoids Clerk JWKS verification on the server
+      return await fetchNearbyPois({ lat: latitude, lng: longitude, radius, limit });
     },
     enabled: enabled && latitude !== null && longitude !== null,
     staleTime: 1000 * 60 * 5,
     gcTime: 1000 * 60 * 10,
+    placeholderData: keepPreviousData,
   });
 }

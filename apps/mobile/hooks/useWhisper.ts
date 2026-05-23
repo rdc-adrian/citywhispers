@@ -27,20 +27,7 @@ export function useWhisper({
       }
 
       const token = await getToken();
-
-      console.log('🔍 Fetching whisper for:', {
-        poiId,
-        timeSlot: currentTimeSlot,
-      });
-
       const result = await fetchWhisper(poiId, currentTimeSlot, token);
-      
-      console.log('✅ Whisper response:', {
-        hasWhisper: !!result,
-        whisperText: result?.whisperText?.substring(0, 50) + '...',
-        audioUrl: result?.audioUrl,
-      });
-
       return result;
     },
     enabled: enabled && Boolean(poiId),

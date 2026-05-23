@@ -32,7 +32,7 @@ export function errorHandler(
   return reply.status(500).send({
     status: 'error',
     code: 'INTERNAL_ERROR',
-    message: isDev ? error.message : 'An unexpected error occurred',
+    message: error.message || 'An unexpected error occurred',
     ...(isDev ? { detail: error.stack } : {}),
   })
 }

@@ -2,20 +2,13 @@ import 'dotenv/config'
 import Fastify from 'fastify'
 import cors from '@fastify/cors'
 import { clerkPlugin } from '@clerk/fastify'
-import { PrismaClient } from '@prisma/client'
-import { PrismaPg } from '@prisma/adapter-pg'
+import { prisma } from './lib/prisma'
 import { cityRoutes } from './routes/city/index'
 import { poisRoutes } from './routes/pois/index'
 import { whisperRoutes } from './routes/whisper/index'
 import { userRoutes } from './routes/user/index'
 import { adminRoutes } from './routes/admin/index'
 import { errorHandler } from './middleware/errorHandler'
-
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
-
-export const prisma = new PrismaClient({ adapter })
 
 const app = Fastify({ logger: true })
 
@@ -26,7 +19,8 @@ const start = async () => {
       origin: (origin, callback) => {
         const allowedOrigins = [
           /^https:\/\/.*\.exp\.direct$/,  // Expo tunnel
-          /^https:\/\/.*\.ngrok\.io$/,    // ngrok
+          /^https:\/\/.*\.ngrok\.io$/,    // ngrok (legacy)
+          /^https:\/\/.*\.ngrok-free\.app$/, // ngrok free tier
           'http://localhost:19006',        // Expo web
           'http://localhost:8081',         // Metro bundler
         ]
@@ -46,18 +40,20 @@ const start = async () => {
       credentials: true,
     })
 
-    // Auth — must be before routes
-    await app.register(clerkPlugin)
-
-    // Routes
-    app.register(cityRoutes, { prefix: '/cities' })
-    app.register(whisperRoutes, { prefix: '/whisper' })
-    app.register(userRoutes, { prefix: '/user' })
-    app.register(adminRoutes, { prefix: '/admin' })
-    app.register(poisRoutes, { prefix: '/pois' })
-
-    // Error handler
+    // Error handler (global — must be set before scoped plugins)
     app.setErrorHandler(errorHandler)
+
+    // Public routes — no Clerk plugin, so JWKS is never fetched for these
+    app.register(poisRoutes, { prefix: '/pois' })
+    app.register(cityRoutes, { prefix: '/cities' })
+
+    // Authenticated scope — Clerk plugin only runs on these routes
+    app.register(async (authed) => {
+      await authed.register(clerkPlugin)
+      authed.register(whisperRoutes, { prefix: '/whisper' })
+      authed.register(userRoutes, { prefix: '/user' })
+      authed.register(adminRoutes, { prefix: '/admin' })
+    })
 
     // Health checks
     app.get('/health', async () => ({
@@ -81,6 +77,7 @@ const start = async () => {
     })
 
     console.log(`🚀 Server running on http://0.0.0.0:${process.env.PORT || 3001}`)
+
   } catch (err) {
     app.log.error(err)
     process.exit(1)

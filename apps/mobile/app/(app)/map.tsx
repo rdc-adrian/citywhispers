@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react'
-import { View, Text, ActivityIndicator } from 'react-native'
+import { View, Text, ActivityIndicator, TouchableOpacity } from 'react-native'
 import MapView, { PROVIDER_DEFAULT, Region } from 'react-native-maps'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { StatusBar } from 'expo-status-bar'
@@ -44,6 +44,10 @@ export default function MapScreen() {
   const location = useLocation()
   const { getToken } = useAuth()
 
+  // Round to 4 dp (~11 m) so GPS noise doesn't create a new query key on
+  // every location tick or sub-pixel map movement.
+  function roundCoord(n: number) { return Math.round(n * 10000) / 10000 }
+
   const [mapCenter, setMapCenter] = useState({
     latitude: 1.2966,
     longitude: 103.852,
@@ -52,7 +56,7 @@ export default function MapScreen() {
   // Track which POI is currently loading so we can show a spinner on the marker
   const [loadingPoiId, setLoadingPoiId] = useState<string | null>(null)
 
-  const { data: pois, isLoading: poisLoading, error: poisError } = useNearbyPois({
+  const { data: pois, isLoading: poisLoading, error: poisError, refetch: refetchPois } = useNearbyPois({
     latitude: mapCenter.latitude,
     longitude: mapCenter.longitude,
   })
@@ -72,20 +76,19 @@ export default function MapScreen() {
         800
       )
       setMapCenter({
-        latitude: location.latitude,
-        longitude: location.longitude,
+        latitude: roundCoord(location.latitude),
+        longitude: roundCoord(location.longitude),
       })
     }
   }, [location.latitude, location.longitude])
 
   function handleRegionChangeComplete(region: Region) {
-    setMapCenter({ latitude: region.latitude, longitude: region.longitude })
+    setMapCenter({ latitude: roundCoord(region.latitude), longitude: roundCoord(region.longitude) })
   }
 
   // Tap a marker → fetch whisper → open card
   const handlePoiPress = useCallback(async (poi: PoiSummary) => {
-    if (loadingPoiId === poi.id) return // already loading this one
-    console.log('📍 POI tapped:', poi.name)
+    if (loadingPoiId === poi.id) return
 
     try {
       setLoadingPoiId(poi.id)
@@ -238,7 +241,8 @@ export default function MapScreen() {
         )}
 
         {poisError && (
-          <View
+          <TouchableOpacity
+            onPress={() => refetchPois()}
             style={{
               backgroundColor: 'rgba(139,0,0,0.8)',
               borderWidth: 1,
@@ -249,9 +253,9 @@ export default function MapScreen() {
             }}
           >
             <Text style={{ color: '#ffcccc', fontSize: 13, textAlign: 'center' }}>
-              Error loading POIs: {poisError.message}
+              {poisError.message} — Tap to retry
             </Text>
-          </View>
+          </TouchableOpacity>
         )}
       </View>
 

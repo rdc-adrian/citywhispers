@@ -1,6 +1,6 @@
-import { TimeSlot } from '@citywhispers/types'
+import type { WhisperResponse } from '@citywhispers/types'
 
-export function getCurrentTimeSlot(): TimeSlot {
+export function getCurrentTimeSlot(): WhisperResponse['timeSlot'] {
   const hour = new Date().getHours()
   if (hour >= 5 && hour < 12) return 'morning'
   if (hour >= 12 && hour < 17) return 'afternoon'

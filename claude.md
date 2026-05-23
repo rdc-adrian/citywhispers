@@ -120,19 +120,65 @@ packages/
 ## Known Issues / Gotchas
 
 - **Prisma v7 + monorepo:** Generated client outputs to root `node_modules/.prisma/client`, not `apps/api/node_modules/.prisma/client`. Type resolution can break in VS Code — use `as any` casts for new JSON fields as workaround.
+- **Supabase SSL:** PrismaPg requires `ssl: { rejectUnauthorized: false }` (in `apps/api/src/lib/prisma.ts`) or DB connections fail silently. Direct hostname (`db.xxx.supabase.co`) doesn't resolve — always use the pooler URL (`aws-1-xxx.pooler.supabase.com:5432`) for both `DATABASE_URL` and `DIRECT_URL`.
 - **Supabase migrations:** Must use session mode pooler (port 5432 on pooler host) or direct URL. Transaction mode (port 6543) blocks migrations. Add `DIRECT_URL` to `.env` and `directUrl` to `schema.prisma` datasource.
+- **Clerk plugin scope:** `@clerk/fastify` `clerkPlugin` must be registered only inside the authenticated route scope (see `apps/api/src/index.ts`). If registered globally, it fetches JWKS on every request — including public routes — and the first request hangs for 10+ seconds. Public routes (`/pois`, `/cities`) must stay outside the Clerk scope.
+- **TanStack Query cached errors:** If the API was unreachable and the app shows an error banner, the error is cached. Hard-reload the app (`r` in Metro terminal) to clear it. The error banner in `map.tsx` also has a Tap-to-retry handler that calls `refetchPois()`.
+- **`EXPO_PUBLIC_*` env vars are baked at bundle time:** Changing `apps/mobile/.env` has no effect until you restart Expo with `--clear`. The app logs `[api] BASE_URL = ...` on startup to confirm the active URL.
 - **`packages/types` must be rebuilt** after any changes: `cd packages/types && npm run build`. The mobile app and API both consume `dist/index.d.ts` — editing `src/index.ts` alone is not enough.
 - **`UserPreference.prefsJson`** — stores `autoplay`, `radiusMeters`, `showVisited`, `darkMode` as JSONB. Column exists in DB. Prisma schema has it. Access via `(record as any).prefsJson` due to type path issue.
+
+---
+
+## Development Environment
+
+### Running the stack
+
+Always start the API first, then Expo:
+
+```bash
+# Terminal 1 — API (from apps/api)
+npm run dev          # Fastify on port 3001, watches src/ with tsx
+
+# Terminal 2 — Mobile (from apps/mobile, NOT repo root)
+npx expo start --clear --tunnel
+```
+
+**Always run `npx expo start` from `apps/mobile`**, not the repo root. The `.env` and `app.json` are scoped to that directory.
+
+### API URL — two modes
+
+`EXPO_PUBLIC_API_URL` in `apps/mobile/.env` is **baked into the JS bundle at compile time**. Any change requires `--clear` to take effect.
+
+| Mode | When to use | `.env` value | Extra step |
+|------|-------------|--------------|------------|
+| **Tunnel** | Device on different network, or firewall blocks direct connection | `https://xxxx.ngrok-free.app` | Run `npx ngrok http 3001` and copy the URL |
+| **LAN** | Device on same Wi-Fi as dev machine | `http://10.168.0.49:3001` *(replace IP)* | Add Windows Firewall inbound rule for TCP port 3001 (run once as admin): `New-NetFirewallRule -DisplayName "CityWhispers API Dev" -Direction Inbound -Protocol TCP -LocalPort 3001 -Action Allow` |
+
+**Tunnel mode is the reliable default.** If ngrok is already running on port 3001 (`EADDRINUSE` when starting `npm run dev`), the API server is already up — don't start a second one.
+
+### Checking the active API URL
+
+The app logs the resolved URL on startup:
+```
+LOG  [api] BASE_URL = http://...
+```
+If this shows the old Render URL or wrong IP, stop Expo, update `.env`, and restart with `--clear`.
+
+### Firewall (LAN mode only)
+
+If using a direct IP and the device times out, port 3001 is likely blocked. Add the rule above once, then it persists across reboots.
 
 ---
 
 ## Coding Commands
 
 ```bash
-# Mobile (from apps/mobile or repo root)
-npx expo start              # Start Expo dev server
-npx expo run:android        # Build & run Android
-npx expo run:ios            # Build & run iOS
+# Mobile (from apps/mobile)
+npx expo start --clear --tunnel   # Recommended: clears cache, uses tunnel
+npx expo start --clear            # LAN mode (same Wi-Fi, firewall rule required)
+npx expo run:android              # Build & run Android
+npx expo run:ios                  # Build & run iOS
 
 # API (from apps/api)
 npm run dev                 # Start Fastify dev server (port 3001)

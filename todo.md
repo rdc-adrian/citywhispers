@@ -1,6 +1,6 @@
 # Project Feature Tracker
 
-## Sprint A — In Progress
+## Sprint A — Complete
 
 > Fix all broken functionality before building anything new.
 
@@ -11,10 +11,24 @@
 - [x] Add `GET /user/preferences` call in `settings.tsx` via `useQuery`
 - [x] Fix `UserPreferences` type in `packages/types/src/index.ts` — corrected field names
 - [x] Add tab navigation to `app/(app)/_layout.tsx` — Settings was unreachable
-- [x] **BLOCKER:** `packages/types` rebuild not clearing TS errors in `settings.tsx` — `radiusMeters`, `showVisited`, `notifications` still not recognised despite `src/index.ts` being correct. Needs resolution in next session.
+- [x] Resolve `packages/types` rebuild not propagating to mobile TS server
 - [x] Add settings persistence validation + error handling
 - [x] Verify preferences round-trip end to end (toggle → DB → reload)
-- [x] Remove debug endpoint and temporary request.log.info line after fix
+
+---
+
+## Sprint D — In Progress
+
+> Persistent Discovery Memory System — make the app remember the user emotionally.
+
+- [x] **Chunk 1** — Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
+- [ ] **Chunk 2** — Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
+- [ ] **Chunk 3** — Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
+- [ ] **Chunk 4** — Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
+- [ ] **Chunk 5** — Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
+- [ ] **Chunk 6** — Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
+- [ ] **Chunk 7** — Completion event: fire `completeWhisper` + `markCompleted` when audio finishes
+- [ ] **Chunk 8** — Revisit guard + marker dimming: `isRevisit` flag in `handlePoiPress` + opacity on `PoiMarker`
 
 ---
 
@@ -74,9 +88,9 @@
 - [x] Add `prefsJson` JSONB column to `user_preferences` table
 - [x] Persist autoplay, radiusMeters, showVisited, darkMode via prefsJson
 - [x] Add preference hydration on app launch via GET /user/preferences
-- [ ] **BLOCKER:** Resolve `packages/types` rebuild not propagating to mobile TS server
-- [ ] Add settings persistence validation + error handling
-- [ ] Verify full round-trip: toggle → PATCH → DB → reload → GET → correct state
+- [x] Resolve `packages/types` rebuild not propagating to mobile TS server
+- [x] Add settings persistence validation + error handling
+- [x] Verify full round-trip: toggle → PATCH → DB → reload → GET → correct state
 
 ---
 
@@ -85,9 +99,17 @@
 - [x] Build Collected screen UI
 - [x] Fetch whisper history from API
 - [x] Fix missing city name in collected entries
-- [ ] Implement persistent discovered-state tracking
-- [ ] Persist playback completion state
-- [ ] Add discovered marker visual states
+- [x] Add `@@unique([userId, whisperId])` constraint to `UserWhisperEvent`
+- [x] Add `completedAt` field to `UserWhisperEvent`
+- [x] Write discovery record on whisper fetch (upsert on `GET /whisper/poi/:poiId`)
+- [ ] Add `PATCH /whisper/:whisperId/complete` endpoint
+- [ ] Update `GET /user/discovered` to return `completedAt`
+- [ ] Add `DiscoveredWhisper` type to shared types package
+- [ ] Add discovery state to Zustand (`discoveredPoiIds`, `completedWhisperIds`)
+- [ ] Hydrate discovery state on app launch
+- [ ] Fire completion event when audio finishes
+- [ ] Add revisit guard in `handlePoiPress`
+- [ ] Add discovered marker visual states (opacity dimming only)
 - [ ] Build Journal emotional layout redesign
 - [ ] Add replay from Journal
 - [ ] Add city grouping in Journal
@@ -156,12 +178,12 @@
 
 ## Sprint Reference
 
-| Sprint          | Focus                                                                 |
-| --------------- | --------------------------------------------------------------------- |
-| **A** — current | Fix broken functionality — settings blocker remaining (types rebuild) |
-| **B**           | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions     |
-| **C**           | Whisper Card Phase 4 — Cormorant, typography, readability             |
-| **D**           | Persistent discovery state                                            |
-| **E**           | Journal / Collected emotional redesign                                |
-| **F**           | AI whisper generation pipeline                                        |
-| **G**           | TTS / audio generation system                                         |
+| Sprint | Focus                                                             | Status         |
+| ------ | ----------------------------------------------------------------- | -------------- |
+| **A**  | Fix broken functionality                                          | ✅ Complete    |
+| **B**  | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending     |
+| **C**  | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
+| **D**  | Persistent discovery state                                        | 🔄 In Progress |
+| **E**  | Journal / Collected emotional redesign                            | ⏳ Pending     |
+| **F**  | AI whisper generation pipeline                                    | ⏳ Pending     |
+| **G**  | TTS / audio generation system                                     | ⏳ Pending     |

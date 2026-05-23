@@ -86,7 +86,6 @@ export default function Onboarding() {
           strategy: 'email_code',
           code: code.trim(),
         });
-        console.log('[OTP] sign-in status:', result.status);
         if (result.status === 'complete') {
           await setSignInActive!({ session: result.createdSessionId });
           router.replace('/(app)/map');
@@ -95,7 +94,6 @@ export default function Onboarding() {
         }
       } else {
         const result = await signUp!.attemptEmailAddressVerification({ code: code.trim() });
-        console.log('[OTP] sign-up status:', result.status, 'missing:', (result as any).missingFields);
         if (result.status === 'complete') {
           await setSignUpActive!({ session: result.createdSessionId });
           router.replace('/(app)/map');

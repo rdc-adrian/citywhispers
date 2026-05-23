@@ -1,7 +1,13 @@
 import { FastifyInstance } from 'fastify'
+import { getAuth, type SessionAuthObject } from '@clerk/fastify'
 import { prisma } from '../../lib/prisma'
 import { NotFoundError } from '../../lib/errors'
 import { z } from 'zod'
+
+function getClerkId(request: Parameters<typeof getAuth>[0]): string | null {
+  const auth = getAuth(request) as SessionAuthObject
+  return auth.userId ?? null
+}
 
 const TriggerSchema = z.object({
   latitude: z.number(),
@@ -52,13 +58,36 @@ export async function whisperRoutes(app: FastifyInstance) {
 
     if (!whisper) throw new NotFoundError('Whisper')
 
+    const userId = getClerkId(request)
+    if (userId) {
+      try {
+        await prisma.userWhisperEvent.upsert({
+          where: {
+            userId_whisperId: {
+              userId,
+              whisperId: whisper.id,
+            },
+          },
+          create: {
+            userId,
+            whisperId: whisper.id,
+            triggeredAt: new Date(),
+          },
+          update: {},
+        })
+      } catch (err) {
+        request.log.warn({ err }, 'Failed to write discovery event — non-fatal')
+      }
+    }
+
     return {
-      whisperId: whisper.id,
+      id: whisper.id,
+      poiId,
       whisperText: whisper.whisperText,
       audioUrl: whisper.audioUrl,
-      personaId: whisper.personaId,
-      unlocked: true,
-      cached: true,
+      timeSlot: whisper.timeSlot,
+      personaSlug: whisper.persona?.slug ?? '',
+      createdAt: whisper.createdAt,
     }
   })
 

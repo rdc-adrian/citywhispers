@@ -8,6 +8,12 @@ import type {
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
 
+async function fetchWithTimeout(url: string, options: RequestInit = {}, ms = 10000): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { ...options, signal: controller.signal }).finally(() => clearTimeout(id));
+}
+
 function getAuthHeaders(token?: string | null): HeadersInit {
   return {
     'Content-Type': 'application/json',
@@ -41,12 +47,13 @@ export async function fetchNearbyPois({
     limit: limit.toString(),
   });
 
-  const response = await fetch(`${BASE_URL}/pois/nearby?${params}`, {
+  const response = await fetchWithTimeout(`${BASE_URL}/pois/nearby?${params}`, {
     headers: getAuthHeaders(token),
   });
 
   if (!response.ok) {
-    throw new Error(`Failed to fetch nearby POIs: ${response.statusText}`);
+    const body = await response.text().catch(() => '')
+    throw new Error(`Failed to fetch nearby POIs: ${response.status} ${body}`)
   }
 
   const result = await response.json();
@@ -109,7 +116,6 @@ export async function fetchDiscoveredWhispers(
   return result.data;
 }
 
-// FIX: fetch saved preferences on app launch
 export async function fetchUserPreferences(
   token?: string | null
 ): Promise<UserPreferences> {
@@ -125,8 +131,6 @@ export async function fetchUserPreferences(
   return result.data;
 }
 
-// FIX: correct signature — (preferences, token) not ({ prefs, token })
-// FIX: returns full UserPreferences so the client can sync state
 export async function patchUserPreferences(
   preferences: Partial<UserPreferences>,
   token?: string | null

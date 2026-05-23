@@ -1,6 +1,6 @@
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+
   output          = "../../../node_modules/.prisma/client"
 }
 
@@ -213,13 +213,15 @@ model UserWhisperEvent {
   id              String   @id @default(uuid())
   userId          String   @map("user_id")
   whisperId       String   @map("whisper_id")
-  listened        Boolean  @default(false)
-  listenDurationS Int?     @map("listen_duration_s")
-  triggeredAt     DateTime @default(now()) @map("triggered_at")
+  listened        Boolean   @default(false)
+  listenDurationS Int?      @map("listen_duration_s")
+  completedAt     DateTime? @map("completed_at")
+  triggeredAt     DateTime  @default(now()) @map("triggered_at")
 
   user    User             @relation(fields: [userId], references: [id])
   whisper GeneratedWhisper @relation(fields: [whisperId], references: [id])
 
+  @@unique([userId, whisperId])
   @@index([userId, triggeredAt(sort: Desc)])
   @@index([whisperId])
   @@map("user_whisper_events")

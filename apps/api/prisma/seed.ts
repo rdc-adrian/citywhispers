@@ -1,10 +1,12 @@
 import 'dotenv/config'
 import { PrismaClient } from '@prisma/client'
 import { PrismaPg } from '@prisma/adapter-pg'
+import ngeohash from 'ngeohash'
 
 const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL!,
-})
+  connectionString: (process.env.DIRECT_URL ?? process.env.DATABASE_URL)!,
+  ssl: { rejectUnauthorized: false },
+} as any)
 
 const prisma = new PrismaClient({ adapter })
 
@@ -307,7 +309,48 @@ async function main() {
     },
   })
 
-  console.log(`✓ Created 8 POIs`)
+  // POIs near test location (Hougang / Serangoon area, lat 1.362 lng 103.887)
+  const hougangCentral = await prisma.poi.upsert({
+    where: { id: 'poi-hougang-central' },
+    update: { tags: ['food', 'local', 'hawker', 'heartland'], importanceScore: 72, triggerRadius: 100, cooldownMinutes: 60 },
+    create: {
+      id: 'poi-hougang-central',
+      cityId: singapore.id,
+      name: 'Hougang Central Hawker Centre',
+      category: 'food',
+      tags: ['food', 'local', 'hawker', 'heartland'],
+      geohash6: ngeohash.encode(1.3621, 103.8867, 6),
+      latitude: 1.3621,
+      longitude: 103.8867,
+      address: 'Hougang Central, Singapore 538768',
+      active: true,
+      importanceScore: 72,
+      triggerRadius: 100,
+      cooldownMinutes: 60,
+    },
+  })
+
+  const serangoonGardens = await prisma.poi.upsert({
+    where: { id: 'poi-serangoon-gardens' },
+    update: { tags: ['historic', 'local', 'neighbourhood', 'food'], importanceScore: 78, triggerRadius: 120, cooldownMinutes: 60 },
+    create: {
+      id: 'poi-serangoon-gardens',
+      cityId: singapore.id,
+      name: 'Serangoon Gardens Estate',
+      category: 'cultural',
+      tags: ['historic', 'local', 'neighbourhood', 'food'],
+      geohash6: ngeohash.encode(1.3589, 103.8733, 6),
+      latitude: 1.3589,
+      longitude: 103.8733,
+      address: 'Serangoon Gardens, Singapore 556083',
+      active: true,
+      importanceScore: 78,
+      triggerRadius: 120,
+      cooldownMinutes: 60,
+    },
+  })
+
+  console.log(`✓ Created 10 POIs`)
 
   // ─────────────────────────────────────────
   // POI FACTS — curated verified facts
@@ -480,7 +523,47 @@ async function main() {
     },
   })
 
-  console.log('✓ Created 3 sample whispers')
+  await prisma.generatedWhisper.upsert({
+    where: { id: 'whisper-hougang-foodie-morning' },
+    update: {},
+    create: {
+      id: 'whisper-hougang-foodie-morning',
+      poiId: hougangCentral.id,
+      cityId: singapore.id,
+      personaId: foodie.id,
+      geohash6: ngeohash.encode(1.3621, 103.8867, 6),
+      timeSlot: 'morning',
+      whisperText:
+        'Before the heat rises and the lunch crowd descends, this hawker centre already smells of kaya toast and soft-boiled eggs. Aunties in plastic slippers arrive at dawn to claim the best stools. The char kway teow uncle has been at his wok since five. This is heartland Singapore — no tourist maps, no air-conditioning, just the real thing.',
+      modelUsed: 'seed',
+      promptHash: 'seed-hougang-foodie-morning',
+      tokenCount: 74,
+      source: 'curated',
+      isStale: false,
+    },
+  })
+
+  await prisma.generatedWhisper.upsert({
+    where: { id: 'whisper-serangoon-historian-afternoon' },
+    update: {},
+    create: {
+      id: 'whisper-serangoon-historian-afternoon',
+      poiId: serangoonGardens.id,
+      cityId: singapore.id,
+      personaId: historian.id,
+      geohash6: ngeohash.encode(1.3589, 103.8733, 6),
+      timeSlot: 'afternoon',
+      whisperText:
+        'Serangoon Gardens was built in the 1950s for British civil servants who missed the green lanes of home. The bungalows here have stood long enough to collect stories — of families who arrived with suitcases and stayed for generations. The Chomp Chomp Food Centre nearby is their living room. In this corner of Singapore, neighbourhood still means something.',
+      modelUsed: 'seed',
+      promptHash: 'seed-serangoon-historian-afternoon',
+      tokenCount: 78,
+      source: 'curated',
+      isStale: false,
+    },
+  })
+
+  console.log('✓ Created 5 sample whispers')
 
   // ─────────────────────────────────────────
   // SAMPLE TRAIL
@@ -524,9 +607,9 @@ async function main() {
   console.log('   4 personas')
   console.log('   1 city (Singapore)')
   console.log('   1 city pack')
-  console.log('   8 POIs')
+  console.log('   10 POIs')
   console.log('   13 POI facts')
-  console.log('   3 sample whispers')
+  console.log('   5 sample whispers')
   console.log('   1 trail with 2 stops')
 }
 

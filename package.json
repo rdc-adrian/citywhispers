@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "postinstall": "npx patch-package",
     "dev:api": "npm run dev --workspace=@citywhispers/api",
     "dev:mobile": "npm run start --workspace=mobile",
     "build:api": "npm run build --workspace=@citywhispers/api",
@@ -14,8 +15,5 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  },
-  "dependencies": {
-    "react": "19.1.0"
   }
 }

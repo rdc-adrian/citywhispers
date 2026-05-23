@@ -1,0 +1,45 @@
+diff --git a/node_modules/@expo/ngrok/index.js b/node_modules/@expo/ngrok/index.js
+index c9e5f8d..2ed109c 100644
+--- a/node_modules/@expo/ngrok/index.js
++++ b/node_modules/@expo/ngrok/index.js
+@@ -12,7 +12,40 @@ const { defaults, validate, isRetriable } = require("./src/utils");
+ let processUrl = null;
+ let ngrokClient = null;
+ 
++function getNgrokV3Url(port) {
++  return new Promise((resolve) => {
++    const http = require("http");
++    const req = http.get("http://127.0.0.1:4040/api/tunnels", (res) => {
++      let data = "";
++      res.on("data", (chunk) => (data += chunk));
++      res.on("end", () => {
++        try {
++          const tunnels = JSON.parse(data).tunnels;
++          const tunnel = tunnels.find(
++            (t) =>
++              t.proto === "https" &&
++              (!port ||
++                (t.config && t.config.addr && t.config.addr.endsWith(`:${port}`)))
++          );
++          resolve(tunnel ? tunnel.public_url : null);
++        } catch (_) {
++          resolve(null);
++        }
++      });
++    });
++    req.on("error", () => resolve(null));
++    req.setTimeout(2000, () => { req.destroy(); resolve(null); });
++  });
++}
++
+ async function connect(opts) {
++  // Use a running ngrok v3 instance if available, bypassing the deprecated v2 binary.
++  const v3Url = await getNgrokV3Url(opts && opts.port);
++  if (v3Url) {
++    console.log("[ngrok] Using ngrok v3 tunnel:", v3Url);
++    return v3Url;
++  }
++
+   opts = defaults(opts);
+   validate(opts);
+   if (opts.authtoken) {

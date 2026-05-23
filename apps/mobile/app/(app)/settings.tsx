@@ -16,6 +16,9 @@ import { Toggle } from '../../components/ui/Toggle'
 import { fetchUserPreferences, patchUserPreferences } from '../../lib/api'
 import type { UserPreferences } from '@citywhispers/types'
 
+// Note: do not call hooks or async auth helpers at module scope.
+// `getToken` is called inside the component where `useAuth()` is available.
+
 const DEFAULT_PREFS: UserPreferences = {
   autoplay: false,
   radiusMeters: 500,
@@ -81,12 +84,7 @@ export default function SettingsScreen() {
   const { user } = useUser()
   const queryClient = useQueryClient()
 
-  const {
-    data: rawPrefs,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<UserPreferences>({
+  const { data: rawPrefs } = useQuery<UserPreferences>({
     queryKey: ['user-preferences'],
     queryFn: async () => {
       const token = await getToken()
@@ -100,7 +98,7 @@ export default function SettingsScreen() {
 
   const prefs: UserPreferences = rawPrefs ?? DEFAULT_PREFS
 
-  const { mutate: savePrefs, isPending: isSaving } = useMutation({
+  const { mutate: savePrefs } = useMutation({
     mutationFn: async (next: Partial<UserPreferences>) => {
       let token: string | null = null
       for (let i = 0; i < 3; i++) {
@@ -154,8 +152,8 @@ export default function SettingsScreen() {
   const displayName = user?.firstName ?? 'Wanderer'
   const email = user?.emailAddresses?.[0]?.emailAddress ?? ''
 
-  // ── Clerk not ready or query in flight ──
-  if (!isLoaded || isLoading) {
+  // ── Clerk not ready ──
+  if (!isLoaded) {
     return (
       <View
         style={{
@@ -167,48 +165,7 @@ export default function SettingsScreen() {
         }}
       >
         <ActivityIndicator color="#c8a96e" />
-        <Text style={{ color: '#5c5650', fontSize: 12 }}>
-          {!isLoaded ? 'Authenticating...' : 'Loading preferences...'}
-        </Text>
-      </View>
-    )
-  }
-
-  // ── Error state ──
-  if (isError) {
-    return (
-      <View
-        style={{
-          flex: 1,
-          backgroundColor: '#0f0e0c',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingHorizontal: 32,
-          gap: 12,
-        }}
-      >
-        <Text style={{ color: '#c06060', fontSize: 15 }}>
-          Failed to load preferences
-        </Text>
-        <Text style={{ color: '#5c5650', fontSize: 12, textAlign: 'center' }}>
-          {error instanceof Error ? error.message : 'Unknown error'}
-        </Text>
-        <Pressable
-          onPress={() =>
-            queryClient.invalidateQueries({ queryKey: ['user-preferences'] })
-          }
-          style={{
-            marginTop: 8,
-            paddingHorizontal: 24,
-            paddingVertical: 12,
-            backgroundColor: '#171613',
-            borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.1)',
-            borderRadius: 12,
-          }}
-        >
-          <Text style={{ color: '#c8a96e', fontSize: 14 }}>Retry</Text>
-        </Pressable>
+        <Text style={{ color: '#5c5650', fontSize: 12 }}>Authenticating...</Text>
       </View>
     )
   }
