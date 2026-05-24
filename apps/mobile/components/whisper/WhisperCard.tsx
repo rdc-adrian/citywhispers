@@ -4,8 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TouchableWithoutFeedback,
-  ScrollView,
   Dimensions,
   Platform,
   PanResponder,
@@ -45,10 +43,8 @@ const C = {
 }
 
 const TIMING = {
-  overlayIn: 320,
   sheetIn: 480,
   stagger: 80,
-  overlayOut: 250,
   sheetOut: 360,
   progressReveal: 300,
 }
@@ -232,7 +228,7 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   const insets = useSafeAreaInsets()
 
   // ── Animation values ────────────────────────────────────────────────────────
-  const overlayOpacity = useSharedValue(0)
+  // Overlay opacity lives in MapOverlay — not owned here.
   const sheetY = useSharedValue(SHEET_MAX_HEIGHT)
   const contentOpacity = useSharedValue(0)
   const titleY = useSharedValue(12)
@@ -273,15 +269,16 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   // ── Open / close animations ─────────────────────────────────────────────────
 
   const animateOpen = useCallback(() => {
-    overlayOpacity.value = withTiming(1, { duration: TIMING.overlayIn })
-    sheetY.value = withSpring(0, { damping: 22, stiffness: 160, mass: 0.9 })
+    // TODO(Sprint-E): diverge revisit animation here — use isRevisit for a quieter entry
+    // Overlay fade is handled by MapOverlay, which reacts to isOpen on the same frame.
+    sheetY.value = withSpring(0, { damping: 18, stiffness: 120 })
     contentOpacity.value = withDelay(TIMING.stagger, withTiming(1, { duration: 320 }))
     titleY.value = withDelay(TIMING.stagger, withSpring(0, { damping: 20, stiffness: 180 }))
     whisperY.value = withDelay(TIMING.stagger * 2, withSpring(0, { damping: 20, stiffness: 160 }))
   }, [])
 
   const animateClose = useCallback((onDone?: () => void) => {
-    overlayOpacity.value = withTiming(0, { duration: TIMING.overlayOut })
+    // Overlay fade-out is handled by MapOverlay on the same frame.
     contentOpacity.value = withTiming(0, { duration: 200 })
     titleY.value = withTiming(8, { duration: 200 })
     whisperY.value = withTiming(12, { duration: 200 })
@@ -335,7 +332,6 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
 
   // ── Animated styles ─────────────────────────────────────────────────────────
 
-  const overlayStyle = useAnimatedStyle(() => ({ opacity: overlayOpacity.value }))
   const sheetStyle = useAnimatedStyle(() => ({ transform: [{ translateY: sheetY.value }] }))
   const contentStyle = useAnimatedStyle(() => ({ opacity: contentOpacity.value }))
   const titleStyle = useAnimatedStyle(() => ({
@@ -356,11 +352,6 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
 
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="box-none">
-      {/* Dimmed overlay */}
-      <TouchableWithoutFeedback onPress={handleClose}>
-        <Animated.View style={[s.overlay, overlayStyle]} />
-      </TouchableWithoutFeedback>
-
       {/* Sheet */}
       <Animated.View
         style={[
@@ -458,10 +449,6 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
 // ─── Styles ───────────────────────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'rgba(0,0,0,0.55)',
-  },
   sheet: {
     position: 'absolute',
     bottom: 0,

@@ -9,6 +9,7 @@ import { useNearbyPois } from '../../hooks/useNearbyPois'
 import { useWhisperStore } from '../../store/useWhisperStore'
 import { PoiMarker } from '../../components/map/PoiMarker'
 import { NearbyBadge } from '../../components/map/NearbyBadge'
+import { MapOverlay } from '../../components/map/MapOverlay'
 import { WhisperCard } from '../../components/whisper/WhisperCard'
 import { fetchWhisper } from '../../lib/api'
 import { getCurrentTimeSlot } from '../../lib/time'
@@ -263,6 +264,9 @@ export default function MapScreen() {
           </TouchableOpacity>
         )}
       </View>
+
+      {/* Map suppression overlay — sits above map+chrome, below the sheet */}
+      <MapOverlay />
 
       {/* Whisper card — always mounted, animates in/out internally */}
       <WhisperCard onNearbyPress={handleNearbyPress} isRevisit={activeWhisper?.isRevisit ?? false} />

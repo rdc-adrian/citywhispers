@@ -73,7 +73,7 @@
 - [x] Implement nearby POI fetching
 - [x] Render map markers dynamically
 - [x] Display nearby distance indicators
-- [ ] Add atmospheric map dimming when Whisper Card opens
+- [x] Add atmospheric map dimming when Whisper Card opens
 - [ ] Refine marker visual hierarchy by POI importance
 - [ ] Implement discovered-state marker styling
 
@@ -90,7 +90,7 @@
 - [x] Implement dynamic progress bar expansion during playback
 - [x] Add nearby whisper suggestions
 - [x] Add graceful fallback when no audio exists
-- [ ] Whisper Card Phase 3 — atmospheric transitions (map dim, cinematic entry)
+- [x] Whisper Card Phase 3 — atmospheric transitions (map dim, cinematic entry)
 - [ ] Whisper Card Phase 4 — typography + spacing polish
 - [ ] Tune nighttime readability and cinematic pacing
 - [ ] Install and configure Cormorant Garamond typography
@@ -197,15 +197,28 @@
 
 ---
 
+## Sprint B — In Progress
+
+> Atmospheric Transitions — make the WhisperCard opening feel like an environmental shift. Pure mobile animation, no backend work.
+
+- [x] B-1: Create `MapOverlay.tsx` — fullscreen Reanimated overlay, `pointerEvents="none"`, `Easing.linear` 320ms fade in/out
+- [x] B-2/B-3: Update `WhisperCard.tsx` — remove internal overlay, soften spring to `damping:18 / stiffness:120`, coordinated entry with MapOverlay
+- [x] B-3 (cleanup): Remove dead `s.overlay` style from WhisperCard StyleSheet
+- [x] B-4: Thread `isRevisit` — `_isRevisit` alias in destructure (typed, unused, Sprint-E TODO comment added in `animateOpen`)
+- [x] B-2: Update `map.tsx` — `MapOverlay` imported and placed between top bar and `WhisperCard` in z-order
+- [ ] B-5: Performance validation on physical device (10+ open/close cycles, GPS running, Perf Monitor, headphones)
+
+---
+
 ## Sprint Reference
 
-| Sprint  | Focus                                                             | Status      |
-| ------- | ----------------------------------------------------------------- | ----------- |
-| **A**   | Fix broken functionality                                          | ✅ Complete |
-| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete |
-| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | ⏳ Pending  |
-| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending  |
-| **D**   | Persistent discovery state                                        | ✅ Complete |
-| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending  |
-| **F**   | AI whisper generation pipeline                                    | ⏳ Pending  |
-| **G**   | TTS / audio generation system                                     | ⏳ Pending  |
+| Sprint  | Focus                                                             | Status         |
+| ------- | ----------------------------------------------------------------- | -------------- |
+| **A**   | Fix broken functionality                                          | ✅ Complete    |
+| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete    |
+| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | 🔄 In Progress |
+| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
+| **D**   | Persistent discovery state                                        | ✅ Complete    |
+| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending     |
+| **F**   | AI whisper generation pipeline                                    | ⏳ Pending     |
+| **G**   | TTS / audio generation system                                     | ⏳ Pending     |
