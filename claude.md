@@ -25,7 +25,7 @@ apps/
     components/
       map/            # NearbyBadge, PoiMarker
       ui/             # Toggle (reusable primitives)
-      whisper/        # WhisperCard, AudioPlayer
+      whisper/        # WhisperCard
     hooks/            # useAudio, useLocation, useNearbyPois, useWhisper
     lib/              # api.ts, queryClient.ts, time.ts
     store/            # useWhisperStore (Zustand)
@@ -152,10 +152,12 @@ npx expo start --clear --tunnel
 
 | Mode | When to use | `.env` value | Extra step |
 |------|-------------|--------------|------------|
-| **Tunnel** | Device on different network, or firewall blocks direct connection | `https://xxxx.ngrok-free.app` | Run `npx ngrok http 3001` and copy the URL |
-| **LAN** | Device on same Wi-Fi as dev machine | `http://10.168.0.49:3001` *(replace IP)* | Add Windows Firewall inbound rule for TCP port 3001 (run once as admin): `New-NetFirewallRule -DisplayName "CityWhispers API Dev" -Direction Inbound -Protocol TCP -LocalPort 3001 -Action Allow` |
+| **Render (default)** | API hosted remotely — works for all devices, no local setup | `https://citywhispers-api.onrender.com` | None — this is the default in `.env` |
+| **LAN** | Local API dev (testing API changes) | `http://10.168.0.49:3001` | Add Windows Firewall inbound rule for TCP port 3001 (run once as admin): `New-NetFirewallRule -DisplayName "CityWhispers API Dev" -Direction Inbound -Protocol TCP -LocalPort 3001 -Action Allow` |
 
 **Tunnel mode is the reliable default.** If ngrok is already running on port 3001 (`EADDRINUSE` when starting `npm run dev`), the API server is already up — don't start a second one.
+
+**Free ngrok allows only 1 tunnel.** If the API is already tunnelled, Expo `--tunnel` will fail with "remote gone away". Use VPN or AVD mode instead.
 
 ### Checking the active API URL
 
@@ -175,7 +177,9 @@ If using a direct IP and the device times out, port 3001 is likely blocked. Add 
 
 ```bash
 # Mobile (from apps/mobile)
-npx expo start --clear --tunnel   # Recommended: clears cache, uses tunnel
+npx expo start --clear --tunnel   # Tunnel mode (requires free ngrok slot)
+npm run start:avd                 # Android Virtual Device — API via 10.0.2.2, Metro on localhost
+npm run start:iphone              # iPhone over OpenVPN — API via 100.96.1.18, Metro on LAN
 npx expo start --clear            # LAN mode (same Wi-Fi, firewall rule required)
 npx expo run:android              # Build & run Android
 npx expo run:ios                  # Build & run iOS
@@ -193,6 +197,33 @@ npm run build               # Rebuild shared types
 npm run build               # Build all packages
 npm run lint                # Lint all workspaces
 ```
+
+---
+
+## Sprint History & Validated Behaviours
+
+### Sprint B — Atmospheric Transitions ✅
+- `MapOverlay.tsx` + coordinated `WhisperCard` entry implemented and stable on device.
+- `isRevisit` flag threaded to `animateOpen` — diverge revisit animation here in Sprint E.
+
+### Sprint G.0 — Audio Reality Check ✅
+- **Audio completion write path validated on-device.** `completedAt` is written correctly to `user_whisper_events` after the 85% playback threshold. `PATCH /whisper/:id/complete` confirmed in API logs with no errors.
+- **Reanimated 4 `runOnJS` fix is stable.** Reanimated 4 compiles `withTiming`/`withSpring` completion callbacks as UI-thread worklets. Any plain JS function called from them must be wrapped with `runOnJS` — applies to `WaveformBar.animate()`, `BreathRing.breathe()`, and `animateClose`. The type-level deprecation warnings are cosmetic; runtime behaviour is stable. Revisit when a supported R4 replacement API emerges.
+
+---
+
+## Product Direction
+
+These are standing PM decisions that frame what the product is. They are not sprint notes — they persist across sessions and should inform all implementation and content choices.
+
+### The Whisper Card is emotional pacing infrastructure
+The WhisperCard is not a UI component that displays audio content. It is the primary emotional delivery mechanism of the app — the moment where the city speaks to the user. Every design decision (animation timing, typography weight, waveform behaviour, progress bar reveal) should be evaluated against whether it creates or destroys a sense of being spoken to. Polish is not the goal; presence is.
+
+### The Journal is a memory cabinet, not a history screen
+The Collected / Journal screen should feel like opening a drawer of found objects, not reviewing a log. The framing is: these are things that happened to you in a city, now kept. Timestamps, atmospheric context (time of day, weather), and emotional weight matter more than completeness or recency ordering. An engineer picking up Sprint E should read this before the task list.
+
+### Singapore content — emotional palette brief
+Singapore MVP content should not be landmark coverage. The emotional palette is: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. POI selection should favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
 
 ---
 

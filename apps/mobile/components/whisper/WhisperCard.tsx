@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Dimensions,
-  Platform,
   PanResponder,
 } from 'react-native'
 import Animated, {
@@ -21,6 +20,7 @@ import Animated, {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { useWhisperStore } from '../../store/useWhisperStore'
 import { useAudio } from '../../hooks/useAudio'
+import { FONT, whisperTitle as typoWhisperTitle, whisperBody as typoWhisperBody } from '../../lib/typography'
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window')
 const SHEET_MAX_HEIGHT = SCREEN_HEIGHT * 0.82
@@ -489,7 +489,7 @@ const s = StyleSheet.create({
   header: {
     paddingHorizontal: 26,
     paddingTop: 10, // reduced — dragPillWrap now owns top spacing
-    paddingBottom: 24,
+    paddingBottom: 32,
   },
   locationLine: {
     fontSize: 9.5,
@@ -500,12 +500,8 @@ const s = StyleSheet.create({
     opacity: 0.8,
   },
   poiName: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    fontSize: 28,
-    fontWeight: '300',
-    color: C.textPrimary,
-    lineHeight: 30,
-    letterSpacing: -0.3,
+    ...typoWhisperTitle,
+    color: C.textSecondary,
   },
   categoryLabel: {
     fontSize: 11,
@@ -518,24 +514,19 @@ const s = StyleSheet.create({
   // Whisper text
   whisperBlock: {
     paddingHorizontal: 26,
-    paddingBottom: 28,
-    marginTop: 4,
+    paddingBottom: 36,
+    marginTop: 0,
   },
   whisperEyebrow: {
     fontSize: 8.5,
     letterSpacing: 2,
     textTransform: 'uppercase',
     color: C.textMuted,
-    marginBottom: 18,
+    marginBottom: 22,
   },
   whisperBody: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
-    fontSize: 22,
-    fontStyle: 'italic',
-    fontWeight: '300',
+    ...typoWhisperBody,
     color: C.textPrimary,
-    lineHeight: 42,
-    letterSpacing: 0.3,
   },
 
   // Audio
@@ -662,10 +653,8 @@ const s = StyleSheet.create({
     opacity: 0.6,
   },
   nearbyName: {
-    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+    fontFamily: FONT.regularItalic,
     fontSize: 16,
-    fontStyle: 'italic',
-    fontWeight: '300',
     color: C.textSecondary,
     flex: 1,
   },

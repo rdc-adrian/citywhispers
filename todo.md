@@ -1,243 +1,181 @@
-# Project Feature Tracker
+# CityWhispers — Project Tracker
 
-## Sprint A — Complete
+## ✅ Foundation (Phases 1–4)
 
-> Fix all broken functionality before building anything new.
-
-- [x] Fix `patchUserPreferences` signature mismatch — corrected to `(preferences, token)`
-- [x] Fix collected screen missing `cityName` — added city include in `user/index.ts`
-- [x] Fix preferences API only persisting `notifications` + `language` — added `prefsJson` JSONB column, all fields now persist
-- [x] Add `GET /user/preferences` endpoint for hydration on app launch
-- [x] Add `GET /user/preferences` call in `settings.tsx` via `useQuery`
-- [x] Fix `UserPreferences` type in `packages/types/src/index.ts` — corrected field names
-- [x] Add tab navigation to `app/(app)/_layout.tsx` — Settings was unreachable
-- [x] Resolve `packages/types` rebuild not propagating to mobile TS server
-- [x] Add settings persistence validation + error handling
-- [x] Verify preferences round-trip end to end (toggle → DB → reload)
+| Phase | Area | Status |
+| ----- | ---- | ------ |
+| **1** | Core infrastructure — Expo + Fastify + Supabase + Clerk + Turborepo monorepo, geohash proximity, admin CRUD | ✅ Complete |
+| **2** | Onboarding & discovery — location permissions, nearby POI fetch, map markers, distance indicators, atmospheric map dim | ✅ Complete |
+| **3** | Whisper Card — bottom sheet, animated entry, drag-to-dismiss, audio controls, waveform, progress bar, nearby suggestions, no-audio fallback, atmospheric transitions | ✅ Complete |
+| **4** | Settings & preferences — Settings screen, `prefsJson` persistence, hydration on launch, full round-trip verified | ✅ Complete |
 
 ---
 
-## Sprint A.5 — Complete
+## 🔄 Active Phases (5–9)
 
-> Dev environment & infrastructure — get the app running end to end on a real device.
-
-- [x] Scope Clerk plugin to authenticated routes only — global registration caused JWKS hang on every public request
-- [x] Fix Supabase SSL (`rejectUnauthorized: false` in PrismaPg) — connections were failing silently
-- [x] Fix `DATABASE_URL` / `DIRECT_URL` to use pooler hostname — direct hostname unresolvable in dev
-- [x] Remove auth token from `useNearbyPois` — `/pois/nearby` is a public route; sending a token triggered Clerk JWKS on the server
-- [x] Add `keepPreviousData` and coordinate rounding (4 dp) to `useNearbyPois` — prevents spinner on every GPS tick
-- [x] Fix whisper route response shape to match `WhisperResponse` type (`id`, `poiId`, `timeSlot`, `personaSlug`, `createdAt`)
-- [x] Fix `UserWhisperEvent.create` removing non-existent `poiId` field — discovery writes were silently failing
-- [x] Add Windows Firewall inbound rule for port 3001 (LAN dev mode)
-- [x] Add `ngrok-free.app` to CORS allowed origins
-- [x] Add tap-to-retry on map POI error banner
-- [x] Document dev environment setup, tunnel vs LAN workflow, and gotchas in `CLAUDE.md`
-- [x] Delete old backup files (`*-old.ts/tsx`) and remove debug `console.log` calls
+| Phase | Area | Status | Next sprint |
+| ----- | ---- | ------ | ----------- |
+| **5** | Discovery & Journal — persistence + collected screen done; journal redesign pending | 🔄 Partial | Sprint E |
+| **6** | Whisper Content — schemas + admin routes done; AI generation pipeline pending | 🔄 Partial | Sprint F |
+| **7** | Audio & TTS — E2E playback + completion chain validated; full generation pipeline pending | 🔄 Partial | Sprint G |
+| **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending | 🔄 Partial | Backlog |
+| **9** | Future Features — trails, offline, monetization, social, gamification | ⏳ Deferred | Backlog |
 
 ---
 
-## Sprint D — Complete
+## Sprint History
 
-> Persistent Discovery Memory System — make the app remember the user emotionally.
+| Sprint  | Focus                                          | Highlights                                                                 |
+| ------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
+| **A**   | Bug fixes                                      | Preferences API, `cityName` fix, tab nav, types rebuild                    |
+| **A.5** | Dev environment                                | Clerk JWKS scope, Supabase SSL, pooler URL, CORS, firewall, env docs       |
+| **D**   | Persistent discovery memory                    | `completedAt` schema, write path, completion API, Zustand hydration, marker dimming |
+| **B**   | Atmospheric transitions                        | `MapOverlay`, coordinated WhisperCard entry, `isRevisit` threaded, device performance validated |
+| **G.0** | Audio reality check                            | Dead code cleanup, error state UI, Reanimated 4 worklet crash fix, E2E completion chain verified |
 
-- [x] Schema: add `completedAt DateTime?` + `@@unique([userId, whisperId])` to `UserWhisperEvent`, run migration
-- [x] Discovery write path: upsert `UserWhisperEvent` on authenticated `GET /whisper/poi/:poiId`
-- [x] Complete endpoint: add `PATCH /whisper/:whisperId/complete` + update `GET /user/discovered` response to include `completedAt`
-- [x] Shared types: add `DiscoveredWhisper` + `CompleteWhisperBody` to `packages/types`, rebuild
-- [x] Zustand + API layer: add `completeWhisper` to `api.ts` + discovery state slices to `useWhisperStore`
-- [x] Hydration on launch: wire `GET /user/discovered` → `hydrateDiscovered` on app open
-- [x] Completion event: fire `completeWhisper` + `markCompleted` when audio finishes
-- [x] Revisit guard + marker dimming: `isRevisit` flag in `handlePoiPress` + opacity on `PoiMarker`
-
----
-
-## Phase 1: Foundation & Core Infrastructure
-
-- [x] Setup Expo React Native mobile app
-- [x] Setup Fastify backend API
-- [x] Setup Supabase PostgreSQL database
-- [x] Configure Clerk authentication
-- [x] Implement geolocation + geohash proximity system
-- [x] Setup monorepo architecture (Turborepo)
-- [x] Seed initial Singapore / Seoul / Jeju POIs
-- [x] Build backend API routes for POIs, whispers, users, cities
-- [x] Build admin CRUD routes for cities, POIs, facts, whispers, personas
+> **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
 ---
 
-## Phase 2: Onboarding & Discovery
+## ✅ Sprint B: Atmospheric Transitions — Complete
 
-- [x] Build lightweight onboarding flow
-- [x] Request location permissions
-- [x] Route onboarding to map experience
-- [x] Implement nearby POI fetching
-- [x] Render map markers dynamically
-- [x] Display nearby distance indicators
-- [x] Add atmospheric map dimming when Whisper Card opens
-- [ ] Refine marker visual hierarchy by POI importance
-- [ ] Implement discovered-state marker styling
+- [x] `MapOverlay.tsx` — fullscreen Reanimated overlay, `pointerEvents="none"`, 320ms fade
+- [x] `WhisperCard.tsx` — soften spring (`damping:18 / stiffness:120`), coordinated entry with MapOverlay
+- [x] `map.tsx` — MapOverlay placed between top bar and WhisperCard in z-order
+- [x] Thread `isRevisit` — `_isRevisit` alias typed, Sprint-E TODO noted in `animateOpen`
+- [x] Performance validation on device — open/close cycles stable, no frame drops with GPS running
 
 ---
 
-## Phase 3: Whisper Card Experience
+## 🔄 Active — Sprint C: Whisper Card Polish
 
-- [x] Build Whisper Card bottom sheet
-- [x] Implement animated card entry sequence
-- [x] Add staggered title + whisper reveal animation
-- [x] Implement drag-to-dismiss interaction
-- [x] Build audio playback controls
-- [x] Add waveform visualiser
-- [x] Implement dynamic progress bar expansion during playback
-- [x] Add nearby whisper suggestions
-- [x] Add graceful fallback when no audio exists
-- [x] Whisper Card Phase 3 — atmospheric transitions (map dim, cinematic entry)
-- [ ] Whisper Card Phase 4 — typography + spacing polish
-- [ ] Tune nighttime readability and cinematic pacing
-- [ ] Install and configure Cormorant Garamond typography
-- [ ] Refine waveform emotional animation behavior
-- [ ] Add audio completion cool down transition state
+> The Whisper Card is emotional pacing infrastructure, not a UI component. Every decision here — font weight, animation timing, waveform behaviour — should be evaluated against whether it creates or reinforces the sense of being spoken to by a place. "Done" means it feels present, not that it looks polished.
 
----
+### C-1 — Install and configure Cormorant Garamond ✅
 
-## Phase 4: User Preferences & Settings
+- [x] Install `@expo-google-fonts/cormorant-garamond` (or load via expo-font with local assets)
+- [x] Load variants: Regular (400), Italic (400i), Light (300), SemiBold (600) — no others
+- [x] Gate rendering behind `useFonts` / `SplashScreen.preventAutoHideAsync()` — no font flash on first render
+- [x] Create `apps/mobile/lib/typography.ts` (or `constants/typography.ts`) exporting named presets: `whisperTitle`, `whisperBody`, `whisperMeta`
+- [x] Verify: `useFonts` returns `true` before card is shown; no Cormorant font family strings hardcoded outside this file
 
-- [x] Build Settings screen UI
-- [x] Fix preferences save API mismatch
-- [x] Add tab navigation so Settings is reachable
-- [x] Add `prefsJson` JSONB column to `user_preferences` table
-- [x] Persist autoplay, radiusMeters, showVisited, darkMode via prefsJson
-- [x] Add preference hydration on app launch via GET /user/preferences
-- [x] Resolve `packages/types` rebuild not propagating to mobile TS server
-- [x] Add settings persistence validation + error handling
-- [x] Verify full round-trip: toggle → PATCH → DB → reload → GET → correct state
+### C-2 — Typography and spacing polish pass
 
----
+- [ ] Apply `whisperTitle` and `whisperBody` presets from C-1 to WhisperCard whisper text and POI name
+- [ ] POI name: lighter weight, `letterSpacing ~1.5`, muted gold or secondary colour — frames, does not compete
+- [ ] Whisper body: Regular or Light Cormorant, `lineHeight` 1.6–1.8×, **left-aligned** (not centred)
+- [ ] Increase vertical breathing room between POI name, whisper body, and audio controls
+- [ ] Typography and spacing only — no layout structure or animation changes
+- [ ] Verify on-device: text reads in one breath without eye strain; POI name is visually subordinate
 
-## Phase 5: Discovery Persistence & Journal
+### C-3 — Nighttime readability and cinematic pacing
 
-- [x] Build Collected screen UI
-- [x] Fetch whisper history from API
-- [x] Fix missing city name in collected entries
-- [x] Add `@@unique([userId, whisperId])` constraint to `UserWhisperEvent`
-- [x] Add `completedAt` field to `UserWhisperEvent`
-- [x] Write discovery record on whisper fetch (upsert on `GET /whisper/poi/:poiId`)
-- [x] Add `PATCH /whisper/:whisperId/complete` endpoint
-- [x] Update `GET /user/discovered` to return `completedAt`
-- [x] Add `DiscoveredWhisper` type to shared types package
-- [x] Add discovery state to Zustand (`discoveredPoiIds`, `completedWhisperIds`)
-- [x] Hydrate discovery state on app launch
-- [x] Fire completion event when audio finishes
-- [x] Add revisit guard in `handlePoiPress`
-- [x] Add discovered marker visual states (opacity dimming only)
-- [ ] Build Journal emotional layout redesign
-- [ ] Add replay from Journal
-- [ ] Add city grouping in Journal
-- [ ] Add timestamps and contextual metadata
-- [ ] Add atmospheric empty states
-- [ ] Add emotional memory details (weather/time/night context)
+- [ ] Test card at low brightness (~30%) — identify any harshness in contrast
+- [ ] Whisper body text: reduce from pure `#e8e4dc` to `rgba(232, 228, 220, 0.88)` — ambient, not broadcast
+- [ ] Card background: evaluate `#15140f` (warm tint) vs `#141414` (neutral) — pick what reads as atmospheric
+- [ ] Entry animation: evaluate slowing spring entry ~15% (`damping:18 / stiffness:120` is the baseline from Sprint B) — adjust only if it reads as *arrival*, not if it just reads as *slower*
+- [ ] On-device review in dim/dark conditions — note explicitly in PR
+- [ ] No new animation types; adjust existing timing values only; no open/close/drag regressions
+
+### C-4 — Waveform emotional behaviour refinement
+
+- [ ] Slow bar animation cycle: target 600–800ms per cycle (faster reads nervous, slower reads present)
+- [ ] Reduce height variance range — tighter range feels intimate, not energetic
+- [ ] Add phase offset / stagger between bars — soft wave motion, not simultaneous movement
+- [ ] Apply `Easing.inOut(Easing.sine)` to bar animations
+- [ ] Paused state: bars minimal or static — visually quiet
+- [ ] Playing state: slow pulse that suggests presence, not technical visualisation
+- [ ] `runOnJS` wrapper in `WaveformBar.animate()` must remain intact (Reanimated 4 — Sprint G.0 constraint)
+- [ ] Verify on-device: motion reads organic; no Reanimated crashes
+
+### C-5 — Audio completion cooldown transition state
+
+- [ ] Fade waveform out over ~400ms when completion threshold (85%) is reached
+- [ ] Replace waveform area with a single thin gold horizontal line (low opacity) or empty space — no text, icons, or replay prompt
+- [ ] Audio controls (play/pause) remain visible but styled to secondary/muted
+- [ ] Waveform and replacement element occupy identical height — no layout reflow on transition
+- [ ] Wire to existing completion event from `useAudio` — do not duplicate the 85% threshold logic
+- [ ] Replaying from completed state restores normal playing appearance (waveform + active controls) without card reload
+- [ ] Verify on-device: transition is smooth, no layout jump, replay round-trip works
+
+### Sprint C — Completion gate
+
+> Sprint C is **not done** until a collective on-device review answers: *"This feels like a place speaking to me — not an audio player."* If the answer is "it feels like an audio player," identify which element breaks the illusion and address it before marking complete. On-device sign-off must be noted in the PR description.
 
 ---
 
-## Phase 6: Whisper Content Operations
+## 🔄 Parallel — Voice Taste-Testing
 
-- [x] Build personas schema + admin routes
-- [x] Build generated whispers schema
-- [x] Build POI facts schema
-- [ ] Build AI whisper generation service
-- [ ] Build whisper generation pipeline
-- [ ] Build whisper regeneration workflow
-- [ ] Add moderation / QA pipeline
-- [ ] Add whisper approval workflow
-- [ ] Add draft / approved / needs-review states
-- [ ] Build internal whisper preview tooling
-- [ ] Add whisper quality scoring system
+> This is a product identity decision, not a Sprint G task. The narrator voice defines how the city sounds to the user — it affects the Journal screen design, the emotional register of content writing, and the TTS pipeline choice. Must be resolved before Sprint E begins. Treat as a creative brief, not a technical ticket.
+
+- [ ] Identify 3–5 candidate voices (ElevenLabs / OpenAI TTS / other)
+- [ ] Generate sample narration from the existing Hougang whisper for each candidate
+- [ ] PM review and selection
+- [ ] Document chosen voice + rationale as handoff note for Sprint G
 
 ---
 
-## Phase 7: Audio & TTS Pipeline
+## ⏳ Sprint E: Journal Redesign
 
-- [ ] Build TTS/audio generation service
-- [ ] Generate and store narration audio files
-- [ ] Implement audio caching strategy
-- [ ] Add audio preloading for nearby whispers
-- [ ] Add graceful streaming/loading fallback states
-- [ ] Tune narration pacing and normalization
-- [ ] Select final narrator voice for MVP
+> The Journal is a memory cabinet, not a history screen. It should feel like opening a drawer of found objects from places you've been — not reviewing a log. Timestamps, time-of-day atmosphere, and emotional weight matter more than recency or completeness. Read this before the task list.
 
----
-
-## Phase 8: Content Expansion (Singapore MVP)
-
-- [ ] Curate Singapore MVP whisper set (in progress)
-- [x] Seed Marina Bay Sands
-- [x] Seed Gardens by the Bay
-- [x] Seed Chinatown Heritage Centre
-- [x] Seed Maxwell Food Centre
-- [x] Seed Raffles Hotel
-- [x] Seed Ann Siang Hill
-- [x] Seed Amoy Street Alley
-- [x] Seed Hougang Central Hawker Centre (test POI near lat 1.362 for local dev)
-- [x] Seed Serangoon Gardens Estate (test POI near lat 1.359 for local dev)
-- [ ] Expand Singapore to 15–20 curated MVP POIs
-- [ ] Add more hidden gems + micro moments
-- [ ] Refine factual sourcing for whisper generation
+- [ ] Emotional layout redesign
+- [ ] City grouping
+- [ ] Timestamps and contextual metadata
+- [ ] Atmospheric empty states
+- [ ] Emotional memory details (weather / time-of-day / night context)
+- [ ] Replay from Journal
 
 ---
 
-## Phase 9: Future / Deferred Features
+## ⏳ Sprint F: AI Whisper Generation
 
+> Build the pipeline that generates whisper text from POI facts.
+
+- [ ] AI whisper generation service
+- [ ] Generation pipeline (facts → prompt → whisper)
+- [ ] Regeneration workflow
+- [ ] Moderation / QA pipeline
+- [ ] Approval workflow — draft / approved / needs-review states
+- [ ] Internal whisper preview tooling
+- [ ] Whisper quality scoring
+
+---
+
+## ⏳ Sprint G: TTS & Audio Pipeline
+
+> Generate, store, and stream narration audio for every whisper.
+
+- [ ] TTS / audio generation service
+- [ ] Generate and store narration audio files → `whisper-audio` bucket (✅ created)
+- [ ] Audio caching strategy
+- [ ] Preloading for nearby whispers
+- [ ] Graceful streaming / loading fallback states
+- [ ] Narrator voice selection for MVP
+- [ ] Pacing and normalization tuning
+
+---
+
+## 📋 Backlog
+
+### Map & Markers
+- [ ] Marker visual hierarchy by POI importance
+- [ ] Richer discovered-state marker styling (beyond opacity dimming)
+
+### Singapore MVP Content
+> Emotional palette: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. Favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
+
+- [ ] Curate whisper copy for all 9 seeded POIs against emotional palette
+- [ ] Expand to 15–20 POIs — prioritise layered, lived-in places over landmarks
+- [ ] Write POI facts that serve atmospheric generation, not encyclopaedic coverage
+- [ ] Review all generated whispers against emotional palette before approval
+
+### Future / Deferred
 - [ ] Trails system
 - [ ] Offline mode
 - [ ] Monetization / city packs
 - [ ] Additional cities expansion
 - [ ] User-generated whispers
-- [ ] Social/community systems
-- [ ] Achievements/gamification
-- [ ] Whisper sharing system
-
----
-
-## Sprint G.0 — Complete
-
-> Audio reality check & cleanup — validate the full audio pipeline before Sprint G proper begins.
-
-- [x] G.0-1: Remove `fetchAudioUrl` from `api.ts` — orphaned, no route exists, no references
-- [x] G.0-2: Delete `AudioPlayer.tsx` — superceded by inline controls in `WhisperCard`; seek/position logic already in `useAudio.ts`
-- [x] G.0-3: Fix silent error state in `WhisperCard` — `playbackState === 'error'` dims play button (opacity 0.4), disables tap, shows "audio unavailable" label; null-audio fallback zone unchanged
-- [x] G.0-4: Fix Reanimated 4 worklet crash — `WaveformBar.animate()` and `BreathRing.breathe()` called directly from UI-thread worklet callbacks; wrapped with `runOnJS`. Also fixed `BreathRing` outer callback missing `finished` guard (runaway animation on pause/close). Same fix applied to `animateClose`
-- [x] G.0-5: Create `whisper-audio` Supabase Storage bucket (public) and upload test MP3
-- [x] G.0-6: Validate end-to-end completion chain — audio plays on device, progress bar animates, `completedAt` written to `user_whisper_events` after 85% threshold, `PATCH /whisper/:id/complete` confirmed in API logs, no crashes
-
-**Findings:**
-- `completedAt` write path confirmed working ✅
-- Reanimated 4 (`~4.1.1`) compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — any JS function called from them requires `runOnJS`. The deprecation hints on `runOnJS` are type-level only; runtime is stable. Proper R4 replacement TBD.
-- Audio zone (waveform + breath ring) had never been exercised before this sprint — `audioUrl` was always null
-
----
-
-## Sprint B — In Progress
-
-> Atmospheric Transitions — make the WhisperCard opening feel like an environmental shift. Pure mobile animation, no backend work.
-
-- [x] B-1: Create `MapOverlay.tsx` — fullscreen Reanimated overlay, `pointerEvents="none"`, `Easing.linear` 320ms fade in/out
-- [x] B-2/B-3: Update `WhisperCard.tsx` — remove internal overlay, soften spring to `damping:18 / stiffness:120`, coordinated entry with MapOverlay
-- [x] B-3 (cleanup): Remove dead `s.overlay` style from WhisperCard StyleSheet
-- [x] B-4: Thread `isRevisit` — `_isRevisit` alias in destructure (typed, unused, Sprint-E TODO comment added in `animateOpen`)
-- [x] B-2: Update `map.tsx` — `MapOverlay` imported and placed between top bar and `WhisperCard` in z-order
-- [ ] B-5: Performance validation on physical device (10+ open/close cycles, GPS running, Perf Monitor, headphones)
-
----
-
-## Sprint Reference
-
-| Sprint  | Focus                                                             | Status         |
-| ------- | ----------------------------------------------------------------- | -------------- |
-| **A**   | Fix broken functionality                                          | ✅ Complete    |
-| **A.5** | Dev environment & infrastructure — real device end-to-end         | ✅ Complete    |
-| **B**   | Whisper Card Phase 3 — atmospheric map dim, cinematic transitions | 🔄 In Progress |
-| **C**   | Whisper Card Phase 4 — Cormorant, typography, readability         | ⏳ Pending     |
-| **D**   | Persistent discovery state                                        | ✅ Complete    |
-| **E**   | Journal / Collected emotional redesign                            | ⏳ Pending     |
-| **F**   | AI whisper generation pipeline                                    | ⏳ Pending     |
-| **G.0** | Audio reality check — cleanup, error state, E2E validation        | ✅ Complete    |
-| **G**   | TTS / audio generation system                                     | ⏳ Pending     |
+- [ ] Social / community systems
+- [ ] Achievements / gamification
+- [ ] Whisper sharing
