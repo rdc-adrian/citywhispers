@@ -82,21 +82,6 @@ export async function fetchWhisper(
   return response.json();
 }
 
-export async function fetchAudioUrl(
-  whisperId: string,
-  token?: string | null
-): Promise<{ url: string; durationSeconds: number }> {
-  const response = await fetch(`${BASE_URL}/whisper/${whisperId}/audio`, {
-    headers: getAuthHeaders(token),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch audio URL: ${response.statusText}`);
-  }
-
-  return response.json();
-}
-
 // ========================================
 // User Endpoints
 // ========================================

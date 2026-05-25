@@ -197,6 +197,24 @@
 
 ---
 
+## Sprint G.0 — Complete
+
+> Audio reality check & cleanup — validate the full audio pipeline before Sprint G proper begins.
+
+- [x] G.0-1: Remove `fetchAudioUrl` from `api.ts` — orphaned, no route exists, no references
+- [x] G.0-2: Delete `AudioPlayer.tsx` — superceded by inline controls in `WhisperCard`; seek/position logic already in `useAudio.ts`
+- [x] G.0-3: Fix silent error state in `WhisperCard` — `playbackState === 'error'` dims play button (opacity 0.4), disables tap, shows "audio unavailable" label; null-audio fallback zone unchanged
+- [x] G.0-4: Fix Reanimated 4 worklet crash — `WaveformBar.animate()` and `BreathRing.breathe()` called directly from UI-thread worklet callbacks; wrapped with `runOnJS`. Also fixed `BreathRing` outer callback missing `finished` guard (runaway animation on pause/close). Same fix applied to `animateClose`
+- [x] G.0-5: Create `whisper-audio` Supabase Storage bucket (public) and upload test MP3
+- [x] G.0-6: Validate end-to-end completion chain — audio plays on device, progress bar animates, `completedAt` written to `user_whisper_events` after 85% threshold, `PATCH /whisper/:id/complete` confirmed in API logs, no crashes
+
+**Findings:**
+- `completedAt` write path confirmed working ✅
+- Reanimated 4 (`~4.1.1`) compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — any JS function called from them requires `runOnJS`. The deprecation hints on `runOnJS` are type-level only; runtime is stable. Proper R4 replacement TBD.
+- Audio zone (waveform + breath ring) had never been exercised before this sprint — `audioUrl` was always null
+
+---
+
 ## Sprint B — In Progress
 
 > Atmospheric Transitions — make the WhisperCard opening feel like an environmental shift. Pure mobile animation, no backend work.
@@ -221,4 +239,5 @@
 | **D**   | Persistent discovery state                                        | ✅ Complete    |
 | **E**   | Journal / Collected emotional redesign                            | ⏳ Pending     |
 | **F**   | AI whisper generation pipeline                                    | ⏳ Pending     |
+| **G.0** | Audio reality check — cleanup, error state, E2E validation        | ✅ Complete    |
 | **G**   | TTS / audio generation system                                     | ⏳ Pending     |

@@ -14,6 +14,7 @@ import Animated, {
   withTiming,
   withSpring,
   withDelay,
+  // eslint-disable-next-line deprecation/deprecation
   runOnJS,
   Easing,
 } from 'react-native-reanimated'
@@ -74,11 +75,13 @@ function WaveformBar({
             easing: Easing.inOut(Easing.ease),
           },
           (finished) => {
-            if (finished) animate()
+            if (finished) runOnJS(animate)()
           }
         )
       }
-      scale.value = withDelay(delay, withTiming(1, { duration: 400 }, animate))
+      scale.value = withDelay(delay, withTiming(1, { duration: 400 }, (finished) => {
+        if (finished) runOnJS(animate)()
+      }))
     } else {
       scale.value = withTiming(0.4, { duration: 400 })
     }
@@ -119,11 +122,12 @@ function BreathRing({ active }: { active: boolean }) {
         scale.value = withTiming(
           1.3,
           { duration: 1100, easing: Easing.inOut(Easing.ease) },
-          () => {
+          (finished) => {
+            if (!finished) return
             scale.value = withTiming(
               1,
               { duration: 1100, easing: Easing.inOut(Easing.ease) },
-              (finished) => { if (finished) breathe() }
+              (done) => { if (done) runOnJS(breathe)() }
             )
           }
         )
@@ -248,6 +252,7 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
 
   const isPlaying = playbackState === 'playing'
   const isLoading = playbackState === 'loading'
+  const isError = playbackState === 'error'
 
   // ── Phase 2: Expand / collapse sheet padding on playback state ──────────────
   useEffect(() => {
@@ -390,12 +395,13 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
             <Animated.View style={[s.audioZone, contentStyle]}>
               {/* Play row */}
               <View style={s.audioRow}>
-                <View style={s.playWrap}>
+                <View style={[s.playWrap, isError && s.playWrapError]}>
                   <BreathRing active={isPlaying} />
                   <TouchableOpacity
                     style={s.playBtn}
                     onPress={handlePlayPause}
-                    activeOpacity={0.7}
+                    activeOpacity={isError ? 1 : 0.7}
+                    disabled={isError}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
                     <Text style={s.playIcon}>
@@ -405,6 +411,11 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
                 </View>
                 <WaveformBars active={isPlaying} />
               </View>
+
+              {/* Error label — only when audio failed to load */}
+              {isError && (
+                <Text style={s.audioErrorText}>audio unavailable</Text>
+              )}
 
               {/* Phase 2: Progress bar slides in below play row when playing */}
               <ProgressReveal
@@ -539,6 +550,7 @@ const s = StyleSheet.create({
     marginBottom: 16,
   },
   playWrap: { position: 'relative', flexShrink: 0 },
+  playWrapError: { opacity: 0.4 },
   breathRing: {
     position: 'absolute',
     width: 46,
@@ -614,6 +626,14 @@ const s = StyleSheet.create({
     color: C.textMuted,
     fontStyle: 'italic',
     letterSpacing: 0.2,
+  },
+  audioErrorText: {
+    fontSize: 10,
+    color: C.textMuted,
+    fontStyle: 'italic',
+    letterSpacing: 0.3,
+    marginTop: 6,
+    opacity: 0.6,
   },
 
   // Nearby
