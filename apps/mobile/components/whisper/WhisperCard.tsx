@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useRef } from 'react'
+import React, { useEffect, useCallback, useRef, useState } from 'react'
 import {
   View,
   Text,
@@ -107,6 +107,37 @@ function WaveformBars({ active }: { active: boolean }) {
       {BAR_HEIGHTS.map((h, i) => (
         <WaveformBar key={i} height={h} active={active} delay={i * 80} index={i} />
       ))}
+    </View>
+  )
+}
+
+// ─── Waveform zone (cross-fades to completion line at 85% threshold) ─────────
+
+function WaveformZone({ active, isCompleted }: { active: boolean; isCompleted: boolean }) {
+  const waveOpacity = useSharedValue(1)
+  const lineOpacity = useSharedValue(0)
+
+  useEffect(() => {
+    if (isCompleted) {
+      waveOpacity.value = withTiming(0, { duration: 400 })
+      lineOpacity.value = withTiming(1, { duration: 400 })
+    } else {
+      waveOpacity.value = withTiming(1, { duration: 250 })
+      lineOpacity.value = withTiming(0, { duration: 250 })
+    }
+  }, [isCompleted])
+
+  const waveStyle = useAnimatedStyle(() => ({ opacity: waveOpacity.value }))
+  const lineStyle = useAnimatedStyle(() => ({ opacity: lineOpacity.value }))
+
+  return (
+    <View style={s.waveformZone}>
+      <Animated.View style={[StyleSheet.absoluteFill, waveStyle]}>
+        <WaveformBars active={active} />
+      </Animated.View>
+      <Animated.View style={[StyleSheet.absoluteFill, s.completionLineWrap, lineStyle]}>
+        <View style={s.completionLineBar} />
+      </Animated.View>
     </View>
   )
 }
@@ -256,6 +287,20 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   const isLoading = playbackState === 'loading'
   const isError = playbackState === 'error'
 
+  // ── C-5: Completion cooldown state ──────────────────────────────────────────
+  // Latches when progress reaches the 85% threshold (same value as useAudio's
+  // COMPLETION_THRESHOLD — UI reflects it, does not re-implement it).
+  // Resets on whisper change or when user explicitly replays.
+  const [isCompleted, setIsCompleted] = useState(false)
+
+  useEffect(() => {
+    if (progress >= 0.85 && !isCompleted) setIsCompleted(true)
+  }, [progress]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setIsCompleted(false)
+  }, [activeWhisper?.whisperId])
+
   // ── Phase 2: Expand / collapse sheet padding on playback state ──────────────
   useEffect(() => {
     if (isPlaying) {
@@ -314,8 +359,15 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   }, [isPlaying, pause, closeWhisper])
 
   const handlePlayPause = useCallback(() => {
+    // Reset completion state when user presses play after completing
+    if (isCompleted && !isPlaying) setIsCompleted(false)
     isPlaying ? pause() : play()
-  }, [isPlaying, play, pause])
+  }, [isCompleted, isPlaying, pause, play])
+
+  const handleReplay = useCallback(() => {
+    setIsCompleted(false)
+    replay()
+  }, [replay])
 
   // ── Phase 2: Drag-down dismiss via PanResponder on the drag pill ─────────────
   // Using a ref for handleClose so the PanResponder (created once) always calls
@@ -400,18 +452,18 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
                 <View style={[s.playWrap, isError && s.playWrapError]}>
                   <BreathRing active={isPlaying} />
                   <TouchableOpacity
-                    style={s.playBtn}
+                    style={[s.playBtn, isCompleted && s.playBtnCompleted]}
                     onPress={handlePlayPause}
                     activeOpacity={isError ? 1 : 0.7}
                     disabled={isError}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <Text style={s.playIcon}>
+                    <Text style={[s.playIcon, isCompleted && s.playIconCompleted]}>
                       {isLoading ? '···' : isPlaying ? '⏸' : '▶'}
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <WaveformBars active={isPlaying} />
+                <WaveformZone active={isPlaying} isCompleted={isCompleted} />
               </View>
 
               {/* Error label — only when audio failed to load */}
@@ -425,7 +477,7 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
                 progress={progress}
                 positionSeconds={positionSeconds}
                 durationSeconds={durationSeconds}
-                onReplay={replay}
+                onReplay={handleReplay}
               />
             </Animated.View>
           ) : (
@@ -580,6 +632,29 @@ const s = StyleSheet.create({
     gap: 3,
     height: 20,
     flex: 1,
+  },
+
+  // C-5: Waveform zone — fixed container, cross-fades waveform ↔ completion line
+  waveformZone: {
+    flex: 1,
+    height: 20,
+  },
+  completionLineWrap: {
+    justifyContent: 'center',
+  },
+  completionLineBar: {
+    height: 0.5,
+    backgroundColor: 'rgba(200,170,110,0.25)',
+    borderRadius: 1,
+  },
+
+  // C-5: Play button — muted state after completion
+  playBtnCompleted: {
+    borderColor: 'rgba(200,170,110,0.12)',
+    backgroundColor: 'transparent',
+  },
+  playIconCompleted: {
+    color: C.textMuted,
   },
 
   // Phase 2: Progress reveal row (slides in below play row)

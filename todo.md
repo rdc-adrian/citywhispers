@@ -125,16 +125,36 @@
 
 ---
 
-## ⏳ Sprint E: Journal Redesign
+## 🔄 Sprint E: Journal Redesign
 
 > The Journal is a memory cabinet, not a history screen. It should feel like opening a drawer of found objects from places you've been — not reviewing a log. Timestamps, time-of-day atmosphere, and emotional weight matter more than recency or completeness. Read this before the task list.
 
-- [ ] Emotional layout redesign
-- [ ] City grouping
-- [ ] Timestamps and contextual metadata
-- [ ] Atmospheric empty states
-- [ ] Emotional memory details (weather / time-of-day / night context)
-- [ ] Replay from Journal
+### E-1 — Emotional layout redesign + City grouping ✅
+
+- [x] Replace all placeholder colors with design tokens (`#0f0e0c` bg, `#e8e4dc` primary text, `#c8a96e` gold)
+- [x] Apply Cormorant Garamond throughout — `whisperTitle` for POI name, `whisperBody` italic for excerpt, `whisperMeta` for labels
+- [x] `SectionList` grouped by city — gold uppercase city header + hairline gold rule
+- [x] Flat entry rows (no bordered cards) — `hairlineWidth` separator between entries, feels like notes in a drawer
+- [x] Ambient time-of-day label derived from `discoveredAt` hour ("morning light", "after dark", etc.)
+- [x] Relative date labels ("yesterday", "3 days ago", "last week")
+- [x] Subtle gold completion dot (5px) when `completedAt` is set
+- [x] Atmospheric state screens — loading: "listening for memories…", empty: "nothing here yet / Step outside. The city has been waiting.", error: "the drawer won't open"
+- [x] `stickySectionHeadersEnabled={false}` — city headers scroll naturally, not pinned
+
+### E-2 — Replay from Journal
+
+- [ ] Tap a journal entry → open WhisperCard pre-loaded with that whisper's data
+- [ ] Wire `Pressable` in `WhisperEntry` to open whisper via `useWhisperStore.openWhisper()`
+- [ ] Handle `audioUrl: null` gracefully (text-only fallback, same as map flow)
+- [ ] `isRevisit: true` for all journal-opened whispers — always a second listen
+- [ ] Verify: tap in Journal opens card; card closes; Journal is still scrolled to same position
+
+### E-3 — Atmospheric metadata depth
+
+- [ ] Show `timeSlot` from DB if available (currently derived from `discoveredAt` — verify server stores it)
+- [ ] Consider: faint POI category label above POI name (e.g. "WATERFRONT", "MARKET") — `whisperMeta` muted
+- [ ] Consider: group ordering — most recently discovered city first vs. most whispers first
+- [ ] On-device review: does the screen feel like opening a drawer or browsing a list?
 
 ---
 

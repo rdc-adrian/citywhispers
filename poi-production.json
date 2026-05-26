@@ -1,237 +1,257 @@
 [
   {
-    "poiId": "SG_004_KALLANG_AIRFIELD_GATES",
-    "poiName": "Old Kallang Airport Disused Passenger Terminal Gates",
-    "environmentalConditions": {
-      "timeOfDay": "Late Night",
-      "weatherState": "After Rain",
-      "occupancyLevel": "Empty"
+    "poi": {
+      "name": "Bukit Merah Lane 1 Shophouse Auto Workshops",
+      "slug": "sg-bukit-merah-auto-workshops",
+      "citySlug": "singapore",
+      "description": "A dense row of traditional, oil-stained motor repair workshops operating beneath mid-century residential flats.",
+      "lat": 1.2863,
+      "lng": 103.8034,
+      "triggerRadiusMeters": 80,
+      "category": "street",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Exhaustion",
+        "ambientProfile": "The heavy scent of degraded motor oil, transmission fluid, and damp asphalt. Air vibrates with the erratic metallic clink of dropped wrenches and the low, industrial purr of idling engines.",
+        "timeOfDayAffinity": "evening",
+        "movementContext": "slow walk",
+        "intensityLevel": 4,
+        "environmentalTexture": "grease-slicked concrete, rusted iron jacks, worn rubber",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
     },
-    "emotionalMap": {
-      "dominantRegister": "Obsolescence",
-      "undertones": ["Stagnation", "Displacement"]
-    },
-    "audioScript": "The tarmac out there ... it doesn't lead anywhere anymore. Just wet grass pushing through the cracks in the concrete. The old art deco columns are still holding up the canopy, stained grey by decades of exhaust from the highway. A single security guard's scooter is parked under the shelter, its exhaust pipe dripping oil onto a puddle. You can hear the Nicoll Highway traffic hum just behind the fence line ... but inside this curve, the air feels heavy, trapped, like it's still waiting for a flight that was canceled forty years ago.",
-    "technicalMetadata": {
-      "triggerRadiusMeters": 45,
-      "vocalProfile": "Declan Sage",
-      "audioDurationSeconds": 48.5,
-      "injectionReady": true
-    },
-    "spatialValidationFacts": [
+    "facts": [
       {
-        "description": "Kallang Airport ceased commercial aviation operations in 1955 when Paya Lebar Airport opened.",
+        "factType": "architectural",
+        "content": "These low-rise blocks combine industrial ground-floor workshops with residential housing above, an early Singapore improvement trust layout designed to blend labor and domestic life.",
         "verified": true,
-        "sourceUrl": "[https://www.nas.gov.sg/archivesonline/article/kallang-airport](https://www.google.com/search?q=https://www.nas.gov.sg/archivesonline/article/kallang-airport)"
+        "sourceUrl": "[https://www.nhb.gov.sg/dash/places/historic-sites](https://www.google.com/search?q=https://www.nhb.gov.sg/dash/places/historic-sites)"
       },
       {
-        "description": "The complex features architectural elements designed by Frank Dorrington Ward, the Public Works Department's chief architect.",
-        "verified": true,
-        "sourceUrl": "[https://www.roots.gov.sg/places/places-of-interest/old-kallang-airport](https://www.google.com/search?q=https://www.roots.gov.sg/places/places-of-interest/old-kallang-airport)"
-      },
-      {
-        "description": "The iron perimeter gates rust unevenly, leaving orange streaks along the pale green base paint.",
+        "factType": "sensory",
+        "content": "The floor of each workshop is permanently saturated with decades of spilled lubricants, creating an iridescent sheen that reflects the fluorescent tube lighting.",
         "verified": false,
         "sourceUrl": null
       },
       {
-        "description": "Rainwater regularly pools in a deep crescent shape beneath the main terminal canopy due to uneven subsidence of the old driveway.",
-        "verified": false,
-        "sourceUrl": null
-      },
-      {
-        "description": "The distant sound of the Nicoll Highway creates a constant 45-decibel acoustic mask across the empty airfield grounds.",
+        "factType": "social",
+        "content": "Mechanics share a collective afternoon ritual around five o'clock, sitting on overturned plastic crates to drink coffee from small plastic bags tied with raffia string.",
         "verified": false,
         "sourceUrl": null
       }
-    ]
+    ],
+    "whisper": {
+      "text": "The grease has worked its way so deep into the concrete here ... I don't think any amount of rain will ever wash it out. The engines are finally going cold, but the metal still ticks as it settles. Another day of stripping gears, of fixing things that are just going to break down again on the expressway next week. Upstairs, someone is frying garlic ... the smell drops down through the floorboards to mix with the transmission fluid. It's always the same. We wash our hands at the iron sink, but the black rim stays under the fingernails. It never really leaves.",
+      "audioScript": "The grease has worked its way so deep into the concrete here ... I don't think any amount of rain will ever wash it out. The engines are finally going cold, but the metal still ticks as it settles. Another day of stripping gears, of fixing things that are just going to break down again on the expressway next week. Upstairs, someone is frying garlic ... the smell drops down through the floorboards to mix with the transmission fluid. It's always the same. We wash our hands at the iron sink, but the black rim stays under the fingernails. It never really leaves.",
+      "voice": "Declan Sage",
+      "durationSeconds": 44.8,
+      "audioFileName": "sg-bukit-merah-auto-workshops-v1.mp3"
+    }
   },
   {
-    "poiId": "SG_005_PEARLS_HILL_STAIRCASE",
-    "poiName": "Pearl's Hill City Park Secluded Concrete Staircase",
-    "environmentalConditions": {
-      "timeOfDay": "Dusk",
-      "weatherState": "Humid / Overcast",
-      "occupancyLevel": "Nearly Empty"
+    "poi": {
+      "name": "Queenstown MRT Overhead Pedestrian Bridge",
+      "slug": "sg-queenstown-mrt-bridge",
+      "citySlug": "singapore",
+      "description": "A long, enclosed concrete and blue-tinted glass walkway spanning Commonwealth Avenue, carrying heavy commuter foot traffic.",
+      "lat": 1.2945,
+      "lng": 103.8061,
+      "triggerRadiusMeters": 80,
+      "category": "infrastructure",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Transition",
+        "ambientProfile": "Enclosed, humming air from the passing trains below. Blue-tinted sunlight or flat fluorescent light bounces off the ribbed plastic flooring, accompanied by the scuff of rubber-soled shoes.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "passing through",
+        "intensityLevel": 3,
+        "environmentalTexture": "scuffed corrugated flooring, acrylic glazing, anodized aluminum",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
     },
-    "emotionalMap": {
-      "dominantRegister": "Isolation",
-      "undertones": ["Claustrophobia", "Vigilance"]
-    },
-    "audioScript": "The moss has taken over the bottom five steps ... turned them slick, almost black. Up here, the city sounds lose their edge, muffled by the thick canopy of Tembusu trees. Someone left a half-empty pack of cigarettes on the green handrail ... the cardboard is soft from the humidity. Down in Chinatown, the evening rush is starting, but on these stairs, everything is stationary. The air smells like wet earth and old concrete. A blue plastic tarpaulin is tied to the reservoir fence, snapping weakly every time the wind catches it.",
-    "technicalMetadata": {
-      "triggerRadiusMeters": 35,
-      "vocalProfile": "Arabella",
-      "audioDurationSeconds": 44.2,
-      "injectionReady": true
-    },
-    "spatialValidationFacts": [
+    "facts": [
       {
-        "description": "Pearl's Hill City Park is built around a concealed service reservoir constructed in 1898.",
+        "factType": "historical",
+        "content": "Queenstown was developed as Singapore's first satellite town by the Singapore Improvement Trust in the 1950s and later expanded by the Housing and Development Board.",
         "verified": true,
-        "sourceUrl": "[https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/pearls-hill-city-park](https://www.google.com/search?q=https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/pearls-hill-city-park)"
+        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2010-06-11.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2010-06-11.html)"
       },
       {
-        "description": "The park terrain rises sharply to a height of 24 meters, creating a micro-climate insulated from urban street noise.",
-        "verified": true,
-        "sourceUrl": "[https://www.ura.gov.sg/Corporate/Planning/Master-Plan](https://www.ura.gov.sg/Corporate/Planning/Master-Plan)"
-      },
-      {
-        "description": "The concrete stairs descending toward Outram Park MRT feature 72 irregular steps prone to moss accumulation.",
+        "factType": "sensory",
+        "content": "Every ninety seconds, the entire bridge structure experiences a low-frequency lateral shudder as a train decelerates into the adjacent platform.",
         "verified": false,
         "sourceUrl": null
       },
       {
-        "description": "A rusted green iron handrail runs the length of the southern staircase, showing bare silver metal where the paint has flaked off.",
-        "verified": false,
-        "sourceUrl": null
-      },
-      {
-        "description": "Cicadas in the upper canopy consistently register a sharp, cyclical audio frequency that cuts off abruptly when night falls.",
+        "factType": "social",
+        "content": "Commuters consistently maintain an unwritten rule of absolute silence here, eyes fixed on illuminated smartphone screens while moving in dense, parallel rows.",
         "verified": false,
         "sourceUrl": null
       }
-    ]
+    ],
+    "whisper": {
+      "text": "Everyone is moving, but nobody is looking at each other. The blue glass makes the whole world outside look like it's underwater ... the buses, the trees, the old blocks waiting to be torn down. I can feel the rumble of the evening train right through the soles of my shoes before I even hear it. A thousands shoes scuffing across this plastic floor every single hour, all heading home to the same small rooms, but the air here stays entirely vacant. Just the sound of a hundred turning turnstiles echoes down the staircase ... over and over.",
+      "audioScript": "Everyone is moving, but nobody is looking at each other. The blue glass makes the whole world outside look like it's underwater ... the buses, the trees, the old blocks waiting to be torn down. I can feel the rumble of the evening train right through the soles of my shoes before I even hear it. A thousands shoes scuffing across this plastic floor every single hour, all heading home to the same small rooms, but the air here stays entirely vacant. Just the sound of a hundred turning turnstiles echoes down the staircase ... over and over.",
+      "voice": "Arabella",
+      "durationSeconds": 42.4,
+      "audioFileName": "sg-queenstown-mrt-bridge-v1.mp3"
+    }
   },
   {
-    "poiId": "SG_006_ROCHOR_CANAL_WALKWAY",
-    "poiName": "Rochor Canal Concrete Promenade Near Sim Lim Square",
-    "environmentalConditions": {
-      "timeOfDay": "Midnight",
-      "weatherState": "Clear / Hot",
-      "occupancyLevel": "Nearly Empty"
+    "poi": {
+      "name": "People's Park Complex Rear Cargo Lift Lobby",
+      "slug": "sg-peoples-park-cargo-lobby",
+      "citySlug": "singapore",
+      "description": "The hidden, cavernous service and freight elevators located behind the main retail podium of the iconic Chinatown complex.",
+      "lat": 1.2848,
+      "lng": 103.8424,
+      "triggerRadiusMeters": 80,
+      "category": "building",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Obsolescence",
+        "ambientProfile": "The smell of damp cardboard, stale incense, and cooling herbal tea. A persistent mechanical whine from the old elevator cables mixes with the distant chatter of textile shop vendors.",
+        "timeOfDayAffinity": "afternoon",
+        "movementContext": "standing",
+        "intensityLevel": 4,
+        "environmentalTexture": "peeling yellow paint, dented steel doors, raw concrete pillars",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
     },
-    "emotionalMap": {
-      "dominantRegister": "Exhaustion",
-      "undertones": ["Artificiality", "Transience"]
-    },
-    "audioScript": "The water down there is completely flat tonight ... mirroring the green neon glow from the commercial blocks. The smell of solder and hot plastic seems to drift right out of the electronics mall and settle over the concrete walkway. A food delivery rider is sitting on a stone bench, his phone screen throwing a pale light across his face as he waits for nothing. The canal walls are clean, scrubbed, but underneath the water line, you can see the thick grey silt shifting slowly toward the sea.",
-    "technicalMetadata": {
-      "triggerRadiusMeters": 50,
-      "vocalProfile": "Declan Sage",
-      "audioDurationSeconds": 46.8,
-      "injectionReady": true
-    },
-    "spatialValidationFacts": [
+    "facts": [
       {
-        "description": "Rochor Canal underwent a major revitalization under the ABC Waters Programme, completed in 2015.",
+        "factType": "architectural",
+        "content": "Completed in 1973, People's Park Complex was a brutalist milestone, featuring the first large-scale shopping atrium of its kind in Southeast Asia.",
         "verified": true,
-        "sourceUrl": "[https://www.pub.gov.sg/abcwaters/exploreabcwaters/rochorcanal](https://www.google.com/search?q=https://www.pub.gov.sg/abcwaters/exploreabcwaters/rochorcanal)"
+        "sourceUrl": "[https://www.roots.gov.sg/places/places-of-interest/peoples-park-complex](https://www.google.com/search?q=https://www.roots.gov.sg/places/places-of-interest/peoples-park-complex)"
       },
       {
-        "description": "Sim Lim Square, adjacent to the canal walkway, has operated as a dedicated electronics hub since 1985.",
-        "verified": true,
-        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Rochor](https://www.google.com/search?q=https://www.roots.gov.sg/stories-stories/landscapes/Rochor)"
-      },
-      {
-        "description": "The green glass railings along the promenade catch the reflection of the building's external LED signage at regular 4-second intervals.",
+        "factType": "sensory",
+        "content": "The massive iron scissor-gates of the freight lifts emit a high-pitched, dry screech when manually cranked open by delivery workers.",
         "verified": false,
         "sourceUrl": null
       },
       {
-        "description": "Large concrete drainage grates along this section emit a consistent warm draft from the underground infrastructure.",
-        "verified": false,
-        "sourceUrl": null
-      },
-      {
-        "description": "The water level drops precisely three feet during low tide exposures, revealing a dark algae rim on the concrete embankment.",
+        "factType": "social",
+        "content": "Elderly shopkeepers use the alcoves near the lift shafts to store overflow stock of heavy synthetic fabrics, rolls of carpet, and discarded display mannequins.",
         "verified": false,
         "sourceUrl": null
       }
-    ]
+    ],
+    "whisper": {
+      "text": "The yellow paint on these pillars has been chipping away since the seventies. Every dent in the metal doors tells a story ... a heavy crate of textiles, a luggage cart from the travel agencies upstairs, pushed too fast. The air is old ... it smells of dust and dried chrysanthemum flowers left out on the small red altars. They built the towers so high to reach the future, but down here in the concrete folds, the clocks stopped decades ago. The elevator indicator clicks ... a heavy iron click ... but the cab is stuck on the fifth floor, and nobody is rushing to fix it.",
+      "audioScript": "The yellow paint on these pillars has been chipping away since the seventies. Every dent in the metal doors tells a story ... a heavy crate of textiles, a luggage cart from the travel agencies upstairs, pushed too fast. The air is old ... it smells of dust and dried chrysanthemum flowers left out on the small red altars. They built the towers so high to reach the future, but down here in the concrete folds, the clocks stopped decades ago. The elevator indicator clicks ... a heavy iron click ... but the cab is stuck on the fifth floor, and nobody is rushing to fix it.",
+      "voice": "Declan Sage",
+      "durationSeconds": 46.4,
+      "audioFileName": "sg-peoples-park-cargo-lobby-v1.mp3"
+    }
   },
   {
-    "poiId": "SG_007_TANJONG_PAGAR_BACKALLEY",
-    "poiName": "Tanjong Pagar Shophouse Rear Alleyway",
-    "environmentalConditions": {
-      "timeOfDay": "Pre-Dawn",
-      "weatherState": "Humid / Still",
-      "occupancyLevel": "Empty"
+    "poi": {
+      "name": "Changi Village Coastal Boardwalk Promenade",
+      "slug": "sg-changi-village-boardwalk",
+      "citySlug": "singapore",
+      "description": "A weathered timber walkway tracing the western edge of Changi Creek, looking out over the dark waters toward Pulau Ubin.",
+      "lat": 1.3894,
+      "lng": 103.9872,
+      "triggerRadiusMeters": 120,
+      "category": "waterfront",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Isolation",
+        "ambientProfile": "The smell of low-tide brine, decomposing mangrove roots, and remote marine fuel. The repetitive, oily lap of dark water against rotting timber pillars.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "standing",
+        "intensityLevel": 2,
+        "environmentalTexture": "splintered wood, salt-crusted iron railings, thick humid air",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
     },
-    "emotionalMap": {
-      "dominantRegister": "Decline",
-      "undertones": ["Domesticity", "Concealment"]
-    },
-    "audioScript": "Behind the bars and the restaurants ... this is what's left. Row after row of yellow grease traps, leaking grease onto the wet asphalt. The industrial kitchen fans are finally quiet, but the air still smells like old cooking oil and damp cardboard. A row of plastic bins is lined up against the brick wall, each marked with a handwritten unit number in fading black marker. Upstairs, behind the timber shutters, someone's washing machine is spinning ... a low, rhythmic thumping that vibrates down through the metal fire escape stairs.",
-    "technicalMetadata": {
-      "triggerRadiusMeters": 30,
-      "vocalProfile": "Arabella",
-      "audioDurationSeconds": 49.1,
-      "injectionReady": true
-    },
-    "spatialValidationFacts": [
+    "facts": [
       {
-        "description": "The Tanjong Pagar conservation area was designated in 1989, preserving the 19th-century shophouse architectural frameworks.",
+        "factType": "historical",
+        "content": "The Changi coast served as a critical British military bastion from the late 1920s through World War II, heavily fortifying the eastern approaches to the Johor Strait.",
         "verified": true,
-        "sourceUrl": "[https://www.ura.gov.sg/Corporate/Guidelines/Conservation/Conservation-Areas/Downtown-Core/Tanjong-Pagar](https://www.google.com/search?q=https://www.ura.gov.sg/Corporate/Guidelines/Conservation/Conservation-Areas/Downtown-Core/Tanjong-Pagar)"
+        "sourceUrl": "[https://www.nhb.gov.sg/dash/places/historic-sites](https://www.google.com/search?q=https://www.nhb.gov.sg/dash/places/historic-sites)"
       },
       {
-        "description": "Shophouse back alleys were originally designed for nightsoil collection prior to the installation of modern sewerage networks.",
-        "verified": true,
-        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Tanjong-Pagar](https://www.google.com/search?q=https://www.roots.gov.sg/stories-stories/landscapes/Tanjong-Pagar)"
-      },
-      {
-        "description": "The fire escape structures are constructed from painted black iron that shows heavy rust scaling around the ground-level bolts.",
+        "factType": "sensory",
+        "content": "At midnight, the standard urban light pollution drops significantly, leaving only the rhythmic green and red flashes of maritime marker buoys in the channel.",
         "verified": false,
         "sourceUrl": null
       },
       {
-        "description": "Splashes of old cooking fat create a permanent grey patina on the lower three feet of the exposed brick walls.",
-        "verified": false,
-        "sourceUrl": null
-      },
-      {
-        "description": "The narrow alley configuration creates an acoustic echo chamber where low-frequency vibrations from domestic appliances are amplified.",
+        "factType": "social",
+        "content": "Solitary night fishermen occupy the far edge of the pier, their presence marked only by the tiny chemical green glow-sticks attached to the tips of their fishing rods.",
         "verified": false,
         "sourceUrl": null
       }
-    ]
+    ],
+    "whisper": {
+      "text": "The city feels entirely behind me out here. Nothing but the black water pulling at the old wood and the distant lights of the cargo ships waiting in the strait. The wind coming off the sea is warm, sticky with salt ... it covers everything in a thin film. A single bumboat engine diesel splutters miles out, then dies away completely. It’s hard to believe the runways are just over the ridge ... all that metal and noise. Here, the mud just waits for the tide to come back in, turning the roots over in the dark, remembering before the concrete arrived.",
+      "audioScript": "The city feels entirely behind me out here. Nothing but the black water pulling at the old wood and the distant lights of the cargo ships waiting in the strait. The wind coming off the sea is warm, sticky with salt ... it covers everything in a thin film. A single bumboat engine diesel splutters miles out, then dies away completely. It’s hard to believe the runways are just over the ridge ... all that metal and noise. Here, the mud just waits for the tide to come back in, turning the roots over in the dark, remembering before the concrete arrived.",
+      "voice": "Arabella",
+      "durationSeconds": 47.6,
+      "audioFileName": "sg-changi-village-boardwalk-v1.mp3"
+    }
   },
   {
-    "poiId": "SG_008_LAVENDER_BUS_STOP",
-    "poiName": "Lavender Street Disused Bus Shelter Frame",
-    "environmentalConditions": {
-      "timeOfDay": "Late Night",
-      "weatherState": "Clear / Windless",
-      "occupancyLevel": "Nearly Empty"
+    "poi": {
+      "name": "Desker Road Shophouse Back Alley",
+      "slug": "sg-desker-road-alley",
+      "citySlug": "singapore",
+      "description": "A narrow, stone-paved service lane running behind the historic shophouses of Little India, marked by urban decay and layered use.",
+      "lat": 1.3112,
+      "lng": 103.8568,
+      "triggerRadiusMeters": 80,
+      "category": "street",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Decline",
+        "ambientProfile": "The sharp aroma of fermented trash, bleach, and spent cardamom shells. The persistent low drip of air-conditioning condensation onto broken asphalt surfaces.",
+        "timeOfDayAffinity": "anytime",
+        "movementContext": "passing through",
+        "intensityLevel": 5,
+        "environmentalTexture": "scabbed brickwork, wet stone pavers, rusted ventilation ducts",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
     },
-    "emotionalMap": {
-      "dominantRegister": "Transition",
-      "undertones": ["Neglect", "Monotony"]
-    },
-    "audioScript": "They removed the route numbers from the sign last month ... just left the grey metal frame standing. The orange plastic seats are scratched up, covered in a thin layer of grit from the construction site across the road. Every few minutes, a container truck roars past toward the highway, shaking the glass panels in their frames. Then it goes quiet again. A yellow light from the nearby coffeeshop flickers against the asphalt ... showing where someone dropped a bunch of keys and never came back for them.",
-    "technicalMetadata": {
-      "triggerRadiusMeters": 40,
-      "vocalProfile": "Declan Sage",
-      "audioDurationSeconds": 43.7,
-      "injectionReady": true
-    },
-    "spatialValidationFacts": [
+    "facts": [
       {
-        "description": "Lavender Street is one of Singapore's oldest thoroughfares, formally named in 1858 to counteract the stench of nightsoil and gasworks.",
+        "factType": "historical",
+        "content": "Desker Road was named after André Filippo Desker, a 19th-century Eurasian butcher and philanthropist who operated a major slaughterhouse in the vicinity.",
         "verified": true,
-        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2011-03-04.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2011-03-04.html)"
+        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2014-06-25.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2014-06-25.html)"
       },
       {
-        "description": "The Land Transport Authority regularly decommissions older pattern bus shelters during route optimization reviews.",
-        "verified": true,
-        "sourceUrl": "[https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/road_commuter_infrastructure.html](https://www.google.com/search?q=https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/road_commuter_infrastructure.html)"
-      },
-      {
-        "description": "The shelter's remaining plexiglass panel features a cloud of fine white scratches centered around headlight height.",
+        "factType": "sensory",
+        "content": "The overhanging maze of water pipes and split-system condenser units creates a continuous, warm artificial rainfall even on clear afternoons.",
         "verified": false,
         "sourceUrl": null
       },
       {
-        "description": "An adjacent streetlamp produces a steady, high-pitched electrical hiss audible only within a five-meter radius of the bench.",
-        "verified": false,
-        "sourceUrl": null
-      },
-      {
-        "description": "The concrete base of the shelter shows dark rectangular stains where the original metal trash receptacle was bolted down.",
+        "factType": "social",
+        "content": "The alley functions as an ad-hoc sorting zone for itinerant cardboard collectors who stack flattened boxes onto rusted iron trolleys before twilight.",
         "verified": false,
         "sourceUrl": null
       }
-    ]
+    ],
+    "whisper": {
+      "text": "The bricks are bleeding salt behind these old walls. Fifty years of kitchen steam and wash-water have turned the stone soft. Up above, the air conditioning boxes are leaking, dropping lukewarm water right into the puddles below ... a steady, electronic rain that never cleans anything. Someone left a broken plastic stool leaning against a rusted heavy fire door, its legs warped by the sun. The life of the street stays out on the main road, but down here ... this is the marrow. The things we use up and slide out of sight, just waiting for the damp to take them.",
+      "audioScript": "The bricks are bleeding salt behind these old walls. Fifty years of kitchen steam and wash-water have turned the stone soft. Up above, the air conditioning boxes are leaking, dropping lukewarm water right into the puddles below ... a steady, electronic rain that never cleans anything. Someone left a broken plastic stool leaning against a rusted heavy fire door, its legs warped by the sun. The life of the street stays out on the main road, but down here ... this is the marrow. The things we use up and slide out of sight, just waiting for the damp to take them.",
+      "voice": "Declan Sage",
+      "durationSeconds": 48.0,
+      "audioFileName": "sg-desker-road-alley-v1.mp3"
+    }
   }
 ]
