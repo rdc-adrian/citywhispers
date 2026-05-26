@@ -9,8 +9,6 @@ import { useNearbyPois } from '../../hooks/useNearbyPois'
 import { useWhisperStore } from '../../store/useWhisperStore'
 import { PoiMarker } from '../../components/map/PoiMarker'
 import { NearbyBadge } from '../../components/map/NearbyBadge'
-import { MapOverlay } from '../../components/map/MapOverlay'
-import { WhisperCard } from '../../components/whisper/WhisperCard'
 import { fetchWhisper } from '../../lib/api'
 import { getCurrentTimeSlot } from '../../lib/time'
 import type { PoiSummary } from '@citywhispers/types'
@@ -62,7 +60,7 @@ export default function MapScreen() {
     longitude: mapCenter.longitude,
   })
 
-  const { openWhisper, activeWhisper, discoveredPoiIds } = useWhisperStore()
+  const { openWhisper, discoveredPoiIds } = useWhisperStore()
 
   // Animate to user location on first GPS fix
   useEffect(() => {
@@ -148,6 +146,15 @@ export default function MapScreen() {
     const target = pois?.find((p) => p.id === poiId)
     if (target) handlePoiPress(target)
   }, [pois, handlePoiPress])
+
+  // Register the nearby-press handler in the store so WhisperCard (now mounted
+  // in the layout) can call it when a nearby suggestion is tapped.
+  // Cleared on unmount so Journal-opened whispers don't inherit a stale callback.
+  const { setNearbyPressHandler } = useWhisperStore()
+  useEffect(() => {
+    setNearbyPressHandler(handleNearbyPress)
+    return () => setNearbyPressHandler(null)
+  }, [handleNearbyPress])
 
   return (
     <View style={{ flex: 1, backgroundColor: '#0f0e0c' }}>
@@ -265,11 +272,8 @@ export default function MapScreen() {
         )}
       </View>
 
-      {/* Map suppression overlay — sits above map+chrome, below the sheet */}
-      <MapOverlay />
-
-      {/* Whisper card — always mounted, animates in/out internally */}
-      <WhisperCard onNearbyPress={handleNearbyPress} isRevisit={activeWhisper?.isRevisit ?? false} />
+      {/* MapOverlay and WhisperCard are now mounted in (app)/_layout.tsx
+          so they overlay all tabs. No render needed here. */}
     </View>
   )
 }

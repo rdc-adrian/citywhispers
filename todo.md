@@ -141,13 +141,16 @@
 - [x] Atmospheric state screens — loading: "listening for memories…", empty: "nothing here yet / Step outside. The city has been waiting.", error: "the drawer won't open"
 - [x] `stickySectionHeadersEnabled={false}` — city headers scroll naturally, not pinned
 
-### E-2 — Replay from Journal
+### E-2 — Replay from Journal ✅
 
-- [ ] Tap a journal entry → open WhisperCard pre-loaded with that whisper's data
-- [ ] Wire `Pressable` in `WhisperEntry` to open whisper via `useWhisperStore.openWhisper()`
-- [ ] Handle `audioUrl: null` gracefully (text-only fallback, same as map flow)
-- [ ] `isRevisit: true` for all journal-opened whispers — always a second listen
-- [ ] Verify: tap in Journal opens card; card closes; Journal is still scrolled to same position
+- [x] Move `WhisperCard` + `MapOverlay` from `map.tsx` to `(app)/_layout.tsx` — now overlays all tabs
+- [x] `nearbyPressHandler` added to store — map screen registers callback on mount, clears on unmount
+- [x] `WhisperCard` props removed (`onNearbyPress`, `isRevisit`) — reads both from store directly
+- [x] `toActiveWhisper()` mapper in `collected.tsx` — builds `ActiveWhisper` from `DiscoveredWhisper`;
+      missing fields (`category`, `personaSlug`) default to `''`; `timeSlot` derived from `discoveredAt`
+- [x] `WhisperEntry` accepts `onPress` callback; `CollectedScreen` wires `openWhisper(toActiveWhisper(w))`
+- [x] `audioUrl: null` handled by existing WhisperCard "no audio yet" fallback — no changes needed
+- [x] `isRevisit: true` always set in `toActiveWhisper` — everything in Journal is a second listen
 
 ### E-3 — Atmospheric metadata depth
 

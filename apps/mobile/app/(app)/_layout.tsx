@@ -1,10 +1,12 @@
 // apps/mobile/app/(app)/_layout.tsx
 import React, { useEffect } from 'react'
 import { Tabs } from 'expo-router'
-import { Text } from 'react-native'
+import { View, Text } from 'react-native'
 import { useAuth } from '@clerk/clerk-expo'
 import { useWhisperStore } from '../../store/useWhisperStore'
 import { fetchDiscoveredWhispers } from '../../lib/api'
+import { MapOverlay } from '../../components/map/MapOverlay'
+import { WhisperCard } from '../../components/whisper/WhisperCard'
 
 function TabIcon({ emoji, focused }: { emoji: string; focused: boolean }) {
   return (
@@ -33,52 +35,59 @@ export default function AppLayout() {
   }, [])
 
   return (
-    <Tabs
-      screenOptions={{
-        headerShown: false,
-        tabBarStyle: {
-          backgroundColor: '#0f0e0c',
-          borderTopColor: 'rgba(255,255,255,0.08)',
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 8,
-        },
-        tabBarActiveTintColor: '#c8a96e',
-        tabBarInactiveTintColor: '#5c5650',
-        tabBarLabelStyle: {
-          fontSize: 10,
-          letterSpacing: 1,
-          textTransform: 'uppercase',
-        },
-      }}
-    >
-      <Tabs.Screen
-        name="map"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="🗺" focused={focused} />
-          ),
+    // View wrapper lets MapOverlay and WhisperCard overlay all tabs, not just map.
+    <View style={{ flex: 1 }}>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: {
+            backgroundColor: '#0f0e0c',
+            borderTopColor: 'rgba(255,255,255,0.08)',
+            borderTopWidth: 1,
+            height: 60,
+            paddingBottom: 8,
+          },
+          tabBarActiveTintColor: '#c8a96e',
+          tabBarInactiveTintColor: '#5c5650',
+          tabBarLabelStyle: {
+            fontSize: 10,
+            letterSpacing: 1,
+            textTransform: 'uppercase',
+          },
         }}
-      />
-      <Tabs.Screen
-        name="collected"
-        options={{
-          title: 'Collected',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="✦" focused={focused} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="settings"
-        options={{
-          title: 'Settings',
-          tabBarIcon: ({ focused }) => (
-            <TabIcon emoji="⚙" focused={focused} />
-          ),
-        }}
-      />
-    </Tabs>
+      >
+        <Tabs.Screen
+          name="map"
+          options={{
+            title: 'Explore',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon emoji="🗺" focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="collected"
+          options={{
+            title: 'Collected',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon emoji="✦" focused={focused} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="settings"
+          options={{
+            title: 'Settings',
+            tabBarIcon: ({ focused }) => (
+              <TabIcon emoji="⚙" focused={focused} />
+            ),
+          }}
+        />
+      </Tabs>
+
+      {/* Global overlays — sit above all tabs, including the tab bar */}
+      <MapOverlay />
+      <WhisperCard />
+    </View>
   )
 }

@@ -255,13 +255,8 @@ function formatDistance(meters: number): string {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-type Props = {
-  onNearbyPress?: (poiId: string) => void
-  isRevisit?: boolean
-}
-
-export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
-  const { activeWhisper, isOpen, closeWhisper } = useWhisperStore()
+export function WhisperCard() {
+  const { activeWhisper, isOpen, closeWhisper, nearbyPressHandler } = useWhisperStore()
   const insets = useSafeAreaInsets()
 
   // ── Animation values ────────────────────────────────────────────────────────
@@ -496,7 +491,7 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
                   key={item.id}
                   style={s.nearbyItem}
                   activeOpacity={0.6}
-                  onPress={() => onNearbyPress?.(item.id)}
+                  onPress={() => nearbyPressHandler?.(item.id)}
                 >
                   <View style={s.nearbyDot} />
                   <Text style={s.nearbyName}>{item.name}</Text>

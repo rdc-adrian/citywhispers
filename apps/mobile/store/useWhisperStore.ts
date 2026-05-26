@@ -64,6 +64,12 @@ export type WhisperStoreLegacy = WhisperStore & {
   setAudioOpen: (v: boolean) => void
   setActiveWhisper: (w: ActiveWhisper | null) => void
   markDiscovered: (poiId: string) => void
+
+  // — Nearby press handler —
+  // Registered by the map screen on mount; null when not on the map tab.
+  // WhisperCard calls this when a nearby suggestion is tapped.
+  nearbyPressHandler: ((poiId: string) => void) | null
+  setNearbyPressHandler: (fn: ((poiId: string) => void) | null) => void
 }
 
 // Wrap original to include legacy helpers
@@ -97,6 +103,10 @@ export const useWhisperStoreLegacy = create<WhisperStoreLegacy>((set) => ({
     // noop placeholder; real implementation may persist discovery elsewhere
     return
   },
+
+  // nearby handler
+  nearbyPressHandler: null,
+  setNearbyPressHandler: (fn) => set({ nearbyPressHandler: fn }),
 }))
 
 // Ensure the commonly imported name `useWhisperStore` provides the legacy-compatible API

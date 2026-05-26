@@ -12,7 +12,9 @@ import { useAuth } from '@clerk/clerk-expo'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { fetchDiscoveredWhispers } from '../../lib/api'
 import { whisperTitle, whisperBody, whisperMeta } from '../../lib/typography'
+import { useWhisperStore } from '../../store/useWhisperStore'
 import type { DiscoveredWhisper } from '@citywhispers/types'
+import type { ActiveWhisper } from '../../store/useWhisperStore'
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -43,6 +45,41 @@ function relativeDate(iso: string): string {
   return new Date(iso).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })
 }
 
+/**
+ * Maps the time-of-day bucket from a discovered-at timestamp.
+ * DiscoveredWhisper doesn't store timeSlot, so we derive it the same way
+ * getCurrentTimeSlot() does on the map screen.
+ */
+function deriveTimeSlot(iso: string): ActiveWhisper['timeSlot'] {
+  const hour = new Date(iso).getHours()
+  if (hour >= 5  && hour < 12) return 'morning'
+  if (hour >= 12 && hour < 17) return 'afternoon'
+  if (hour >= 17 && hour < 21) return 'evening'
+  return 'night'
+}
+
+/**
+ * Builds an ActiveWhisper from a DiscoveredWhisper for Journal replay.
+ * Fields not stored on UserWhisperEvent (category, personaSlug) fall back to
+ * empty strings — WhisperCard handles both gracefully.
+ * isRevisit is always true: everything in the Journal has been heard before.
+ */
+function toActiveWhisper(item: DiscoveredWhisper): ActiveWhisper {
+  return {
+    poiId:        item.poiId,
+    poiName:      item.poiName,
+    category:     '',
+    whisperId:    item.whisperId,
+    whisperText:  item.whisperText,
+    audioUrl:     item.audioUrl,
+    timeSlot:     deriveTimeSlot(item.discoveredAt),
+    personaSlug:  '',
+    ambientLabel: ambientTimeLabel(item.discoveredAt),
+    nearby:       [],
+    isRevisit:    true,
+  }
+}
+
 /** Groups a flat whisper list by city name, preserving discovery order. */
 function groupByCity(whispers: DiscoveredWhisper[]) {
   const map = new Map<string, DiscoveredWhisper[]>()
@@ -64,13 +101,20 @@ function CitySection({ title }: { title: string }) {
   )
 }
 
-function WhisperEntry({ item }: { item: DiscoveredWhisper }) {
+function WhisperEntry({
+  item,
+  onPress,
+}: {
+  item: DiscoveredWhisper
+  onPress: (item: DiscoveredWhisper) => void
+}) {
   const timeLabel  = ambientTimeLabel(item.discoveredAt)
   const whenFound  = relativeDate(item.discoveredAt)
   const isComplete = item.completedAt !== null
 
   return (
     <Pressable
+      onPress={() => onPress(item)}
       style={({ pressed }) => [styles.entry, pressed && styles.entryPressed]}
     >
       <View style={styles.entryTopRow}>
@@ -94,6 +138,7 @@ function WhisperEntry({ item }: { item: DiscoveredWhisper }) {
 export default function CollectedScreen() {
   const { getToken }  = useAuth()
   const insets        = useSafeAreaInsets()
+  const { openWhisper } = useWhisperStore()
 
   const { data: whispers, isLoading, error } = useQuery<DiscoveredWhisper[]>({
     queryKey: ['discovered-whispers'],
@@ -142,7 +187,12 @@ export default function CollectedScreen() {
       <SectionList
         sections={sections}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <WhisperEntry item={item} />}
+        renderItem={({ item }) => (
+          <WhisperEntry
+            item={item}
+            onPress={(w) => openWhisper(toActiveWhisper(w))}
+          />
+        )}
         renderSectionHeader={({ section }) => (
           <CitySection title={section.title} />
         )}
