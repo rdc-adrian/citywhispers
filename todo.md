@@ -15,7 +15,7 @@
 
 | Phase | Area                                                                                      | Status      | Next sprint |
 | ----- | ----------------------------------------------------------------------------------------- | ----------- | ----------- |
-| **5** | Discovery & Journal — persistence + collected screen done; journal redesign pending       | 🔄 Partial  | Sprint E    |
+| **5** | Discovery & Journal — persistence + journal redesign complete (E-1 through E-3)           | ✅ Complete | —           |
 | **6** | Whisper Content — schemas + admin routes done; AI generation pipeline pending             | 🔄 Partial  | Sprint F    |
 | **7** | Audio & TTS — E2E playback + completion chain validated; full generation pipeline pending | 🔄 Partial  | Sprint G    |
 | **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending    | 🔄 Partial  | Backlog     |
@@ -32,6 +32,8 @@
 | **D**   | Persistent discovery memory | `completedAt` schema, write path, completion API, Zustand hydration, marker dimming              |
 | **B**   | Atmospheric transitions     | `MapOverlay`, coordinated WhisperCard entry, `isRevisit` threaded, device performance validated  |
 | **G.0** | Audio reality check         | Dead code cleanup, error state UI, Reanimated 4 worklet crash fix, E2E completion chain verified |
+| **C**   | WhisperCard polish          | Cormorant Garamond typography, cinematic pacing, waveform refinement, C-5 completion cooldown    |
+| **E**   | Journal redesign            | Memory-cabinet layout, city grouping, replay from Journal, real category + timeSlot from API     |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
@@ -125,7 +127,7 @@
 
 ---
 
-## 🔄 Sprint E: Journal Redesign
+## ✅ Sprint E: Journal Redesign — Complete
 
 > The Journal is a memory cabinet, not a history screen. It should feel like opening a drawer of found objects from places you've been — not reviewing a log. Timestamps, time-of-day atmosphere, and emotional weight matter more than recency or completeness. Read this before the task list.
 
