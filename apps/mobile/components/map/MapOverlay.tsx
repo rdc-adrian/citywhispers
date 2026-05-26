@@ -24,7 +24,8 @@ const DURATION = 320 // ms — must match WhisperCard TIMING.overlayIn / overlay
 //     close animation) and unmounts automatically once the store clears it
 
 export function MapOverlay() {
-  const { activeWhisper, isOpen } = useWhisperStore()
+  const activeWhisper = useWhisperStore((s) => s.activeWhisper)
+  const isOpen = useWhisperStore((s) => s.isOpen)
   const opacity = useSharedValue(0)
 
   useEffect(() => {

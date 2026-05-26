@@ -60,7 +60,8 @@ export default function MapScreen() {
     longitude: mapCenter.longitude,
   })
 
-  const { openWhisper, discoveredPoiIds } = useWhisperStore()
+  const openWhisper = useWhisperStore((s) => s.openWhisper)
+  const discoveredPoiIds = useWhisperStore((s) => s.discoveredPoiIds)
 
   // Animate to user location on first GPS fix
   useEffect(() => {
@@ -150,7 +151,7 @@ export default function MapScreen() {
   // Register the nearby-press handler in the store so WhisperCard (now mounted
   // in the layout) can call it when a nearby suggestion is tapped.
   // Cleared on unmount so Journal-opened whispers don't inherit a stale callback.
-  const { setNearbyPressHandler } = useWhisperStore()
+  const setNearbyPressHandler = useWhisperStore((s) => s.setNearbyPressHandler)
   useEffect(() => {
     setNearbyPressHandler(handleNearbyPress)
     return () => setNearbyPressHandler(null)

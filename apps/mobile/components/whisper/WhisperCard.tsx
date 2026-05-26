@@ -256,7 +256,10 @@ function formatDistance(meters: number): string {
 // ─── Component ────────────────────────────────────────────────────────────────
 
 export function WhisperCard() {
-  const { activeWhisper, isOpen, closeWhisper, nearbyPressHandler } = useWhisperStore()
+  const activeWhisper = useWhisperStore((s) => s.activeWhisper)
+  const isOpen = useWhisperStore((s) => s.isOpen)
+  const closeWhisper = useWhisperStore((s) => s.closeWhisper)
+  const nearbyPressHandler = useWhisperStore((s) => s.nearbyPressHandler)
   const insets = useSafeAreaInsets()
 
   // ── Animation values ────────────────────────────────────────────────────────
@@ -314,6 +317,11 @@ export function WhisperCard() {
   }, [isPlaying])
 
   // ── Open / close animations ─────────────────────────────────────────────────
+  // Guard: only call animateClose when transitioning open→closed, not on initial mount.
+  // Without this, the effect fires animateClose on mount (isOpen=false), which after
+  // 360ms calls useWhisperStore.setState({activeWhisper:null}) unnecessarily — causing
+  // a spurious store update that re-renders all non-selective subscribers.
+  const hasBeenOpenRef = useRef(false)
 
   const animateOpen = useCallback(() => {
     // TODO(Sprint-E): diverge revisit animation here — use isRevisit for a quieter entry
@@ -340,8 +348,10 @@ export function WhisperCard() {
 
   useEffect(() => {
     if (isOpen) {
+      hasBeenOpenRef.current = true
       animateOpen()
-    } else {
+    } else if (hasBeenOpenRef.current) {
+      // Only animate close when transitioning from open → closed, never on initial mount
       animateClose(() => {
         useWhisperStore.setState({ activeWhisper: null })
       })

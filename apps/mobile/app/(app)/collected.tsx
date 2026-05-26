@@ -129,7 +129,7 @@ function WhisperEntry({
 export default function CollectedScreen() {
   const { getToken }  = useAuth()
   const insets        = useSafeAreaInsets()
-  const { openWhisper } = useWhisperStore()
+  const openWhisper = useWhisperStore((s) => s.openWhisper)
 
   const { data: whispers, isLoading, error } = useQuery<DiscoveredWhisper[]>({
     queryKey: ['discovered-whispers'],
