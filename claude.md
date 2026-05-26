@@ -357,6 +357,42 @@ The whisper is the city speaking to a single person standing in that place. It i
 
 ---
 
+### AI Generation — Approved Submission Constraints
+
+> These rules govern Claude-assisted POI batch generation. They are stricter than the researcher template above and override it where they conflict. When generating POI JSON, follow these exactly.
+
+**Output format**
+
+- Output **only** the raw JSON array. No markdown code fences, no introductory text, no conversational filler. The array is ready to paste directly into the seed script or admin API.
+
+**Field type constraints**
+
+| Field | Rule |
+|---|---|
+| `triggerRadiusMeters` | Strict number — `80` for street-level, `120`–`150` for open plazas/waterfronts. Never a string. |
+| `imageUrl` | Always empty string `""`. Never a placeholder URL. |
+| `atmosphere.intensityLevel` | Strict integer 1–5. |
+| `atmosphere.sourceAttribution` | Always `"CityWhispers Research Unit"`. |
+| `atmosphere.reviewStatus` | Always `"draft"`. |
+| `atmosphere.contentOwner` | The voice assigned to the whisper (`"Declan Sage"` or `"Arabella"`). |
+| `whisper.durationSeconds` | Strict number: word count ÷ 2.5. Round to one decimal place. |
+| `whisper.audioScript` | Exact duplicate of `text`, preserving all ellipsis (`...`) and em-dash (`—`) pacing. |
+
+**Facts rules**
+
+- `historical` facts: `verified: true` required; `sourceUrl` must be a real URL.
+- `sensory`, `social`, `architectural` facts: `verified: false`, `sourceUrl: null`.
+- 2–4 facts per POI; use a mix of `factType` values.
+
+**Whisper rules**
+
+- 60–120 words. First person, present tense.
+- Atmosphere and sensory observation only — no mood-labelling ("melancholy", "eerie"), no technical units, no navigation choreography ("turn left", "look up").
+- Must drift away mid-thought with an unresolved ending. Never a clean resolution.
+- Ellipsis (`...`) and em-dashes (`—`) are the primary pacing tools.
+
+---
+
 ## Thread Management
 
 - Warn at **~80% context** with: `⚠️ This thread is getting long. I recommend starting a fresh one soon.`
