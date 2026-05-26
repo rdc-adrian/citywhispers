@@ -68,6 +68,8 @@ export async function userRoutes(app: FastifyInstance) {
         poiId: e.whisper.poiId,
         poiName: e.whisper.poi?.name ?? 'Unknown',
         cityName: e.whisper.poi?.city?.name ?? 'Unknown',
+        category: e.whisper.poi?.category ?? '',
+        timeSlot: e.whisper.timeSlot,
         whisperText: e.whisper.whisperText,
         audioUrl: e.whisper.audioUrl,
         discoveredAt: e.triggeredAt,

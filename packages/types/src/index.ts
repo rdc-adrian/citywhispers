@@ -76,6 +76,8 @@ export interface DiscoveredWhisper {
   poiId: string;
   poiName: string;
   cityName: string;
+  category: string;           // from poi.category — e.g. "waterfront", "market"
+  timeSlot: 'morning' | 'afternoon' | 'evening' | 'night'; // from generated_whisper.time_slot
   whisperText: string;
   audioUrl: string | null;
   discoveredAt: string;       // ISO 8601 — serialised from DB Date by Fastify

@@ -46,33 +46,20 @@ function relativeDate(iso: string): string {
 }
 
 /**
- * Maps the time-of-day bucket from a discovered-at timestamp.
- * DiscoveredWhisper doesn't store timeSlot, so we derive it the same way
- * getCurrentTimeSlot() does on the map screen.
- */
-function deriveTimeSlot(iso: string): ActiveWhisper['timeSlot'] {
-  const hour = new Date(iso).getHours()
-  if (hour >= 5  && hour < 12) return 'morning'
-  if (hour >= 12 && hour < 17) return 'afternoon'
-  if (hour >= 17 && hour < 21) return 'evening'
-  return 'night'
-}
-
-/**
  * Builds an ActiveWhisper from a DiscoveredWhisper for Journal replay.
- * Fields not stored on UserWhisperEvent (category, personaSlug) fall back to
- * empty strings — WhisperCard handles both gracefully.
- * isRevisit is always true: everything in the Journal has been heard before.
+ * category and timeSlot now come from the API directly.
+ * personaSlug is not stored on UserWhisperEvent — defaults to ''.
+ * isRevisit is always true: everything in the Journal is a second listen.
  */
 function toActiveWhisper(item: DiscoveredWhisper): ActiveWhisper {
   return {
     poiId:        item.poiId,
     poiName:      item.poiName,
-    category:     '',
+    category:     item.category,
     whisperId:    item.whisperId,
     whisperText:  item.whisperText,
     audioUrl:     item.audioUrl,
-    timeSlot:     deriveTimeSlot(item.discoveredAt),
+    timeSlot:     item.timeSlot,
     personaSlug:  '',
     ambientLabel: ambientTimeLabel(item.discoveredAt),
     nearby:       [],
@@ -121,6 +108,10 @@ function WhisperEntry({
         <Text style={styles.timeLabel}>{timeLabel}</Text>
         {isComplete && <View style={styles.completedDot} />}
       </View>
+
+      {item.category ? (
+        <Text style={styles.categoryLabel}>{item.category}</Text>
+      ) : null}
 
       <Text style={styles.poiName}>{item.poiName}</Text>
 
@@ -297,6 +288,12 @@ const styles = StyleSheet.create({
     borderRadius: 2.5,
     backgroundColor: '#c8a96e',
     opacity: 0.55,
+  },
+  categoryLabel: {
+    ...whisperMeta,
+    fontSize: 9,
+    color: '#3d3b38',
+    marginBottom: 6,
   },
   poiName: {
     ...whisperTitle,

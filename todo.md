@@ -152,12 +152,14 @@
 - [x] `audioUrl: null` handled by existing WhisperCard "no audio yet" fallback — no changes needed
 - [x] `isRevisit: true` always set in `toActiveWhisper` — everything in Journal is a second listen
 
-### E-3 — Atmospheric metadata depth
+### E-3 — Atmospheric metadata depth ✅
 
-- [ ] Show `timeSlot` from DB if available (currently derived from `discoveredAt` — verify server stores it)
-- [ ] Consider: faint POI category label above POI name (e.g. "WATERFRONT", "MARKET") — `whisperMeta` muted
-- [ ] Consider: group ordering — most recently discovered city first vs. most whispers first
-- [ ] On-device review: does the screen feel like opening a drawer or browsing a list?
+- [x] `timeSlot` confirmed in DB (`generated_whispers.time_slot`) — added to API response + `DiscoveredWhisper` type
+- [x] `category` confirmed in DB (`pois.category`) — added to API response + `DiscoveredWhisper` type
+- [x] `packages/types` rebuilt after type changes
+- [x] `toActiveWhisper()` updated — `category` and `timeSlot` now from real data; `deriveTimeSlot()` removed
+- [x] Category label added to `WhisperEntry` — `whisperMeta`, `#3d3b38` (more muted than time label), sits between time row and POI name, hidden when empty
+- [x] Group ordering: already correct — API returns `triggeredAt: desc`, so `groupByCity` naturally produces most-recently-active city first; no change needed
 
 ---
 
