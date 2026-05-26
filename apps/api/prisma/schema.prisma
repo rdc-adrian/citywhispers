@@ -178,6 +178,7 @@ model GeneratedWhisper {
   tokenCount   Int?      @map("token_count")
   source       String    @default("ai")
   qualityScore Float?    @map("quality_score")
+  status       String    @default("approved")
   isFeatured   Boolean   @default(false) @map("is_featured")
   isStale      Boolean   @default(false) @map("is_stale")
   expiresAt    DateTime? @map("expires_at")

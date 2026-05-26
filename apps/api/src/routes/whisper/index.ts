@@ -36,21 +36,22 @@ export async function whisperRoutes(app: FastifyInstance) {
     const { poiId } = request.params
     const timeSlot = request.query.time_slot ?? 'morning'
 
-    // Try to find an exact time slot match first
+    // Try to find an exact time slot match first — approved whispers only
     let whisper = await prisma.generatedWhisper.findFirst({
       where: {
         poiId,
         timeSlot,
         isStale: false,
-      },
+        status: 'approved',
+      } as any,
       include: { persona: true },
       orderBy: { qualityScore: 'desc' },
     })
 
-    // Fall back to any whisper for this POI
+    // Fall back to any approved whisper for this POI
     if (!whisper) {
       whisper = await prisma.generatedWhisper.findFirst({
-        where: { poiId, isStale: false },
+        where: { poiId, isStale: false, status: 'approved' } as any,
         include: { persona: true },
         orderBy: { qualityScore: 'desc' },
       })

@@ -26,3 +26,15 @@ export class ForbiddenError extends AppError {
     super(reason, 403, 'FORBIDDEN')
   }
 }
+
+export class AIProviderError extends AppError {
+  constructor(message: string) {
+    super(message, 502, 'AI_PROVIDER_ERROR')
+  }
+}
+
+export class GenerationError extends AppError {
+  constructor(message: string) {
+    super(message, 422, 'GENERATION_ERROR')
+  }
+}

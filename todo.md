@@ -16,7 +16,7 @@
 | Phase | Area                                                                                      | Status      | Next sprint |
 | ----- | ----------------------------------------------------------------------------------------- | ----------- | ----------- |
 | **5** | Discovery & Journal — persistence + journal redesign complete (E-1 through E-3)           | ✅ Complete | —           |
-| **6** | Whisper Content — schemas + admin routes done; AI generation pipeline pending             | 🔄 Partial  | Sprint F    |
+| **6** | Whisper Content — schemas + admin routes done; AI generation pipeline complete            | ✅ Complete | Sprint G    |
 | **7** | Audio & TTS — E2E playback + completion chain validated; full generation pipeline pending | 🔄 Partial  | Sprint G    |
 | **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending    | 🔄 Partial  | Backlog     |
 | **9** | Future Features — trails, offline, monetization, social, gamification                     | ⏳ Deferred | Backlog     |
@@ -34,6 +34,7 @@
 | **G.0** | Audio reality check         | Dead code cleanup, error state UI, Reanimated 4 worklet crash fix, E2E completion chain verified |
 | **C**   | WhisperCard polish          | Cormorant Garamond typography, cinematic pacing, waveform refinement, C-5 completion cooldown    |
 | **E**   | Journal redesign            | Memory-cabinet layout, city grouping, replay from Journal, real category + timeSlot from API     |
+| **F**   | AI whisper generation       | Gemini/Anthropic provider, prompt pipeline, draft/approve workflow, quality scoring, 14 tests    |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
@@ -165,17 +166,21 @@
 
 ---
 
-## ⏳ Sprint F: AI Whisper Generation
+## ✅ Sprint F: AI Whisper Generation — Complete
 
-> Build the pipeline that generates whisper text from POI facts.
+> Pipeline validated live on 27 May 2026 against Singapore POI data.
 
-- [ ] AI whisper generation service
-- [ ] Generation pipeline (facts → prompt → whisper)
-- [ ] Regeneration workflow
-- [ ] Moderation / QA pipeline
-- [ ] Approval workflow — draft / approved / needs-review states
-- [ ] Internal whisper preview tooling
-- [ ] Whisper quality scoring
+- [x] AI provider interface (`services/ai.ts`) — thin wrapper, swappable; Gemini 2.5-flash active, Anthropic Sonnet ready for production
+- [x] Generation pipeline (`services/generation.ts`) — facts → prompt → whisper; tonal constraints encoded as hard rules
+- [x] Default persona — Declan Sage auto-created on first generation if not seeded
+- [x] `POST /admin/whispers/generate` — draft record created, GenerationJob tracked, scoring pass non-blocking
+- [x] `POST /admin/whispers/:id/regenerate` — soft replace; old record marked `isStale: true`, new draft created
+- [x] `PATCH /admin/whispers/:id/status` — approve / needs-review workflow
+- [x] Mobile fetch filter — `GET /whisper/poi/:poiId` now requires `status: approved`; drafts invisible to app
+- [x] Whisper quality scoring — AI scores 0–100 written to `quality_score`; serves highest score to mobile
+- [x] `GeneratedWhisper.status` field — migration applied; existing records defaulted to `approved`
+- [x] 14 unit tests passing — prompt builder, system prompt constraints, scoring fixture comparison
+- [x] `.env.example` updated with all new keys (`GEMINI_API_KEY`, `ANTHROPIC_API_KEY`, `AI_PROVIDER`)
 
 ---
 
