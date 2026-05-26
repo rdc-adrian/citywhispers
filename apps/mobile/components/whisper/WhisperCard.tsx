@@ -32,7 +32,7 @@ const PROGRESS_REVEAL_HEIGHT = 68
 // ─── Design tokens ────────────────────────────────────────────────────────────
 
 const C = {
-  surface: '#141414',
+  surface: '#15140f',
   sep: 'rgba(255,255,255,0.045)',
   textPrimary: '#ede5d4',
   textSecondary: '#7a7370',
@@ -58,38 +58,40 @@ function WaveformBar({
   height,
   active,
   delay,
+  index,
 }: {
   height: number
   active: boolean
   delay: number
+  index: number
 }) {
-  const scale = useSharedValue(0.4)
+  const scale = useSharedValue(0.15)
 
   useEffect(() => {
     if (active) {
       const animate = () => {
         scale.value = withTiming(
-          0.3 + Math.random() * 0.7,
+          0.5 + Math.random() * 0.25,
           {
-            duration: 500 + Math.random() * 600,
-            easing: Easing.inOut(Easing.ease),
+            duration: 680 + index * 35,
+            easing: Easing.inOut(Easing.sin),
           },
           (finished) => {
             if (finished) runOnJS(animate)()
           }
         )
       }
-      scale.value = withDelay(delay, withTiming(1, { duration: 400 }, (finished) => {
+      scale.value = withDelay(delay, withTiming(0.65, { duration: 600 }, (finished) => {
         if (finished) runOnJS(animate)()
       }))
     } else {
-      scale.value = withTiming(0.4, { duration: 400 })
+      scale.value = withTiming(0.15, { duration: 600 })
     }
   }, [active])
 
   const style = useAnimatedStyle(() => ({
     transform: [{ scaleY: scale.value }],
-    backgroundColor: active ? C.goldBar : 'rgba(200,170,110,0.12)',
+    backgroundColor: active ? C.goldBar : 'rgba(200,170,110,0.08)',
   }))
 
   return (
@@ -103,7 +105,7 @@ function WaveformBars({ active }: { active: boolean }) {
   return (
     <View style={s.waveform}>
       {BAR_HEIGHTS.map((h, i) => (
-        <WaveformBar key={i} height={h} active={active} delay={i * 55} />
+        <WaveformBar key={i} height={h} active={active} delay={i * 80} index={i} />
       ))}
     </View>
   )
@@ -276,7 +278,7 @@ export function WhisperCard({ onNearbyPress, isRevisit: _isRevisit }: Props) {
   const animateOpen = useCallback(() => {
     // TODO(Sprint-E): diverge revisit animation here — use isRevisit for a quieter entry
     // Overlay fade is handled by MapOverlay, which reacts to isOpen on the same frame.
-    sheetY.value = withSpring(0, { damping: 18, stiffness: 120 })
+    sheetY.value = withSpring(0, { damping: 18, stiffness: 102 })
     contentOpacity.value = withDelay(TIMING.stagger, withTiming(1, { duration: 320 }))
     titleY.value = withDelay(TIMING.stagger, withSpring(0, { damping: 20, stiffness: 180 }))
     whisperY.value = withDelay(TIMING.stagger * 2, withSpring(0, { damping: 20, stiffness: 160 }))
@@ -526,7 +528,7 @@ const s = StyleSheet.create({
   },
   whisperBody: {
     ...typoWhisperBody,
-    color: C.textPrimary,
+    color: 'rgba(232, 228, 220, 0.88)',
   },
 
   // Audio

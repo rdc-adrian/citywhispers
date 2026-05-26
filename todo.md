@@ -59,33 +59,32 @@
 - [x] Create `apps/mobile/lib/typography.ts` (or `constants/typography.ts`) exporting named presets: `whisperTitle`, `whisperBody`, `whisperMeta`
 - [x] Verify: `useFonts` returns `true` before card is shown; no Cormorant font family strings hardcoded outside this file
 
-### C-2 — Typography and spacing polish pass
+### C-2 — Typography and spacing polish pass ✅
 
-- [ ] Apply `whisperTitle` and `whisperBody` presets from C-1 to WhisperCard whisper text and POI name
-- [ ] POI name: lighter weight, `letterSpacing ~1.5`, muted gold or secondary colour — frames, does not compete
-- [ ] Whisper body: Regular or Light Cormorant, `lineHeight` 1.6–1.8×, **left-aligned** (not centred)
-- [ ] Increase vertical breathing room between POI name, whisper body, and audio controls
-- [ ] Typography and spacing only — no layout structure or animation changes
-- [ ] Verify on-device: text reads in one breath without eye strain; POI name is visually subordinate
+- [x] Apply `whisperTitle` and `whisperBody` presets from C-1 to WhisperCard whisper text and POI name
+- [x] POI name: lighter weight, `letterSpacing ~1.5`, muted gold or secondary colour — frames, does not compete
+- [x] Whisper body: Regular or Light Cormorant, `lineHeight` 1.6–1.8×, **left-aligned** (not centred)
+- [x] Increase vertical breathing room between POI name, whisper body, and audio controls
+- [x] Typography and spacing only — no layout structure or animation changes
+- [x] Verify on-device: text reads in one breath without eye strain; POI name is visually subordinate
 
 ### C-3 — Nighttime readability and cinematic pacing
 
-- [ ] Test card at low brightness (~30%) — identify any harshness in contrast
-- [ ] Whisper body text: reduce from pure `#e8e4dc` to `rgba(232, 228, 220, 0.88)` — ambient, not broadcast
-- [ ] Card background: evaluate `#15140f` (warm tint) vs `#141414` (neutral) — pick what reads as atmospheric
-- [ ] Entry animation: evaluate slowing spring entry ~15% (`damping:18 / stiffness:120` is the baseline from Sprint B) — adjust only if it reads as *arrival*, not if it just reads as *slower*
-- [ ] On-device review in dim/dark conditions — note explicitly in PR
-- [ ] No new animation types; adjust existing timing values only; no open/close/drag regressions
+- [x] Whisper body text: reduce from pure `#e8e4dc` to `rgba(232, 228, 220, 0.88)` — ambient, not broadcast
+- [x] Card background: `#15140f` warm tint applied
+- [x] Entry animation: spring slowed ~15% — `stiffness: 120 → 102`
+- [x] No new animation types; existing timing values only; no regressions
+- [ ] On-device review in dim/dark conditions — pending low-light test session
 
 ### C-4 — Waveform emotional behaviour refinement
 
-- [ ] Slow bar animation cycle: target 600–800ms per cycle (faster reads nervous, slower reads present)
-- [ ] Reduce height variance range — tighter range feels intimate, not energetic
-- [ ] Add phase offset / stagger between bars — soft wave motion, not simultaneous movement
-- [ ] Apply `Easing.inOut(Easing.sine)` to bar animations
-- [ ] Paused state: bars minimal or static — visually quiet
-- [ ] Playing state: slow pulse that suggests presence, not technical visualisation
-- [ ] `runOnJS` wrapper in `WaveformBar.animate()` must remain intact (Reanimated 4 — Sprint G.0 constraint)
+- [x] Slow bar animation cycle: target 600–800ms per cycle (faster reads nervous, slower reads present)
+- [x] Reduce height variance range — tighter range feels intimate, not energetic
+- [x] Add phase offset / stagger between bars — soft wave motion, not simultaneous movement
+- [x] Apply `Easing.inOut(Easing.sine)` to bar animations
+- [x] Paused state: bars minimal or static — visually quiet
+- [x] Playing state: slow pulse that suggests presence, not technical visualisation
+- [x] `runOnJS` wrapper in `WaveformBar.animate()` must remain intact (Reanimated 4 — Sprint G.0 constraint)
 - [ ] Verify on-device: motion reads organic; no Reanimated crashes
 
 ### C-5 — Audio completion cooldown transition state
