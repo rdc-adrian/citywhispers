@@ -150,10 +150,10 @@ npx expo start --clear --tunnel
 
 `EXPO_PUBLIC_API_URL` in `apps/mobile/.env` is **baked into the JS bundle at compile time**. Any change requires `--clear` to take effect.
 
-| Mode | When to use | `.env` value | Extra step |
-|------|-------------|--------------|------------|
-| **Render (default)** | API hosted remotely — works for all devices, no local setup | `https://citywhispers-api.onrender.com` | None — this is the default in `.env` |
-| **LAN** | Local API dev (testing API changes) | `http://10.168.0.49:3001` | Add Windows Firewall inbound rule for TCP port 3001 (run once as admin): `New-NetFirewallRule -DisplayName "CityWhispers API Dev" -Direction Inbound -Protocol TCP -LocalPort 3001 -Action Allow` |
+| Mode                 | When to use                                                 | `.env` value                            | Extra step                                                                                                                                                                                        |
+| -------------------- | ----------------------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Render (default)** | API hosted remotely — works for all devices, no local setup | `https://citywhispers-api.onrender.com` | None — this is the default in `.env`                                                                                                                                                              |
+| **LAN**              | Local API dev (testing API changes)                         | `http://10.168.0.49:3001`               | Add Windows Firewall inbound rule for TCP port 3001 (run once as admin): `New-NetFirewallRule -DisplayName "CityWhispers API Dev" -Direction Inbound -Protocol TCP -LocalPort 3001 -Action Allow` |
 
 **Tunnel mode is the reliable default.** If ngrok is already running on port 3001 (`EADDRINUSE` when starting `npm run dev`), the API server is already up — don't start a second one.
 
@@ -162,9 +162,11 @@ npx expo start --clear --tunnel
 ### Checking the active API URL
 
 The app logs the resolved URL on startup:
+
 ```
 LOG  [api] BASE_URL = http://...
 ```
+
 If this shows the old Render URL or wrong IP, stop Expo, update `.env`, and restart with `--clear`.
 
 ### Firewall (LAN mode only)
@@ -203,10 +205,12 @@ npm run lint                # Lint all workspaces
 ## Sprint History & Validated Behaviours
 
 ### Sprint B — Atmospheric Transitions ✅
+
 - `MapOverlay.tsx` + coordinated `WhisperCard` entry implemented and stable on device.
 - `isRevisit` flag threaded to `animateOpen` — diverge revisit animation here in Sprint E.
 
 ### Sprint G.0 — Audio Reality Check ✅
+
 - **Audio completion write path validated on-device.** `completedAt` is written correctly to `user_whisper_events` after the 85% playback threshold. `PATCH /whisper/:id/complete` confirmed in API logs with no errors.
 - **Reanimated 4 `runOnJS` fix is stable.** Reanimated 4 compiles `withTiming`/`withSpring` completion callbacks as UI-thread worklets. Any plain JS function called from them must be wrapped with `runOnJS` — applies to `WaveformBar.animate()`, `BreathRing.breathe()`, and `animateClose`. The type-level deprecation warnings are cosmetic; runtime behaviour is stable. Revisit when a supported R4 replacement API emerges.
 
@@ -217,13 +221,128 @@ npm run lint                # Lint all workspaces
 These are standing PM decisions that frame what the product is. They are not sprint notes — they persist across sessions and should inform all implementation and content choices.
 
 ### The Whisper Card is emotional pacing infrastructure
+
 The WhisperCard is not a UI component that displays audio content. It is the primary emotional delivery mechanism of the app — the moment where the city speaks to the user. Every design decision (animation timing, typography weight, waveform behaviour, progress bar reveal) should be evaluated against whether it creates or destroys a sense of being spoken to. Polish is not the goal; presence is.
 
 ### The Journal is a memory cabinet, not a history screen
+
 The Collected / Journal screen should feel like opening a drawer of found objects, not reviewing a log. The framing is: these are things that happened to you in a city, now kept. Timestamps, atmospheric context (time of day, weather), and emotional weight matter more than completeness or recency ordering. An engineer picking up Sprint E should read this before the task list.
 
 ### Singapore content — emotional palette brief
+
 Singapore MVP content should not be landmark coverage. The emotional palette is: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. POI selection should favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
+
+### Narrator voice identity
+
+**Provider:** ElevenLabs
+**Primary voice (MVP):** Declan Sage — Eleven Multilingual v2 or v3
+**Secondary / experimental:** Arabella — used selectively for softer emotional ambiguity, poetic intimacy, or reflective waterfront/interior-space atmosphere. Not the default MVP narrator.
+
+**Production settings (Declan Sage baseline)**
+
+| Parameter | Value |
+|---|---|
+| Stability | 39% |
+| Similarity / Clarity | 78% |
+| Style exaggeration | Minimal |
+| Pacing | Slightly slower than conversational |
+
+- Punctuation shaping: heavy ellipsis (`...`), em-dashes (`—`), sentence fragmentation allowed.
+- Preserve breath, pause, and slight vocal instability — do not smooth these out.
+- Avoid over-enunciation and commercial/podcast cadence.
+
+**Voice rationale**
+
+CityWhispers is not guided tourism or narrated storytelling. The narrator should feel like memory surfacing through a place. Declan Sage was chosen for his restrained gravel texture, low-register delivery, and silence handling — he preserves emotional residue without introducing documentary or meditation-app energy. The slight vocal friction makes the city feel physically lived-in rather than theatrically mysterious.
+
+This aligns directly with the Singapore palette: humidity, lingering heat, layered redevelopment, quiet loneliness, the persistence of old emotional textures inside rapidly changing urban environments. Narration should feel overheard late at night through damp air — intimate, unhurried, slightly incomplete.
+
+**Implementation principle:** Audio delivery should never sound finished. Sentence endings soften rather than resolve cleanly. The listener should feel like the city continues thinking after playback stops.
+
+---
+
+## Research Team — POI Submission Format
+
+> This section is for researchers sourcing new points of interest. Submit one JSON object per POI. Engineers seed it directly via the admin API or `prisma/seed.ts`. Read the tonal brief before writing whisper text.
+
+### Submission template
+
+```json
+{
+  "poi": {
+    "name": "<Place Name>",
+    "slug": "<countryISO2>-<kebab-place-name>",
+    "citySlug": "<city-slug>",
+    "description": "<One sentence for admin use only — never shown in app>",
+    "lat": "<latitude>",
+    "lng": "<longitude>",
+    "triggerRadiusMeters": "<80 | 120–150 for open plazas>",
+    "category": "<neighbourhood | landmark | market | religious | park | street | building | waterfront>",
+    "imageUrl": "<url or empty string>"
+  },
+  "facts": [
+    {
+      "factType": "<historical | sensory | social | architectural>",
+      "content": "<Fact. Max 2 sentences. Serve atmosphere, not encyclopaedic coverage.>",
+      "verified": "<true | false>",
+      "sourceUrl": "<https://... or null>"
+    }
+  ],
+  "whisper": {
+    "text": "<60–120 words. First person, present tense. Written to be heard, not read. See tonal brief below.>",
+    "audioScript": "<same as text, or leave empty>",
+    "voice": "Declan Sage | Arabella",
+    "durationSeconds": "<word count ÷ 2.5>",
+    "audioFileName": "<countryISO2>-<kebab-place-name>-v1.mp3"
+  }
+}
+```
+
+### Field notes
+
+**`poi`**
+
+- `slug` — `{cityCode}-{kebab-name}`, e.g. `sg-kampong-glam`. Must be unique.
+- `description` — admin-facing only, never shown in the app. One sentence max.
+- `triggerRadiusMeters` — default 80m for street-level POIs; 120–150m for open plazas or large spaces.
+- `category` — one of: `neighbourhood`, `landmark`, `market`, `religious`, `park`, `street`, `building`, `waterfront`.
+- `imageUrl` — leave empty string if no image yet; do not omit the field.
+
+**`facts`** — include 2–4 facts per POI. Use multiple `factType` values:
+
+- `historical` — a specific dated or named event, person, or transformation. Avoid generic "it was built in…" framing.
+- `sensory` — what you smell, hear, or feel standing there. No need for sourcing; mark `verified: false`.
+- `social` — who uses it, how, and when. Daily rhythms, regulars, recurring rituals.
+- `architectural` — material, scale, juxtaposition, decay, or incongruity worth noting.
+- `sourceUrl` — required for `verified: true`. Use `null` for sensory/social facts.
+
+**`whisper`**
+
+- `text` — see tonal brief below. 60–120 words is a firm range; shorter is often better.
+- `durationSeconds` — estimate at roughly 2.5 words/second for slow narration. A 90-word whisper ≈ 36–40s.
+- `audioFileName` — `{slug}-v1.mp3`. Leave as placeholder if audio not yet generated.
+
+### Whisper tonal brief
+
+The whisper is the city speaking to a single person standing in that place. It is not a tour guide. It is not a history lesson. It is something you might overhear — a voice that knows the place the way a longtime resident does, not the way a plaque does.
+
+**Voice:** First person, present tense. The narrator is the place itself, or someone who has always been here. Not "this building was once…" — instead: "the smell hasn't changed."
+
+**Tone:** Humid, unhurried, slightly melancholy. The emotional register of old photographs. Not sad — just aware that things persist and disappear at the same time.
+
+**What to avoid:**
+
+- Dates, statistics, or facts stated as facts. If a fact is in the whisper, it should feel incidental — noticed, not reported.
+- Instructions or second-person address ("you are standing…", "look up and you'll see…").
+- Clean endings. A whisper should feel like it continues after the audio stops.
+
+**What to aim for:**
+
+- A detail so specific it feels impossible to have made up.
+- A tension between what a place used to be and what it is now, held lightly.
+- The texture of daily life — who comes here at 6am, what the light does, what gets left behind.
+
+**Singapore palette:** Humidity and memory. The persistence of old things inside new cities. Favour layered, ambiguous places over clean landmarks. The whisper should feel overheard in passing, not delivered.
 
 ---
 

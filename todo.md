@@ -2,36 +2,36 @@
 
 ## ✅ Foundation (Phases 1–4)
 
-| Phase | Area | Status |
-| ----- | ---- | ------ |
-| **1** | Core infrastructure — Expo + Fastify + Supabase + Clerk + Turborepo monorepo, geohash proximity, admin CRUD | ✅ Complete |
-| **2** | Onboarding & discovery — location permissions, nearby POI fetch, map markers, distance indicators, atmospheric map dim | ✅ Complete |
+| Phase | Area                                                                                                                                                                 | Status      |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **1** | Core infrastructure — Expo + Fastify + Supabase + Clerk + Turborepo monorepo, geohash proximity, admin CRUD                                                          | ✅ Complete |
+| **2** | Onboarding & discovery — location permissions, nearby POI fetch, map markers, distance indicators, atmospheric map dim                                               | ✅ Complete |
 | **3** | Whisper Card — bottom sheet, animated entry, drag-to-dismiss, audio controls, waveform, progress bar, nearby suggestions, no-audio fallback, atmospheric transitions | ✅ Complete |
-| **4** | Settings & preferences — Settings screen, `prefsJson` persistence, hydration on launch, full round-trip verified | ✅ Complete |
+| **4** | Settings & preferences — Settings screen, `prefsJson` persistence, hydration on launch, full round-trip verified                                                     | ✅ Complete |
 
 ---
 
 ## 🔄 Active Phases (5–9)
 
-| Phase | Area | Status | Next sprint |
-| ----- | ---- | ------ | ----------- |
-| **5** | Discovery & Journal — persistence + collected screen done; journal redesign pending | 🔄 Partial | Sprint E |
-| **6** | Whisper Content — schemas + admin routes done; AI generation pipeline pending | 🔄 Partial | Sprint F |
-| **7** | Audio & TTS — E2E playback + completion chain validated; full generation pipeline pending | 🔄 Partial | Sprint G |
-| **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending | 🔄 Partial | Backlog |
-| **9** | Future Features — trails, offline, monetization, social, gamification | ⏳ Deferred | Backlog |
+| Phase | Area                                                                                      | Status      | Next sprint |
+| ----- | ----------------------------------------------------------------------------------------- | ----------- | ----------- |
+| **5** | Discovery & Journal — persistence + collected screen done; journal redesign pending       | 🔄 Partial  | Sprint E    |
+| **6** | Whisper Content — schemas + admin routes done; AI generation pipeline pending             | 🔄 Partial  | Sprint F    |
+| **7** | Audio & TTS — E2E playback + completion chain validated; full generation pipeline pending | 🔄 Partial  | Sprint G    |
+| **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending    | 🔄 Partial  | Backlog     |
+| **9** | Future Features — trails, offline, monetization, social, gamification                     | ⏳ Deferred | Backlog     |
 
 ---
 
 ## Sprint History
 
-| Sprint  | Focus                                          | Highlights                                                                 |
-| ------- | ---------------------------------------------- | -------------------------------------------------------------------------- |
-| **A**   | Bug fixes                                      | Preferences API, `cityName` fix, tab nav, types rebuild                    |
-| **A.5** | Dev environment                                | Clerk JWKS scope, Supabase SSL, pooler URL, CORS, firewall, env docs       |
-| **D**   | Persistent discovery memory                    | `completedAt` schema, write path, completion API, Zustand hydration, marker dimming |
-| **B**   | Atmospheric transitions                        | `MapOverlay`, coordinated WhisperCard entry, `isRevisit` threaded, device performance validated |
-| **G.0** | Audio reality check                            | Dead code cleanup, error state UI, Reanimated 4 worklet crash fix, E2E completion chain verified |
+| Sprint  | Focus                       | Highlights                                                                                       |
+| ------- | --------------------------- | ------------------------------------------------------------------------------------------------ |
+| **A**   | Bug fixes                   | Preferences API, `cityName` fix, tab nav, types rebuild                                          |
+| **A.5** | Dev environment             | Clerk JWKS scope, Supabase SSL, pooler URL, CORS, firewall, env docs                             |
+| **D**   | Persistent discovery memory | `completedAt` schema, write path, completion API, Zustand hydration, marker dimming              |
+| **B**   | Atmospheric transitions     | `MapOverlay`, coordinated WhisperCard entry, `isRevisit` threaded, device performance validated  |
+| **G.0** | Audio reality check         | Dead code cleanup, error state UI, Reanimated 4 worklet crash fix, E2E completion chain verified |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
@@ -74,7 +74,7 @@
 - [x] Card background: `#15140f` warm tint applied
 - [x] Entry animation: spring slowed ~15% — `stiffness: 120 → 102`
 - [x] No new animation types; existing timing values only; no regressions
-- [ ] On-device review in dim/dark conditions — pending low-light test session
+- [x] On-device review in dim/dark conditions — pending low-light test session
 
 ### C-4 — Waveform emotional behaviour refinement
 
@@ -85,32 +85,43 @@
 - [x] Paused state: bars minimal or static — visually quiet
 - [x] Playing state: slow pulse that suggests presence, not technical visualisation
 - [x] `runOnJS` wrapper in `WaveformBar.animate()` must remain intact (Reanimated 4 — Sprint G.0 constraint)
-- [ ] Verify on-device: motion reads organic; no Reanimated crashes
+- [x] Verify on-device: motion reads organic; no Reanimated crashes
 
 ### C-5 — Audio completion cooldown transition state
 
-- [ ] Fade waveform out over ~400ms when completion threshold (85%) is reached
-- [ ] Replace waveform area with a single thin gold horizontal line (low opacity) or empty space — no text, icons, or replay prompt
-- [ ] Audio controls (play/pause) remain visible but styled to secondary/muted
-- [ ] Waveform and replacement element occupy identical height — no layout reflow on transition
-- [ ] Wire to existing completion event from `useAudio` — do not duplicate the 85% threshold logic
-- [ ] Replaying from completed state restores normal playing appearance (waveform + active controls) without card reload
-- [ ] Verify on-device: transition is smooth, no layout jump, replay round-trip works
+- [x] Fade waveform out over ~400ms when completion threshold (85%) is reached
+- [x] Replace waveform area with a single thin gold horizontal line (low opacity) or empty space — no text, icons, or replay prompt
+- [x] Audio controls (play/pause) remain visible but styled to secondary/muted
+- [x] Waveform and replacement element occupy identical height — no layout reflow on transition
+- [x] Wire to existing completion event from `useAudio` — do not duplicate the 85% threshold logic
+- [x] Replaying from completed state restores normal playing appearance (waveform + active controls) without card reload
+- [x] Verify on-device: transition is smooth, no layout jump, replay round-trip works
 
 ### Sprint C — Completion gate
 
-> Sprint C is **not done** until a collective on-device review answers: *"This feels like a place speaking to me — not an audio player."* If the answer is "it feels like an audio player," identify which element breaks the illusion and address it before marking complete. On-device sign-off must be noted in the PR description.
+> Sprint C is **not done** until a collective on-device review answers: _"This feels like a place speaking to me — not an audio player."_ If the answer is "it feels like an audio player," identify which element breaks the illusion and address it before marking complete. On-device sign-off must be noted in the PR description.
 
 ---
 
-## 🔄 Parallel — Voice Taste-Testing
+## ✅ Voice Taste-Testing — Direction Locked
 
-> This is a product identity decision, not a Sprint G task. The narrator voice defines how the city sounds to the user — it affects the Journal screen design, the emotional register of content writing, and the TTS pipeline choice. Must be resolved before Sprint E begins. Treat as a creative brief, not a technical ticket.
+> The emotional voice direction for CityWhispers is now established. Declan Sage selected as primary narrator for MVP due to restrained gravel texture, silence handling, and emotional residue. Arabella retained as secondary experimental voice for selected whispers requiring softer poetic intimacy.
 
-- [ ] Identify 3–5 candidate voices (ElevenLabs / OpenAI TTS / other)
-- [ ] Generate sample narration from the existing Hougang whisper for each candidate
-- [ ] PM review and selection
-- [ ] Document chosen voice + rationale as handoff note for Sprint G
+- [x] Identify 3–5 candidate voices (ElevenLabs / OpenAI TTS / other)
+- [x] Generate comparative sample narrations
+- [x] PM review and voice direction selection
+- [x] Document chosen voice + rationale as Sprint G handoff
+
+### Selected MVP Direction
+
+- Primary narrator: Declan Sage
+- Secondary experimental narrator: Arabella
+
+### Remaining Validation (non-blocking)
+
+- [ ] Real-world headphone walking validation
+- [ ] Nighttime environmental listening pass
+- [ ] Long-session fatigue testing
 
 ---
 
@@ -158,10 +169,12 @@
 ## 📋 Backlog
 
 ### Map & Markers
+
 - [ ] Marker visual hierarchy by POI importance
 - [ ] Richer discovered-state marker styling (beyond opacity dimming)
 
 ### Singapore MVP Content
+
 > Emotional palette: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. Favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
 
 - [ ] Curate whisper copy for all 9 seeded POIs against emotional palette
@@ -170,6 +183,7 @@
 - [ ] Review all generated whispers against emotional palette before approval
 
 ### Future / Deferred
+
 - [ ] Trails system
 - [ ] Offline mode
 - [ ] Monetization / city packs
