@@ -278,7 +278,18 @@ This aligns directly with the Singapore palette: humidity, lingering heat, layer
     "lng": "<longitude>",
     "triggerRadiusMeters": "<80 | 120–150 for open plazas>",
     "category": "<neighbourhood | landmark | market | religious | park | street | building | waterfront>",
-    "imageUrl": "<url or empty string>"
+    "imageUrl": "<url or empty string>",
+    "atmosphere": {
+      "emotionalTone": "<dominant register e.g. Obsolescence | Isolation | Exhaustion | Decline | Transition>",
+      "ambientProfile": "<1–2 sentences: sensory/atmospheric summary used for AI prompt context>",
+      "timeOfDayAffinity": "<morning | afternoon | evening | night | anytime>",
+      "movementContext": "<standing | slow walk | passing through | seated>",
+      "intensityLevel": "<1–5 — 1 subtle, 5 overwhelming>",
+      "environmentalTexture": "<physical texture e.g. wet concrete, rusted iron, dense canopy>",
+      "sourceAttribution": "<researcher name or institution, or null>",
+      "reviewStatus": "draft",
+      "contentOwner": "<team member name>"
+    }
   },
   "facts": [
     {

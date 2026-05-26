@@ -1,0 +1,237 @@
+[
+  {
+    "poiId": "SG_004_KALLANG_AIRFIELD_GATES",
+    "poiName": "Old Kallang Airport Disused Passenger Terminal Gates",
+    "environmentalConditions": {
+      "timeOfDay": "Late Night",
+      "weatherState": "After Rain",
+      "occupancyLevel": "Empty"
+    },
+    "emotionalMap": {
+      "dominantRegister": "Obsolescence",
+      "undertones": ["Stagnation", "Displacement"]
+    },
+    "audioScript": "The tarmac out there ... it doesn't lead anywhere anymore. Just wet grass pushing through the cracks in the concrete. The old art deco columns are still holding up the canopy, stained grey by decades of exhaust from the highway. A single security guard's scooter is parked under the shelter, its exhaust pipe dripping oil onto a puddle. You can hear the Nicoll Highway traffic hum just behind the fence line ... but inside this curve, the air feels heavy, trapped, like it's still waiting for a flight that was canceled forty years ago.",
+    "technicalMetadata": {
+      "triggerRadiusMeters": 45,
+      "vocalProfile": "Declan Sage",
+      "audioDurationSeconds": 48.5,
+      "injectionReady": true
+    },
+    "spatialValidationFacts": [
+      {
+        "description": "Kallang Airport ceased commercial aviation operations in 1955 when Paya Lebar Airport opened.",
+        "verified": true,
+        "sourceUrl": "[https://www.nas.gov.sg/archivesonline/article/kallang-airport](https://www.google.com/search?q=https://www.nas.gov.sg/archivesonline/article/kallang-airport)"
+      },
+      {
+        "description": "The complex features architectural elements designed by Frank Dorrington Ward, the Public Works Department's chief architect.",
+        "verified": true,
+        "sourceUrl": "[https://www.roots.gov.sg/places/places-of-interest/old-kallang-airport](https://www.google.com/search?q=https://www.roots.gov.sg/places/places-of-interest/old-kallang-airport)"
+      },
+      {
+        "description": "The iron perimeter gates rust unevenly, leaving orange streaks along the pale green base paint.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "Rainwater regularly pools in a deep crescent shape beneath the main terminal canopy due to uneven subsidence of the old driveway.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "The distant sound of the Nicoll Highway creates a constant 45-decibel acoustic mask across the empty airfield grounds.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ]
+  },
+  {
+    "poiId": "SG_005_PEARLS_HILL_STAIRCASE",
+    "poiName": "Pearl's Hill City Park Secluded Concrete Staircase",
+    "environmentalConditions": {
+      "timeOfDay": "Dusk",
+      "weatherState": "Humid / Overcast",
+      "occupancyLevel": "Nearly Empty"
+    },
+    "emotionalMap": {
+      "dominantRegister": "Isolation",
+      "undertones": ["Claustrophobia", "Vigilance"]
+    },
+    "audioScript": "The moss has taken over the bottom five steps ... turned them slick, almost black. Up here, the city sounds lose their edge, muffled by the thick canopy of Tembusu trees. Someone left a half-empty pack of cigarettes on the green handrail ... the cardboard is soft from the humidity. Down in Chinatown, the evening rush is starting, but on these stairs, everything is stationary. The air smells like wet earth and old concrete. A blue plastic tarpaulin is tied to the reservoir fence, snapping weakly every time the wind catches it.",
+    "technicalMetadata": {
+      "triggerRadiusMeters": 35,
+      "vocalProfile": "Arabella",
+      "audioDurationSeconds": 44.2,
+      "injectionReady": true
+    },
+    "spatialValidationFacts": [
+      {
+        "description": "Pearl's Hill City Park is built around a concealed service reservoir constructed in 1898.",
+        "verified": true,
+        "sourceUrl": "[https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/pearls-hill-city-park](https://www.google.com/search?q=https://www.nparks.gov.sg/gardens-parks-and-nature/parks-and-nature-reserves/pearls-hill-city-park)"
+      },
+      {
+        "description": "The park terrain rises sharply to a height of 24 meters, creating a micro-climate insulated from urban street noise.",
+        "verified": true,
+        "sourceUrl": "[https://www.ura.gov.sg/Corporate/Planning/Master-Plan](https://www.ura.gov.sg/Corporate/Planning/Master-Plan)"
+      },
+      {
+        "description": "The concrete stairs descending toward Outram Park MRT feature 72 irregular steps prone to moss accumulation.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "A rusted green iron handrail runs the length of the southern staircase, showing bare silver metal where the paint has flaked off.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "Cicadas in the upper canopy consistently register a sharp, cyclical audio frequency that cuts off abruptly when night falls.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ]
+  },
+  {
+    "poiId": "SG_006_ROCHOR_CANAL_WALKWAY",
+    "poiName": "Rochor Canal Concrete Promenade Near Sim Lim Square",
+    "environmentalConditions": {
+      "timeOfDay": "Midnight",
+      "weatherState": "Clear / Hot",
+      "occupancyLevel": "Nearly Empty"
+    },
+    "emotionalMap": {
+      "dominantRegister": "Exhaustion",
+      "undertones": ["Artificiality", "Transience"]
+    },
+    "audioScript": "The water down there is completely flat tonight ... mirroring the green neon glow from the commercial blocks. The smell of solder and hot plastic seems to drift right out of the electronics mall and settle over the concrete walkway. A food delivery rider is sitting on a stone bench, his phone screen throwing a pale light across his face as he waits for nothing. The canal walls are clean, scrubbed, but underneath the water line, you can see the thick grey silt shifting slowly toward the sea.",
+    "technicalMetadata": {
+      "triggerRadiusMeters": 50,
+      "vocalProfile": "Declan Sage",
+      "audioDurationSeconds": 46.8,
+      "injectionReady": true
+    },
+    "spatialValidationFacts": [
+      {
+        "description": "Rochor Canal underwent a major revitalization under the ABC Waters Programme, completed in 2015.",
+        "verified": true,
+        "sourceUrl": "[https://www.pub.gov.sg/abcwaters/exploreabcwaters/rochorcanal](https://www.google.com/search?q=https://www.pub.gov.sg/abcwaters/exploreabcwaters/rochorcanal)"
+      },
+      {
+        "description": "Sim Lim Square, adjacent to the canal walkway, has operated as a dedicated electronics hub since 1985.",
+        "verified": true,
+        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Rochor](https://www.google.com/search?q=https://www.roots.gov.sg/stories-stories/landscapes/Rochor)"
+      },
+      {
+        "description": "The green glass railings along the promenade catch the reflection of the building's external LED signage at regular 4-second intervals.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "Large concrete drainage grates along this section emit a consistent warm draft from the underground infrastructure.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "The water level drops precisely three feet during low tide exposures, revealing a dark algae rim on the concrete embankment.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ]
+  },
+  {
+    "poiId": "SG_007_TANJONG_PAGAR_BACKALLEY",
+    "poiName": "Tanjong Pagar Shophouse Rear Alleyway",
+    "environmentalConditions": {
+      "timeOfDay": "Pre-Dawn",
+      "weatherState": "Humid / Still",
+      "occupancyLevel": "Empty"
+    },
+    "emotionalMap": {
+      "dominantRegister": "Decline",
+      "undertones": ["Domesticity", "Concealment"]
+    },
+    "audioScript": "Behind the bars and the restaurants ... this is what's left. Row after row of yellow grease traps, leaking grease onto the wet asphalt. The industrial kitchen fans are finally quiet, but the air still smells like old cooking oil and damp cardboard. A row of plastic bins is lined up against the brick wall, each marked with a handwritten unit number in fading black marker. Upstairs, behind the timber shutters, someone's washing machine is spinning ... a low, rhythmic thumping that vibrates down through the metal fire escape stairs.",
+    "technicalMetadata": {
+      "triggerRadiusMeters": 30,
+      "vocalProfile": "Arabella",
+      "audioDurationSeconds": 49.1,
+      "injectionReady": true
+    },
+    "spatialValidationFacts": [
+      {
+        "description": "The Tanjong Pagar conservation area was designated in 1989, preserving the 19th-century shophouse architectural frameworks.",
+        "verified": true,
+        "sourceUrl": "[https://www.ura.gov.sg/Corporate/Guidelines/Conservation/Conservation-Areas/Downtown-Core/Tanjong-Pagar](https://www.google.com/search?q=https://www.ura.gov.sg/Corporate/Guidelines/Conservation/Conservation-Areas/Downtown-Core/Tanjong-Pagar)"
+      },
+      {
+        "description": "Shophouse back alleys were originally designed for nightsoil collection prior to the installation of modern sewerage networks.",
+        "verified": true,
+        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Tanjong-Pagar](https://www.google.com/search?q=https://www.roots.gov.sg/stories-stories/landscapes/Tanjong-Pagar)"
+      },
+      {
+        "description": "The fire escape structures are constructed from painted black iron that shows heavy rust scaling around the ground-level bolts.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "Splashes of old cooking fat create a permanent grey patina on the lower three feet of the exposed brick walls.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "The narrow alley configuration creates an acoustic echo chamber where low-frequency vibrations from domestic appliances are amplified.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ]
+  },
+  {
+    "poiId": "SG_008_LAVENDER_BUS_STOP",
+    "poiName": "Lavender Street Disused Bus Shelter Frame",
+    "environmentalConditions": {
+      "timeOfDay": "Late Night",
+      "weatherState": "Clear / Windless",
+      "occupancyLevel": "Nearly Empty"
+    },
+    "emotionalMap": {
+      "dominantRegister": "Transition",
+      "undertones": ["Neglect", "Monotony"]
+    },
+    "audioScript": "They removed the route numbers from the sign last month ... just left the grey metal frame standing. The orange plastic seats are scratched up, covered in a thin layer of grit from the construction site across the road. Every few minutes, a container truck roars past toward the highway, shaking the glass panels in their frames. Then it goes quiet again. A yellow light from the nearby coffeeshop flickers against the asphalt ... showing where someone dropped a bunch of keys and never came back for them.",
+    "technicalMetadata": {
+      "triggerRadiusMeters": 40,
+      "vocalProfile": "Declan Sage",
+      "audioDurationSeconds": 43.7,
+      "injectionReady": true
+    },
+    "spatialValidationFacts": [
+      {
+        "description": "Lavender Street is one of Singapore's oldest thoroughfares, formally named in 1858 to counteract the stench of nightsoil and gasworks.",
+        "verified": true,
+        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2011-03-04.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2011-03-04.html)"
+      },
+      {
+        "description": "The Land Transport Authority regularly decommissions older pattern bus shelters during route optimization reviews.",
+        "verified": true,
+        "sourceUrl": "[https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/road_commuter_infrastructure.html](https://www.google.com/search?q=https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/road_commuter_infrastructure.html)"
+      },
+      {
+        "description": "The shelter's remaining plexiglass panel features a cloud of fine white scratches centered around headlight height.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "An adjacent streetlamp produces a steady, high-pitched electrical hiss audible only within a five-meter radius of the bench.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "description": "The concrete base of the shelter shows dark rectangular stains where the original metal trash receptacle was bolted down.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ]
+  }
+]

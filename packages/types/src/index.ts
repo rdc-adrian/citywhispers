@@ -11,7 +11,28 @@ export interface PoiSummary {
   distance?: number; // Distance from user in meters
   importanceScore: number;
 }
-export interface PoiDetail extends PoiSummary {
+export interface PoiAtmosphere {
+  /** Dominant emotional register e.g. "Obsolescence", "Isolation" */
+  emotionalTone: string | null;
+  /** Sensory/atmospheric summary for AI prompt context */
+  ambientProfile: string | null;
+  /** Optimal trigger window: morning | afternoon | evening | night | anytime */
+  timeOfDayAffinity: 'morning' | 'afternoon' | 'evening' | 'night' | 'anytime' | null;
+  /** Physical mode e.g. "standing", "slow walk", "passing through" */
+  movementContext: string | null;
+  /** Emotional weight 1 (subtle) → 5 (overwhelming) */
+  intensityLevel: number | null;
+  /** Physical texture description e.g. "wet concrete, rusted iron, dense canopy" */
+  environmentalTexture: string | null;
+  /** Research credit or origin note */
+  sourceAttribution: string | null;
+  /** Content pipeline state */
+  reviewStatus: 'draft' | 'approved' | 'needs_review';
+  /** Team member responsible for this POI's content */
+  contentOwner: string | null;
+}
+
+export interface PoiDetail extends PoiSummary, PoiAtmosphere {
   cityId: string;
   geohash6: string;
   active: boolean;

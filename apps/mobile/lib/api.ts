@@ -7,6 +7,7 @@ import type {
 } from '@citywhispers/types';
 
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3001';
+console.log('[api] BASE_URL =', BASE_URL);
 
 async function fetchWithTimeout(url: string, options: RequestInit = {}, ms = 10000): Promise<Response> {
   const controller = new AbortController();

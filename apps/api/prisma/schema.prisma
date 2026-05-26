@@ -40,6 +40,26 @@ model Poi {
   cooldownMinutes Int      @default(60) @map("cooldown_minutes")
   createdAt       DateTime @default(now()) @map("created_at")
 
+  // ── Atmospheric metadata (Phase 6) ──────────────────────────────────────
+  // emotionalTone       — dominant emotional register e.g. "Obsolescence", "Isolation"
+  // ambientProfile      — sensory/atmospheric summary for AI prompt context
+  // timeOfDayAffinity   — optimal trigger window: morning|afternoon|evening|night|anytime
+  // movementContext     — intended physical mode e.g. "standing", "slow walk", "passing through"
+  // intensityLevel      — emotional weight 1 (subtle) → 5 (overwhelming)
+  // environmentalTexture — physical texture description e.g. "wet concrete, rusted iron, dense canopy"
+  // sourceAttribution   — research credit or origin note
+  // reviewStatus        — content pipeline state: draft|approved|needs_review
+  // contentOwner        — team member responsible for this POI's content
+  emotionalTone        String?  @map("emotional_tone")
+  ambientProfile       String?  @map("ambient_profile")
+  timeOfDayAffinity    String?  @map("time_of_day_affinity")
+  movementContext      String?  @map("movement_context")
+  intensityLevel       Int?     @map("intensity_level")
+  environmentalTexture String?  @map("environmental_texture")
+  sourceAttribution    String?  @map("source_attribution")
+  reviewStatus         String   @default("draft") @map("review_status")
+  contentOwner         String?  @map("content_owner")
+
   city              City               @relation(fields: [cityId], references: [id])
   poiFacts          PoiFact[]
   generatedWhispers GeneratedWhisper[]

@@ -13,7 +13,10 @@
     "db:push": "prisma db push",
     "db:pull": "prisma db pull",
     "db:seed": "tsx prisma/seed.ts",
-    "db:seed-all": "tsx prisma/seed-all.ts"
+    "db:seed-all": "tsx prisma/seed-all.ts",
+    "backup:snapshot": "tsx scripts/backup-snapshot.ts",
+    "reset:storage": "tsx scripts/cleanup-storage.ts",
+    "reset:content": "tsx scripts/reset-content.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.39.0",
