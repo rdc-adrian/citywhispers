@@ -214,6 +214,18 @@ npm run lint                # Lint all workspaces
 - **Audio completion write path validated on-device.** `completedAt` is written correctly to `user_whisper_events` after the 85% playback threshold. `PATCH /whisper/:id/complete` confirmed in API logs with no errors.
 - **Reanimated 4 `runOnJS` fix is stable.** Reanimated 4 compiles `withTiming`/`withSpring` completion callbacks as UI-thread worklets. Any plain JS function called from them must be wrapped with `runOnJS` — applies to `WaveformBar.animate()`, `BreathRing.breathe()`, and `animateClose`. The type-level deprecation warnings are cosmetic; runtime behaviour is stable. Revisit when a supported R4 replacement API emerges.
 
+### Sprint G — TTS & Audio Pipeline (in progress)
+
+- **Voice provider changed to Google Cloud TTS.** ElevenLabs removed. Active voice: `en-GB-Chirp3-HD-Aoede`. `en-SG` locale does not exist in GCP — all voices are `en-GB`. PM confirmed narrator roster on 2026-05-27 (see Narrator Architecture section).
+- **Narrator profile system implemented.** `services/media/tts.ts` — three registered profiles (Aoede, Charon, Neural2-B) with per-narrator configs. `generateNarrationAudio(text, whisperId, narratorId?)` — defaults to Aoede.
+- **SSML builder** (`services/media/ssml.ts`) — 1.8s leading arrival pause, sentence-length-aware inter-sentence pauses (2.2s after short sentences → 1.2s after long), ellipsis-aware, phoneme-hooked.
+- **Phoneme override system** (`services/media/phonemes.ts`) — 27 Singapore place names registered. `applyPhonemeOverrides` runs before sentence splitting in `buildSsml`.
+- **Narrator preview endpoint** — `POST /admin/whispers/preview-narration`. Returns base64 MP3 + SSML used. Does not write to DB. For content team QA iteration.
+- **36 tests green** across SSML builder, phoneme overrides, and generation service.
+- **Audio storage** — `city/{citySlug}/whispers/{whisperId}.mp3` in Supabase `whisper-audio` bucket. citySlug derived from `City.countryCode + City.name`.
+- **WhisperCard loading states** (G-7) and **audio preloading** (G-8) already implemented.
+- **E2E validation pending.** Sprint is done when: approve → GenerationJob completes → audioUrl populated → device hears Aoede narration → silences feel intentional → Singapore place names pronounced correctly.
+
 ---
 
 ## Product Direction
@@ -232,32 +244,72 @@ The Collected / Journal screen should feel like opening a drawer of found object
 
 Singapore MVP content should not be landmark coverage. The emotional palette is: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. POI selection should favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
 
-### Narrator voice identity
+### Narrator Architecture
 
-**Provider:** ElevenLabs
-**Primary voice (MVP):** Declan Sage — Eleven Multilingual v2 or v3
-**Secondary / experimental:** Arabella — used selectively for softer emotional ambiguity, poetic intimacy, or reflective waterfront/interior-space atmosphere. Not the default MVP narrator.
+> **Provider:** Google Cloud Text-to-Speech (Chirp3-HD tier)
+> **Note:** GCP has no `en-SG` locale. All voices are `en-GB`. British English is the production accent for MVP — the SSML layer and per-narrator config suppress broadcaster/documentary cadence ("colonial tour-guide syndrome").
 
-**Production settings (Declan Sage baseline)**
+#### Narrator roster (PM confirmed 2026-05-27)
 
-| Parameter | Value |
-|---|---|
-| Stability | 39% |
-| Similarity / Clarity | 78% |
-| Style exaggeration | Minimal |
-| Pacing | Slightly slower than conversational |
+| Role | `narratorId` | Voice | Gender | Tier |
+|---|---|---|---|---|
+| **Primary MVP** | `aoede` | `en-GB-Chirp3-HD-Aoede` | Female | Chirp3-HD |
+| Nighttime / industrial | `charon` | `en-GB-Chirp3-HD-Charon` | Male | Chirp3-HD |
+| Stable fallback | `neural2_b` | `en-GB-Neural2-B` | Male | Neural2 |
 
-- Punctuation shaping: heavy ellipsis (`...`), em-dashes (`—`), sentence fragmentation allowed.
-- Preserve breath, pause, and slight vocal instability — do not smooth these out.
-- Avoid over-enunciation and commercial/podcast cadence.
+Charon is not yet wired to any content path — infrastructure preparation only. Persona-based selection (Charon for nighttime whispers) to be wired in a future sprint.
 
-**Voice rationale**
+#### Per-narrator audio config
 
-CityWhispers is not guided tourism or narrated storytelling. The narrator should feel like memory surfacing through a place. Declan Sage was chosen for his restrained gravel texture, low-register delivery, and silence handling — he preserves emotional residue without introducing documentary or meditation-app energy. The slight vocal friction makes the city feel physically lived-in rather than theatrically mysterious.
+| Setting | `aoede` | `charon` | `neural2_b` |
+|---|---|---|---|
+| `speakingRate` | `0.90` | `0.88` | `0.88` |
+| `pitch` | `-1.5` | `-2.0` | `-2.0` |
+| `volumeGainDb` | `-0.5` | `-1.0` | `-1.5` |
 
-This aligns directly with the Singapore palette: humidity, lingering heat, layered redevelopment, quiet loneliness, the persistence of old emotional textures inside rapidly changing urban environments. Narration should feel overheard late at night through damp air — intimate, unhurried, slightly incomplete.
+To swap the active narrator: change `DEFAULT_NARRATOR` in [apps/api/src/services/media/tts.ts](apps/api/src/services/media/tts.ts). All profiles are registered in `NARRATOR_PROFILES` — no other code changes needed.
 
-**Implementation principle:** Audio delivery should never sound finished. Sentence endings soften rather than resolve cleanly. The listener should feel like the city continues thinking after playback stops.
+#### Auth
+
+GCP service account credentials via env vars. Required IAM role: `Cloud Text-to-Speech API User`.
+
+```
+GOOGLE_CLOUD_PROJECT_ID
+GOOGLE_CLOUD_CLIENT_EMAIL
+GOOGLE_CLOUD_PRIVATE_KEY   # Literal \n sequences — normalised on load in tts.ts
+```
+
+#### SSML pacing — [apps/api/src/services/media/ssml.ts](apps/api/src/services/media/ssml.ts)
+
+The silence windows are not padding — they're where ambient city sound lives. Do not optimise them away without PM sign-off.
+
+- **Leading break:** `1.8s` — voice arrives, doesn't start
+- **Inter-sentence pauses:** sentence-length-aware — `2.2s` after ≤5 words, `2.0s` after ≤8 words, `1.6s` after ≤12 words, `1.2s` after longer. Short sentences sit in silence longer; the rhythm feels uneven and human.
+- **Ellipses (`...`):** `<break time="1.2s"/>...` — break inserted, ellipsis preserved for natural TTS softening. Ellipsis is NOT a sentence boundary.
+- **Trailing break:** `2.0s` — no abrupt cutoffs, ever
+- **Em-dashes (`—`):** untouched — TTS handles them naturally
+
+If narration sounds upbeat, explanatory, or performative — tune SSML pauses first, phoneme overrides second. Never look at the voice config first.
+
+#### Phoneme overrides — [apps/api/src/services/media/phonemes.ts](apps/api/src/services/media/phonemes.ts)
+
+British Chirp3-HD mispronounces Singaporean place names. `applyPhonemeOverrides(text)` wraps known names in `<phoneme alphabet="ipa">` tags before sentence splitting. 27 names registered (Kallang, Tiong Bahru, Tanjong Pagar, etc.). Add new entries to `PHONEME_OVERRIDES` as content expands — do not inline phoneme tags in whisper text.
+
+#### Audio storage
+
+Supabase `whisper-audio` bucket. Path: `city/{citySlug}/whispers/{whisperId}.mp3`. Files are immutable after generation — regeneration overwrites at the same path. `citySlug` is derived at runtime from `City.countryCode + City.name` (e.g. `sg-singapore`).
+
+#### Narrator preview endpoint
+
+`POST /admin/whispers/preview-narration` — lets the content team test SSML variants and phoneme fixes without touching the DB. Returns `{ audioBase64, mimeType, narratorId, voiceName, ssml }`. Accepts `{ text, narratorId?, ssmlOverride? }`.
+
+#### Implementation principle
+
+Audio delivery should never sound finished. Sentence endings soften rather than resolve cleanly. The listener should feel like the city continues thinking after playback stops.
+
+---
+
+> **Original ElevenLabs direction (archived):** Declan Sage — Eleven Multilingual v2/v3. Stability 39%, similarity 78%, style minimal. Arabella as secondary voice. Superseded before production use — do not re-introduce.
 
 ---
 
@@ -302,7 +354,7 @@ This aligns directly with the Singapore palette: humidity, lingering heat, layer
   "whisper": {
     "text": "<60–120 words. First person, present tense. Written to be heard, not read. See tonal brief below.>",
     "audioScript": "<same as text, or leave empty>",
-    "voice": "Declan Sage | Arabella",
+    "voice": "en-SG-Neural2-A",
     "durationSeconds": "<word count ÷ 2.5>",
     "audioFileName": "<countryISO2>-<kebab-place-name>-v1.mp3"
   }
@@ -374,7 +426,7 @@ The whisper is the city speaking to a single person standing in that place. It i
 | `atmosphere.intensityLevel` | Strict integer 1–5. |
 | `atmosphere.sourceAttribution` | Always `"CityWhispers Research Unit"`. |
 | `atmosphere.reviewStatus` | Always `"draft"`. |
-| `atmosphere.contentOwner` | The voice assigned to the whisper (`"Declan Sage"` or `"Arabella"`). |
+| `atmosphere.contentOwner` | The researcher or team member who authored this POI's content. |
 | `whisper.durationSeconds` | Strict number: word count ÷ 2.5. Round to one decimal place. |
 | `whisper.audioScript` | Exact duplicate of `text`, preserving all ellipsis (`...`) and em-dash (`—`) pacing. |
 

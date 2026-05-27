@@ -3,8 +3,8 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { generateWhisper, scoreWhisper, getCurrentTimeSlot } from '../../services/generation'
 import { getAIProvider } from '../../services/ai'
-import { generateTTS, resolveVoiceId } from '../../services/tts'
-import { uploadWhisperAudio } from '../../services/media'
+import { generateNarrationAudio, generateNarrationFromSsml, NARRATOR_PROFILES, DEFAULT_NARRATOR } from '../../services/media/tts'
+import { uploadAudioAssetFromCity } from '../../services/media/upload'
 import { NotFoundError, GenerationError } from '../../lib/errors'
 
 // ── Validation schemas ─────────────────────────────────────────────────────
@@ -59,6 +59,55 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
       orderBy: { createdAt: 'desc' },
     })
     return { data: whispers }
+  })
+
+  // ── POST /admin/whispers/preview-narration — G-5 ────────────────────────
+  // Registered BEFORE /:id routes so the literal path is never captured as an id.
+  //
+  // Lets the content team test SSML variants and phoneme fixes without going
+  // through the full approve → generate → serve cycle. Does NOT write to the DB.
+  //
+  // Body: { text, narratorId?, ssmlOverride? }
+  //   text         — raw whisper text (buildSsml runs automatically)
+  //   narratorId   — one of 'aoede' | 'charon' | 'neural2_b' (default: 'aoede')
+  //   ssmlOverride — if provided, skips buildSsml and sends this SSML directly
+  //
+  // Returns: { audioBase64, mimeType, narratorId, voiceName, ssml }
+  //   audioBase64 — base64-encoded MP3 — play directly in browser or audio tag
+  //   ssml        — the SSML that was sent to GCP (useful for debugging pacing)
+  app.post('/preview-narration', async (request, reply) => {
+    const PreviewSchema = z.object({
+      text: z.string().min(1).max(2000),
+      narratorId: z.enum(['aoede', 'charon', 'neural2_b']).optional().default('aoede'),
+      ssmlOverride: z.string().optional(),
+    })
+
+    const { text, narratorId, ssmlOverride } = PreviewSchema.parse(request.body)
+    const profile = NARRATOR_PROFILES[narratorId] ?? NARRATOR_PROFILES.aoede
+
+    // Build SSML ourselves so we can return it in the response for inspection
+    let ssml: string
+    let audioBuffer: Buffer
+
+    if (ssmlOverride) {
+      ssml = ssmlOverride
+      audioBuffer = await generateNarrationFromSsml(ssmlOverride, 'preview', narratorId)
+    } else {
+      // Import buildSsml here to avoid circular dep risk — ssml.ts has no server deps
+      const { buildSsml } = await import('../../services/media/ssml')
+      ssml = buildSsml(text)
+      audioBuffer = await generateNarrationAudio(text, 'preview', narratorId)
+    }
+
+    return reply.send({
+      data: {
+        audioBase64: audioBuffer.toString('base64'),
+        mimeType: 'audio/mpeg',
+        narratorId: profile.id,
+        voiceName: profile.voiceName,
+        ssml,
+      },
+    })
   })
 
   // ── POST /admin/whispers/generate — F-2 ─────────────────────────────────
@@ -257,6 +306,7 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
       where: { id },
       include: {
         persona: { select: { slug: true } },
+        city: { select: { name: true, countryCode: true } },
       },
     })
     if (!existing) throw new NotFoundError('Whisper')
@@ -282,17 +332,14 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
       // Fire-and-forget: resolve voice → generate TTS → upload → write URL
       void (async () => {
         try {
-          const personaSlug = existing.persona?.slug ?? 'declan_sage'
-          const voiceId = resolveVoiceId(personaSlug)
+          request.log.info(
+            { whisperId: id, narrator: DEFAULT_NARRATOR.id, voice: DEFAULT_NARRATOR.voiceName },
+            'Starting TTS generation'
+          )
 
-          request.log.info({ whisperId: id, personaSlug, voiceId }, 'Starting TTS generation')
+          const audioBuffer = await generateNarrationAudio(existing.whisperText, id)
 
-          const audioBuffer = await generateTTS({
-            text: existing.whisperText,
-            voiceId,
-          })
-
-          const audioUrl = await uploadWhisperAudio(id, audioBuffer)
+          const audioUrl = await uploadAudioAssetFromCity(id, existing.city, audioBuffer)
 
           await prisma.generationJob.update({
             where: { id: job.id },

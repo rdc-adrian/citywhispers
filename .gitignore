@@ -8,3 +8,8 @@ prisma/migrations/*.sql.bak
 .claude/settings.local.json
 
 archive/
+
+# GCP service account keys — never commit
+resources/keys/
+*.json.key
+*-credentials.json
