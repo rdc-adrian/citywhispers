@@ -38,3 +38,15 @@ export class GenerationError extends AppError {
     super(message, 422, 'GENERATION_ERROR')
   }
 }
+
+export class TTSError extends AppError {
+  constructor(message: string) {
+    super(message, 502, 'TTS_ERROR')
+  }
+}
+
+export class MediaUploadError extends AppError {
+  constructor(message: string) {
+    super(message, 502, 'MEDIA_UPLOAD_ERROR')
+  }
+}

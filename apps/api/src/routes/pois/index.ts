@@ -49,8 +49,10 @@ export async function poisRoutes(app: FastifyInstance) {
       },
       include: {
         generatedWhispers: {
-          where: { isStale: false },
-          select: { id: true },
+          // G-3: include audioUrl so mobile can preload audio for nearby POIs
+          where: { isStale: false, status: 'approved' } as any,
+          select: { id: true, audioUrl: true },
+          orderBy: { qualityScore: 'desc' },
           take: 1,
         },
       },
@@ -63,14 +65,17 @@ export async function poisRoutes(app: FastifyInstance) {
         const distanceMeters = Math.round(
           haversineDistance(lat, lng, poi.latitude, poi.longitude)
         )
+        const bestWhisper = poi.generatedWhispers[0] ?? null
         return {
           id: poi.id,
           name: poi.name,
           latitude: poi.latitude,
           longitude: poi.longitude,
           category: poi.category,
-          hasWhisper: poi.generatedWhispers.length > 0,
+          hasWhisper: bestWhisper !== null,
+          audioUrl: bestWhisper?.audioUrl ?? null,
           distanceMeters,
+          importanceScore: poi.importanceScore,
           visited: false,
         }
       })

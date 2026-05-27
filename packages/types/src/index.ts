@@ -8,8 +8,15 @@ export interface PoiSummary {
   category: string;
   latitude: number;
   longitude: number;
-  distance?: number; // Distance from user in meters
+  /** Distance from user in meters (returned by /pois/nearby as distanceMeters) */
+  distanceMeters?: number;
+  /** @deprecated Use distanceMeters instead */
+  distance?: number;
   importanceScore: number;
+  /** Set when the POI has an approved whisper with audio ready — used for preloading */
+  audioUrl?: string | null;
+  hasWhisper?: boolean;
+  visited?: boolean;
 }
 export interface PoiAtmosphere {
   /** Dominant emotional register e.g. "Obsolescence", "Isolation" */

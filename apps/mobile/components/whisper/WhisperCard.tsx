@@ -50,6 +50,53 @@ const TIMING = {
   progressReveal: 300,
 }
 
+// ─── Waveform skeleton (G-5) ──────────────────────────────────────────────────
+// Shown when audioUrl is present but the sound hasn't loaded yet (playbackState
+// === 'loading'). Pulsing bars at very low opacity signal "audio is coming"
+// without triggering layout shift — the container is the same height as the
+// live waveform.
+
+function WaveformSkeleton() {
+  const opacity = useSharedValue(0.08)
+
+  useEffect(() => {
+    const pulse = () => {
+      opacity.value = withTiming(
+        0.22,
+        { duration: 900, easing: Easing.inOut(Easing.sin) },
+        (finished) => {
+          if (finished) {
+            opacity.value = withTiming(
+              0.08,
+              { duration: 900, easing: Easing.inOut(Easing.sin) },
+              (done) => { if (done) runOnJS(pulse)() }
+            )
+          }
+        }
+      )
+    }
+    pulse()
+  }, [])
+
+  const style = useAnimatedStyle(() => ({ opacity: opacity.value }))
+
+  return (
+    <Animated.View style={[s.waveform, style]}>
+      {BAR_HEIGHTS.map((h, i) => (
+        <View
+          key={i}
+          style={{
+            width: 3,
+            height: h,
+            borderRadius: 2,
+            backgroundColor: C.gold,
+          }}
+        />
+      ))}
+    </Animated.View>
+  )
+}
+
 // ─── Waveform ─────────────────────────────────────────────────────────────────
 
 const BAR_HEIGHTS = [5, 9, 14, 8, 11, 6, 13, 7, 10, 4]
@@ -468,7 +515,11 @@ export function WhisperCard() {
                     </Text>
                   </TouchableOpacity>
                 </View>
-                <WaveformZone active={isPlaying} isCompleted={isCompleted} />
+                {/* G-5: skeleton while buffering, live waveform once loaded */}
+              {isLoading
+                ? <WaveformSkeleton />
+                : <WaveformZone active={isPlaying} isCompleted={isCompleted} />
+              }
               </View>
 
               {/* Error label — only when audio failed to load */}
@@ -484,6 +535,11 @@ export function WhisperCard() {
                 durationSeconds={durationSeconds}
                 onReplay={handleReplay}
               />
+            </Animated.View>
+          ) : activeWhisper.isAudioGenerating ? (
+            // G-5 state 3: TTS is being generated server-side — card opened before audio ready
+            <Animated.View style={[s.noAudioZone, contentStyle]}>
+              <Text style={s.preparingAudioText}>preparing audio…</Text>
             </Animated.View>
           ) : (
             // No audio — show a quiet placeholder
@@ -699,6 +755,14 @@ const s = StyleSheet.create({
     color: C.textMuted,
     fontStyle: 'italic',
     letterSpacing: 0.2,
+  },
+  // G-5: shown while TTS generation is in-progress server-side
+  preparingAudioText: {
+    fontSize: 11,
+    color: C.gold,
+    fontStyle: 'italic',
+    letterSpacing: 0.3,
+    opacity: 0.55,
   },
   audioErrorText: {
     fontSize: 10,

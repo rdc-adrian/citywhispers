@@ -3,6 +3,8 @@ import { z } from 'zod'
 import { prisma } from '../../lib/prisma'
 import { generateWhisper, scoreWhisper, getCurrentTimeSlot } from '../../services/generation'
 import { getAIProvider } from '../../services/ai'
+import { generateTTS, resolveVoiceId } from '../../services/tts'
+import { uploadWhisperAudio } from '../../services/media'
 import { NotFoundError, GenerationError } from '../../lib/errors'
 
 // ── Validation schemas ─────────────────────────────────────────────────────
@@ -243,14 +245,19 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
     }
   })
 
-  // ── PATCH /admin/whispers/:id/status — F-4 ──────────────────────────────
+  // ── PATCH /admin/whispers/:id/status — F-4 / G-3 ───────────────────────
+  // When transitioning to 'approved', automatically triggers TTS generation.
+  // Audio generation runs async (non-blocking) so the approve response is fast.
+  // A GenerationJob tracks progress; audioUrl is written to the record on completion.
   app.patch<{ Params: { id: string } }>('/:id/status', async (request) => {
     const { id } = request.params
     const { status } = WhisperStatusSchema.parse(request.body)
 
     const existing = await prisma.generatedWhisper.findUnique({
       where: { id },
-      select: { id: true },
+      include: {
+        persona: { select: { slug: true } },
+      },
     })
     if (!existing) throw new NotFoundError('Whisper')
 
@@ -259,6 +266,56 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
       // as any: Prisma v7 monorepo type path issue — status field is live in DB
       data: { status } as any,
     })
+
+    // ── G-3: Trigger audio generation on approval ──────────────────────────
+    if (status === 'approved') {
+      // Create a GenerationJob to track the async audio pipeline
+      const job = await prisma.generationJob.create({
+        data: {
+          whisperId: id,
+          jobType: 'audio_generation',
+          status: 'pending',
+          queueName: 'tts-generate',
+        },
+      })
+
+      // Fire-and-forget: resolve voice → generate TTS → upload → write URL
+      void (async () => {
+        try {
+          const personaSlug = existing.persona?.slug ?? 'declan_sage'
+          const voiceId = resolveVoiceId(personaSlug)
+
+          request.log.info({ whisperId: id, personaSlug, voiceId }, 'Starting TTS generation')
+
+          const audioBuffer = await generateTTS({
+            text: existing.whisperText,
+            voiceId,
+          })
+
+          const audioUrl = await uploadWhisperAudio(id, audioBuffer)
+
+          await prisma.generationJob.update({
+            where: { id: job.id },
+            data: { status: 'completed', completedAt: new Date() },
+          })
+
+          request.log.info({ whisperId: id, audioUrl }, 'TTS generation completed')
+        } catch (err) {
+          request.log.error(
+            { err, whisperId: id, jobId: job.id },
+            'TTS generation failed'
+          )
+          await prisma.generationJob.update({
+            where: { id: job.id },
+            data: {
+              status: 'failed',
+              errorMessage: (err as Error).message,
+              completedAt: new Date(),
+            },
+          }).catch(() => { /* ignore secondary DB failure */ })
+        }
+      })()
+    }
 
     return { data: whisper }
   })

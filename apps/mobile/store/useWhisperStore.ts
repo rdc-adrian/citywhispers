@@ -17,6 +17,8 @@ export interface ActiveWhisper {
   ambientLabel: string
   nearby: Array<{ id: string; name: string; distanceMeters: number }>
   isRevisit?: boolean
+  /** G-5: true while TTS is being generated server-side (card opened before audio ready) */
+  isAudioGenerating?: boolean
 }
 
 type WhisperStore = {
