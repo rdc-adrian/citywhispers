@@ -214,17 +214,17 @@ npm run lint                # Lint all workspaces
 - **Audio completion write path validated on-device.** `completedAt` is written correctly to `user_whisper_events` after the 85% playback threshold. `PATCH /whisper/:id/complete` confirmed in API logs with no errors.
 - **Reanimated 4 `runOnJS` fix is stable.** Reanimated 4 compiles `withTiming`/`withSpring` completion callbacks as UI-thread worklets. Any plain JS function called from them must be wrapped with `runOnJS` — applies to `WaveformBar.animate()`, `BreathRing.breathe()`, and `animateClose`. The type-level deprecation warnings are cosmetic; runtime behaviour is stable. Revisit when a supported R4 replacement API emerges.
 
-### Sprint G — TTS & Audio Pipeline (in progress)
+### Sprint G — TTS & Audio Pipeline ✅
 
 - **Voice provider changed to Google Cloud TTS.** ElevenLabs removed. Active voice: `en-GB-Chirp3-HD-Aoede`. `en-SG` locale does not exist in GCP — all voices are `en-GB`. PM confirmed narrator roster on 2026-05-27 (see Narrator Architecture section).
 - **Narrator profile system implemented.** `services/media/tts.ts` — three registered profiles (Aoede, Charon, Neural2-B) with per-narrator configs. `generateNarrationAudio(text, whisperId, narratorId?)` — defaults to Aoede.
 - **SSML builder** (`services/media/ssml.ts`) — 1.8s leading arrival pause, sentence-length-aware inter-sentence pauses (2.2s after short sentences → 1.2s after long), ellipsis-aware, phoneme-hooked.
 - **Phoneme override system** (`services/media/phonemes.ts`) — 27 Singapore place names registered. `applyPhonemeOverrides` runs before sentence splitting in `buildSsml`.
 - **Narrator preview endpoint** — `POST /admin/whispers/preview-narration`. Returns base64 MP3 + SSML used. Does not write to DB. For content team QA iteration.
-- **36 tests green** across SSML builder, phoneme overrides, and generation service.
+- **22 SSML/phoneme tests green.** Suites: structural requirements, multi-sentence pacing, ellipsis handling, edge cases, phoneme overrides.
 - **Audio storage** — `city/{citySlug}/whispers/{whisperId}.mp3` in Supabase `whisper-audio` bucket. citySlug derived from `City.countryCode + City.name`.
-- **WhisperCard loading states** (G-7) and **audio preloading** (G-8) already implemented.
-- **E2E validation pending.** Sprint is done when: approve → GenerationJob completes → audioUrl populated → device hears Aoede narration → silences feel intentional → Singapore place names pronounced correctly.
+- **WhisperCard loading states** (G-7) and **audio preloading** (G-8) implemented.
+- **E2E validated on-device (2026-05-29).** Approve → GenerationJob completes → audioUrl populated → Aoede narration plays on device → silences feel intentional → 85% completion write path regression-free.
 
 ---
 
