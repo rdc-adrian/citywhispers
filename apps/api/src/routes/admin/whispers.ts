@@ -94,7 +94,7 @@ export async function adminWhisperRoutes(app: FastifyInstance) {
       audioBuffer = await generateNarrationFromSsml(ssmlOverride, 'preview', narratorId)
     } else {
       // Import buildSsml here to avoid circular dep risk — ssml.ts has no server deps
-      const { buildSsml } = await import('../../services/media/ssml')
+      const { buildSsml } = await import('../../services/media/ssml.js')
       ssml = buildSsml(text)
       audioBuffer = await generateNarrationAudio(text, 'preview', narratorId)
     }
