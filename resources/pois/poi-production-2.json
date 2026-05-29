@@ -45,7 +45,7 @@
     "whisper": {
       "text": "The air has been trapped down here since nineteen seventy-four. It feels heavy ... tasting of old carbon and cold stone that never sees the sun. Up on the highway, the city is racing past, but under these low pipes, time just pools like the water in the corner. Every tyre mark on the ramp is a car that left hours ago ... leaving behind nothing but the smell of burnt rubber and oil. The fluorescent tubes overhead have a rhythmic flicker ... a dry click that cuts through the dark. It feels like the whole building is holding its breath ... waiting to settle another inch into the mud.",
       "audioScript": "The air has been trapped down here since nineteen seventy-four. It feels heavy ... tasting of old carbon and cold stone that never sees the sun. Up on the highway, the city is racing past, but under these low pipes, time just pools like the water in the corner. Every tyre mark on the ramp is a car that left hours ago ... leaving behind nothing but the smell of burnt rubber and oil. The fluorescent tubes overhead have a rhythmic flicker ... a dry click that cuts through the dark. It feels like the whole building is holding its breath ... waiting to settle another inch into the mud.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 47.6,
       "audioFileName": "sg-golden-mile-tower-basement-v1.mp3"
     }
@@ -96,7 +96,7 @@
     "whisper": {
       "text": "The families are all gone now ... but their shadows are still stuck to these blue pillars. You can see where the washing lines used to clip into the concrete, where the children scraped their bicycles against the low walls. These little ceramic checkers tables ... nobody is coming back to play on them. The silence here isn't peaceful ... it’s just waiting for the iron balls and the excavators to arrive. The wind blows straight through the empty elevator shafts ... a hollow sound that carries the dust of forty years of afternoon conversations out onto the grass.",
       "audioScript": "The families are all gone now ... but their shadows are still stuck to these blue pillars. You can see where the washing lines used to clip into the concrete, where the children scraped their bicycles against the low walls. These little ceramic checkers tables ... nobody is coming back to play on them. The silence here isn't peaceful ... it’s just waiting for the iron balls and the excavators to arrive. The wind blows straight through the empty elevator shafts ... a hollow sound that carries the dust of forty years of afternoon conversations out onto the grass.",
-      "voice": "Arabella",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 48.8,
       "audioFileName": "sg-tanglin-halt-block-49-v1.mp3"
     }
@@ -147,7 +147,7 @@
     "whisper": {
       "text": "The forest is slowly drinking the reservoir today. The water is so still ... like dark glass, swallowing the reflection of the clouds before they can cross the ridge. Under the timber boards, the drowned tree roots are rotting in the mud ... a slow, wet breath that smells of old earth. Everything here feels heavy, waterlogged, like the city's memory is slipping down into the deep silt where nobody can reach it. The cicadas keep up that sharp, steady buzz in the canopy ... a constant sound that makes the silence feel even larger than it is.",
       "audioScript": "The forest is slowly drinking the reservoir today. The water is so still ... like dark glass, swallowing the reflection of the clouds before they can cross the ridge. Under the timber boards, the drowned tree roots are rotting in the mud ... a slow, wet breath that smells of old earth. Everything here feels heavy, waterlogged, like the city's memory is slipping down into the deep silt where nobody can reach it. The cicadas keep up that sharp, steady buzz in the canopy ... a constant sound that makes the silence feel even larger than it is.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 48.4,
       "audioFileName": "sg-macritchie-submerged-boardwalk-v1.mp3"
     }
@@ -198,7 +198,7 @@
     "whisper": {
       "text": "The heat never leaves these iron steps. It rises up from the kitchens below ... smelling of burning oil and five-spice, sticking to the damp clothes hanging from the windows above. These spiral stairs look like they’re trying to untangle themselves from the old brickwork. Upstairs, behind the rusted security grilles, three different televisions are playing at once ... a blur of voices that nobody is really listening to. Everyone is just resting after the long shift, staring out into the dark alley where the single lightbulb keeps flickering on and off ... on and off.",
       "audioScript": "The heat never leaves these iron steps. It rises up from the kitchens below ... smelling of burning oil and five-spice, sticking to the damp clothes hanging from the windows above. These spiral stairs look like they’re trying to untangle themselves from the old brickwork. Upstairs, behind the rusted security grilles, three different televisions are playing at once ... a blur of voices that nobody is really listening to. Everyone is just resting after the long shift, staring out into the dark alley where the single lightbulb keeps flickering on and off ... on and off.",
-      "voice": "Arabella",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 47.6,
       "audioFileName": "sg-geylang-lorong-11-stairs-v1.mp3"
     }
@@ -249,7 +249,7 @@
     "whisper": {
       "text": "The names are just rows of straight lines when you look close. The stone holds the heat of the afternoon sun ... giving it back to the air now that the shadows are stretching across the grass. Down at the bottom of the hill, the container trucks are starting their night runs to the coast ... a low, metallic roar that never stops. But up here ... nothing moves. The rows of white graves look like they’re waiting for something to be decided. The light is turning grey over the strait, and the names are just slipping away into the dark, one by one.",
       "audioScript": "The names are just rows of straight lines when you look close. The stone holds the heat of the afternoon sun ... giving it back to the air now that the shadows are stretching across the grass. Down at the bottom of the hill, the container trucks are starting their night runs to the coast ... a low, metallic roar that never stops. But up here ... nothing moves. The rows of white graves look like they’re waiting for something to be decided. The light is turning grey over the strait, and the names are just slipping away into the dark, one by one.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 48,
       "audioFileName": "sg-kranji-war-memorial-terraces-v1.mp3"
     }

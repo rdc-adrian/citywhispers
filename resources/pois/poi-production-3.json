@@ -1,0 +1,257 @@
+[
+  {
+    "poi": {
+      "name": "Beauty World Centre Roof Level Abandoned Spaces",
+      "slug": "sg-beauty-world-roof-level",
+      "citySlug": "singapore",
+      "description": "The open-air, weathered upper concrete deck of a 1980s strata-titled shopping mall, overlooking Bukit Timah Road.",
+      "lat": 1.3424,
+      "lng": 103.7761,
+      "triggerRadiusMeters": 80,
+      "category": "building",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Obsolescence",
+        "ambientProfile": "The smell of damp concrete grit, rust, and old moss. A flat acoustic profile where the heavy roar of the Bukit Timah canal road is muffled by the building's parapet wall.",
+        "timeOfDayAffinity": "evening",
+        "movementContext": "standing",
+        "intensityLevel": 4,
+        "environmentalTexture": "spalled concrete, blistering paint, rusted iron railings",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "Beauty World Centre opened in 1984, built to rehouse shopkeepers from the historic, open-air Beauty World Market that closed nearby.",
+        "verified": true,
+        "sourceUrl": "https://infopedia.nlb.gov.sg/infopedia_articles_2013-05-13.html"
+      },
+      {
+        "factType": "sensory",
+        "content": "The upper deck features large drainage sumps that collect stagnant rainwater, growing a bright green layer of slick surface slime.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "architectural",
+        "content": "The building's heavy concrete structural columns show severe discoloration along the rainwater drainage channels, exposing the dark aggregate beneath.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The escalators don't even bother coming up to this level anymore. Out here on the concrete, the sun has baked the old green paint until it looks like dried skin. You can hear the hum of the air conditioners from the tuition centres down on the third floor ... a steady, heavy vibration through the floorboards. Someone left a rusted meta folding chair tucked into the corner by the elevator motor housing ... its plastic seat cracked straight down the middle. Nobody comes up here to look at the view. They just leave the space to grow dark, while the traffic down on the road below keeps rushing toward the highway.",
+      "audioScript": "The escalators don't even bother coming up to this level anymore. Out here on the concrete, the sun has baked the old green paint until it looks like dried skin. You can hear the hum of the air conditioners from the tuition centres down on the third floor ... a steady, heavy vibration through the floorboards. Someone left a rusted meta folding chair tucked into the corner by the elevator motor housing ... its plastic seat cracked straight down the middle. Nobody comes up here to look at the view. They just leave the space to grow dark, while the traffic down on the road below keeps rushing toward the highway.",
+      "voice": "en-GB-Chirp3-HD-Aoede",
+      "durationSeconds": 48.4,
+      "audioFileName": "sg-beauty-world-roof-level-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Little India MRT Underpass Tiled Walkway",
+      "slug": "sg-little-india-underpass-walkway",
+      "citySlug": "singapore",
+      "description": "The starkly lit, beige-tiled subterranean pedestrian tunnel connecting the transit lines beneath Bukit Timah Road.",
+      "lat": 1.3068,
+      "lng": 103.8491,
+      "triggerRadiusMeters": 80,
+      "category": "infrastructure",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Transition",
+        "ambientProfile": "A blast of cold, recirculated air carrying the scent of floor wax and wet umbrellas. The rhythmic, sharp echo of hundreds of leather and rubber shoe soles hitting the ceramic glaze.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "passing through",
+        "intensityLevel": 3,
+        "environmentalTexture": "glazed ceramic tiles, stainless steel handrails, flat fluorescent light",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The North East Line station infrastructure was constructed deep beneath the existing Rochor Canal bed, requiring extensive groundwater management during excavation.",
+        "verified": true,
+        "sourceUrl": "https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/rail_expansion.html"
+      },
+      {
+        "factType": "sensory",
+        "content": "The subterranean alignment creates a permanent micro-draft that moves loose dust particles along the baseboards in tiny, predictable circles.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Commuters increase their walking pace by roughly twenty percent upon entering the central section of the tunnel, driven by the uniformity of the wall patterns.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The tiles are too bright down here ... everything looks flat, scrubbed of any kind of dirt. The air moves in short, cold gasps from the ventilation grilles ... smelling faintly of wet clothes and chemical soap. If you stand near the pillar, the sound of the crowd becomes just one long, heavy sigh ... a thousand rubber soles dragging across the ceramic floor. Nobody stops to check the map. We’re all just being pulled along through the white tube, waiting to be pushed out into the rain up at the street level, entirely invisible to each other.",
+      "audioScript": "The tiles are too bright down here ... everything looks flat, scrubbed of any kind of dirt. The air moves in short, cold gasps from the ventilation grilles ... smelling faintly of wet clothes and chemical soap. If you stand near the pillar, the sound of the crowd becomes just one long, heavy sigh ... a thousand rubber soles dragging across the ceramic floor. Nobody stops to check the map. We’re all just being pulled along through the white tube, waiting to be pushed out into the rain up at the street level, entirely invisible to each other.",
+      "voice": "en-GB-Chirp3-HD-Aoede",
+      "durationSeconds": 43.6,
+      "audioFileName": "sg-little-india-underpass-walkway-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Whampoa Drive Wet Market Late Afternoon Closing",
+      "slug": "sg-whampoa-drive-market-closing",
+      "citySlug": "singapore",
+      "description": "The open-sided market pavilion during its post-noon shutdown phase, with empty concrete tables and pooled rinse water.",
+      "lat": 1.3252,
+      "lng": 103.8541,
+      "triggerRadiusMeters": 80,
+      "category": "market",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Exhaustion",
+        "ambientProfile": "The heavy scent of damp wood shavings, discarded cabbage leaves, and iron water pipe rust. The sound of high-pressure hose water striking hollow plastic baskets.",
+        "timeOfDayAffinity": "afternoon",
+        "movementContext": "slow walk",
+        "intensityLevel": 4,
+        "environmentalTexture": "scoured concrete block, wet red plastic twine, scale rust",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The Whampoa area honors Hoo Ah Kay, a prominent 19th-century leader and merchant known as Whampoa, who maintained large estates in this sector.",
+        "verified": true,
+        "sourceUrl": "https://infopedia.nlb.gov.sg/infopedia_articles_2009-10-30.html"
+      },
+      {
+        "factType": "sensory",
+        "content": "The overhead metal beams retain the greasy residue of poultry processing, dropping small beads of condensed water onto the central walkways as the afternoon cools.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Stall operators sit on low wooden stools near the ice chests, slowly counting paper notes before packing away their brass weighing balances.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The concrete blocks are cold now that the crates have been loaded back onto the lorries. All that noise from the morning ... the shouting over the fish bins, the chop of the cleavers ... it’s just washed down into the central drain with the blood and the scales. A single yellow string from a vegetable crate is floating in a puddle by my shoe. The stall owners are sitting in the dark alcoves, their fingers moving slowly over the crumpled dollar notes. The day is entirely spent ... nothing left but the smell of wet concrete and the heavy iron hooks swinging empty from the rafters.",
+      "audioScript": "The concrete blocks are cold now that the crates have been loaded back onto the lorries. All that noise from the morning ... the shouting over the fish bins, the chop of the cleavers ... it’s just washed down into the central drain with the blood and the scales. A single yellow string from a vegetable crate is floating in a puddle by my shoe. The stall owners are sitting in the dark alcoves, their fingers moving slowly over the crumpled dollar notes. The day is entirely spent ... nothing left but the smell of wet concrete and the heavy iron hooks swinging empty from the rafters.",
+      "voice": "en-GB-Chirp3-HD-Aoede",
+      "durationSeconds": 47.6,
+      "audioFileName": "sg-whampoa-drive-market-closing-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Keppel Road Railway Old Disused Culvert",
+      "slug": "sg-keppel-road-railway-culvert",
+      "citySlug": "singapore",
+      "description": "A forgotten concrete and brick water channel passing beneath the abandoned KTM railway alignment near the harbor.",
+      "lat": 1.2721,
+      "lng": 103.8374,
+      "triggerRadiusMeters": 80,
+      "category": "infrastructure",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Decline",
+        "ambientProfile": "The smell of creosote-soaked earth, rusty iron spikes, and stagnant silt water. The sound of thick wild grass scraping against old brick arches during harbor gusts.",
+        "timeOfDayAffinity": "anytime",
+        "movementContext": "standing",
+        "intensityLevel": 4,
+        "environmentalTexture": "rotted timber ties, split bricks, coarse iron slag",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The Tanjong Pagar Railway Station ceased operations in 2011, concluding eighty years of direct rail connection between Singapore and the Malaysian mainland.",
+        "verified": true,
+        "sourceUrl": "https://www.roots.gov.sg/places/places-of-interest/former-tanjong-pagar-railway-station"
+      },
+      {
+        "factType": "sensory",
+        "content": "The ground beneath the old tracks remains heavily impregnated with black engine oil, resisting plant growth despite years of abandonment.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "The culvert area is a sanctuary for feral grass cats that sleep on the dry ballast stones beneath the overhanging fern leaves.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The iron rails were pulled up years ago ... but the smell of the diesel oil is still cooked right into the dirt. Under this brick arch, the water doesn’t move at all ... just holds a greasy reflection of the container cranes over at the docks. The wild mimosa bushes are crawling over the old ballast stones, their pink flowers closing up as the shadow of the expressway hits the gully. Everything that came down these tracks has gone silent ... leaving just the empty stone path to be swallowed up by the weeds and the damp sea air.",
+      "audioScript": "The iron rails were pulled up years ago ... but the smell of the diesel oil is still cooked right into the dirt. Under this brick arch, the water doesn’t move at all ... just holds a greasy reflection of the container cranes over at the docks. The wild mimosa bushes are crawling over the old ballast stones, their pink flowers closing up as the shadow of the expressway hits the gully. Everything that came down these tracks has gone silent ... leaving just the empty stone path to be swallowed up by the weeds and the damp sea air.",
+      "voice": "en-GB-Chirp3-HD-Aoede",
+      "durationSeconds": 46.8,
+      "audioFileName": "sg-keppel-road-railway-culvert-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Loyang Beach Isolated Coastal Mangrove Margin",
+      "slug": "sg-loyang-beach-mangrove-margin",
+      "citySlug": "singapore",
+      "description": "A secluded strip of low sand and protruding pneumatophores near the industrial aviation fabrication zones.",
+      "lat": 1.3856,
+      "lng": 103.9744,
+      "triggerRadiusMeters": 120,
+      "category": "waterfront",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Isolation",
+        "ambientProfile": "The smell of anaerobic mud, decomposing seagrass, and aviation fuel vapors. The faint, metallic whine of turbine testing rigs drifting over from the airport perimeter.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "standing",
+        "intensityLevel": 3,
+        "environmentalTexture": "sticky mud, salt-pitted plastic flotsam, coarse shell sand",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The Loyang coastal frontage was heavily modified from the late 1960s onward to support industrial marine services and aerospace engineering parks.",
+        "verified": true,
+        "sourceUrl": "https://www.lta.gov.sg/content/ltagov/en/upcoming_projects/road_projects/loyang-viaduct.html"
+      },
+      {
+        "factType": "sensory",
+        "content": "The incoming tide traps heavy plastic bottles and industrial styrofoam fragments against the vertical roots, creating a soft, repeating click as the water rises.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Night shift factory technicians occasionally sit on the concrete seawall edge, smoking in silence while watching the flights descend toward the eastern runways.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The sand out here is grey ... full of broken glass and small bits of black plastic washed up from the shipping channels. Between the mangrove roots, the water turns thick, oily, swallowing the white light from the factory fences over the road. You can hear the low, mechanical scream of the jet engines being tested behind the tree line ... a sound that never lets go of the air. This coast isn't for holidays. It’s just where the city runs out of concrete and leaves the mud to take care of itself in the dark ... under the low flights.",
+      "audioScript": "The sand out here is grey ... full of broken glass and small bits of black plastic washed up from the shipping channels. Between the mangrove roots, the water turns thick, oily, swallowing the white light from the factory fences over the road. You can hear the low, mechanical scream of the jet engines being tested behind the tree line ... a sound that never lets go of the air. This coast isn't for holidays. It’s just where the city runs out of concrete and leaves the mud to take care of itself in the dark ... under the low flights.",
+      "voice": "en-GB-Chirp3-HD-Aoede",
+      "durationSeconds": 47.2,
+      "audioFileName": "sg-loyang-beach-mangrove-margin-v1.mp3"
+    }
+  }
+]

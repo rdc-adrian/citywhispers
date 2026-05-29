@@ -45,7 +45,7 @@
     "whisper": {
       "text": "The grease has worked its way so deep into the concrete here ... I don't think any amount of rain will ever wash it out. The engines are finally going cold, but the metal still ticks as it settles. Another day of stripping gears, of fixing things that are just going to break down again on the expressway next week. Upstairs, someone is frying garlic ... the smell drops down through the floorboards to mix with the transmission fluid. It's always the same. We wash our hands at the iron sink, but the black rim stays under the fingernails. It never really leaves.",
       "audioScript": "The grease has worked its way so deep into the concrete here ... I don't think any amount of rain will ever wash it out. The engines are finally going cold, but the metal still ticks as it settles. Another day of stripping gears, of fixing things that are just going to break down again on the expressway next week. Upstairs, someone is frying garlic ... the smell drops down through the floorboards to mix with the transmission fluid. It's always the same. We wash our hands at the iron sink, but the black rim stays under the fingernails. It never really leaves.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 44.8,
       "audioFileName": "sg-bukit-merah-auto-workshops-v1.mp3"
     }
@@ -96,7 +96,7 @@
     "whisper": {
       "text": "Everyone is moving, but nobody is looking at each other. The blue glass makes the whole world outside look like it's underwater ... the buses, the trees, the old blocks waiting to be torn down. I can feel the rumble of the evening train right through the soles of my shoes before I even hear it. A thousands shoes scuffing across this plastic floor every single hour, all heading home to the same small rooms, but the air here stays entirely vacant. Just the sound of a hundred turning turnstiles echoes down the staircase ... over and over.",
       "audioScript": "Everyone is moving, but nobody is looking at each other. The blue glass makes the whole world outside look like it's underwater ... the buses, the trees, the old blocks waiting to be torn down. I can feel the rumble of the evening train right through the soles of my shoes before I even hear it. A thousands shoes scuffing across this plastic floor every single hour, all heading home to the same small rooms, but the air here stays entirely vacant. Just the sound of a hundred turning turnstiles echoes down the staircase ... over and over.",
-      "voice": "Arabella",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 42.4,
       "audioFileName": "sg-queenstown-mrt-bridge-v1.mp3"
     }
@@ -147,7 +147,7 @@
     "whisper": {
       "text": "The yellow paint on these pillars has been chipping away since the seventies. Every dent in the metal doors tells a story ... a heavy crate of textiles, a luggage cart from the travel agencies upstairs, pushed too fast. The air is old ... it smells of dust and dried chrysanthemum flowers left out on the small red altars. They built the towers so high to reach the future, but down here in the concrete folds, the clocks stopped decades ago. The elevator indicator clicks ... a heavy iron click ... but the cab is stuck on the fifth floor, and nobody is rushing to fix it.",
       "audioScript": "The yellow paint on these pillars has been chipping away since the seventies. Every dent in the metal doors tells a story ... a heavy crate of textiles, a luggage cart from the travel agencies upstairs, pushed too fast. The air is old ... it smells of dust and dried chrysanthemum flowers left out on the small red altars. They built the towers so high to reach the future, but down here in the concrete folds, the clocks stopped decades ago. The elevator indicator clicks ... a heavy iron click ... but the cab is stuck on the fifth floor, and nobody is rushing to fix it.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 46.4,
       "audioFileName": "sg-peoples-park-cargo-lobby-v1.mp3"
     }
@@ -198,7 +198,7 @@
     "whisper": {
       "text": "The city feels entirely behind me out here. Nothing but the black water pulling at the old wood and the distant lights of the cargo ships waiting in the strait. The wind coming off the sea is warm, sticky with salt ... it covers everything in a thin film. A single bumboat engine diesel splutters miles out, then dies away completely. It’s hard to believe the runways are just over the ridge ... all that metal and noise. Here, the mud just waits for the tide to come back in, turning the roots over in the dark, remembering before the concrete arrived.",
       "audioScript": "The city feels entirely behind me out here. Nothing but the black water pulling at the old wood and the distant lights of the cargo ships waiting in the strait. The wind coming off the sea is warm, sticky with salt ... it covers everything in a thin film. A single bumboat engine diesel splutters miles out, then dies away completely. It’s hard to believe the runways are just over the ridge ... all that metal and noise. Here, the mud just waits for the tide to come back in, turning the roots over in the dark, remembering before the concrete arrived.",
-      "voice": "Arabella",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 47.6,
       "audioFileName": "sg-changi-village-boardwalk-v1.mp3"
     }
@@ -249,7 +249,7 @@
     "whisper": {
       "text": "The bricks are bleeding salt behind these old walls. Fifty years of kitchen steam and wash-water have turned the stone soft. Up above, the air conditioning boxes are leaking, dropping lukewarm water right into the puddles below ... a steady, electronic rain that never cleans anything. Someone left a broken plastic stool leaning against a rusted heavy fire door, its legs warped by the sun. The life of the street stays out on the main road, but down here ... this is the marrow. The things we use up and slide out of sight, just waiting for the damp to take them.",
       "audioScript": "The bricks are bleeding salt behind these old walls. Fifty years of kitchen steam and wash-water have turned the stone soft. Up above, the air conditioning boxes are leaking, dropping lukewarm water right into the puddles below ... a steady, electronic rain that never cleans anything. Someone left a broken plastic stool leaning against a rusted heavy fire door, its legs warped by the sun. The life of the street stays out on the main road, but down here ... this is the marrow. The things we use up and slide out of sight, just waiting for the damp to take them.",
-      "voice": "Declan Sage",
+      "voice": "en-GB-Chirp3-HD-Aoede",
       "durationSeconds": 48.0,
       "audioFileName": "sg-desker-road-alley-v1.mp3"
     }
