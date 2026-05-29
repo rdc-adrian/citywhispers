@@ -27,7 +27,7 @@
         "factType": "historical",
         "content": "Sim Lim Tower was completed in 1980, preceding Sim Lim Square as a dedicated enclave for wholesale electronic components, engineering tools, and radio parts.",
         "verified": true,
-        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2013-01-28.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2013-01-28.html)"
+        "sourceUrl": "https://infopedia.nlb.gov.sg/infopedia_articles_2013-01-28.html"
       },
       {
         "factType": "sensory",
@@ -43,8 +43,8 @@
       }
     ],
     "whisper": {
-      "text": "The light down here doesn't care about the time of day. It’s just that flat, white hum from the tubes ... buzzing like an insect trapped behind the plastic casing. Out on the shop floors, thousands of little glass fuses and copper capacitors are sitting in plastic trays ... waiting for machines that don't exist anymore. Someone left a small red rubber washer on the handrail. It’s entirely still. The air smells of solder and hot oil, drifting up from the basements where people are fixing old circuit boards ... trying to keep things running just another month.",
-      "audioScript": "The light down here doesn't care about the time of day. It’s just that flat, white hum from the tubes ... buzzing like an insect trapped behind the plastic casing. Out on the shop floors, thousands of little glass fuses and copper capacitors are sitting in plastic trays ... waiting for machines that don't exist anymore. Someone left a small red rubber washer on the handrail. It’s entirely still. The air smells of solder and hot oil, drifting up from the basements where people are fixing old circuit boards ... trying to keep things running just another month.",
+      "text": "The light down here doesn't care about the time of day. It's just that flat, white hum from the tubes ... buzzing like an insect trapped behind the plastic casing. Out on the shop floors, thousands of little glass fuses and copper capacitors are sitting in plastic trays ... waiting for machines that don't exist anymore. Someone left a small red rubber washer on the handrail. It's entirely still. The air smells of solder and hot oil, drifting up from the basements where people are fixing old circuit boards ... trying to keep things running just another month.",
+      "audioScript": "The light down here doesn't care about the time of day. It's just that flat, white hum from the tubes ... buzzing like an insect trapped behind the plastic casing. Out on the shop floors, thousands of little glass fuses and copper capacitors are sitting in plastic trays ... waiting for machines that don't exist anymore. Someone left a small red rubber washer on the handrail. It's entirely still. The air smells of solder and hot oil, drifting up from the basements where people are fixing old circuit boards ... trying to keep things running just another month.",
       "voice": "Declan Sage",
       "durationSeconds": 46.8,
       "audioFileName": "sg-sim-lim-tower-stairwell-v1.mp3"
@@ -78,7 +78,7 @@
         "factType": "historical",
         "content": "The MacPherson industrial sector was systematically partitioned in the late 1960s to cluster light textile and precision assembly workshops close to urban labor pools.",
         "verified": true,
-        "sourceUrl": "[https://www.nas.gov.sg/archivesonline/article/macpherson-estate](https://www.google.com/search?q=https://www.nas.gov.sg/archivesonline/article/macpherson-estate)"
+        "sourceUrl": "https://www.nas.gov.sg/archivesonline/article/macpherson-estate"
       },
       {
         "factType": "sensory",
@@ -94,8 +94,8 @@
       }
     ],
     "whisper": {
-      "text": "The grease stays on the tiles long after the shutters go down. Every afternoon, the big steel sinks are filled with boiling water ... but the smell of the old lard stays cooked into the mortar. Someone left an empty carton of condensed milk on the drain grate ... its paper side turning soft under the steam. The workers have gone back to the assembly lines upstairs. You can hear the dull, heavy punch of a metal press somewhere on the third floor ... over and over. It’s just the island clearing its throat, getting ready for the dark.",
-      "audioScript": "The grease stays on the tiles long after the shutters go down. Every afternoon, the big steel sinks are filled with boiling water ... but the smell of the old lard stays cooked into the mortar. Someone left an empty carton of condensed milk on the drain grate ... its paper side turning soft under the steam. The workers have gone back to the assembly lines upstairs. You can hear the dull, heavy punch of a metal press somewhere on the third floor ... over and over. It’s just the island clearing its throat, getting ready for the dark.",
+      "text": "The grease stays on the tiles long after the shutters go down. Every afternoon, the big steel sinks are filled with boiling water ... but the smell of the old lard stays cooked into the mortar. Someone left an empty carton of condensed milk on the drain grate ... its paper side turning soft under the steam. The workers have gone back to the assembly lines upstairs. You can hear the dull, heavy punch of a metal press somewhere on the third floor ... over and over. It's just the island clearing its throat, getting ready for the dark.",
+      "audioScript": "The grease stays on the tiles long after the shutters go down. Every afternoon, the big steel sinks are filled with boiling water ... but the smell of the old lard stays cooked into the mortar. Someone left an empty carton of condensed milk on the drain grate ... its paper side turning soft under the steam. The workers have gone back to the assembly lines upstairs. You can hear the dull, heavy punch of a metal press somewhere on the third floor ... over and over. It's just the island clearing its throat, getting ready for the dark.",
       "voice": "Declan Sage",
       "durationSeconds": 48.0,
       "audioFileName": "sg-macpherson-industrial-canteen-v1.mp3"
@@ -103,7 +103,7 @@
   },
   {
     "poi": {
-      "name": " Tanjong Rhu Footbridge Sheltered Margin",
+      "name": "Tanjong Rhu Footbridge Sheltered Margin",
       "slug": "sg-tanjong-rhu-footbridge",
       "citySlug": "singapore",
       "description": "The narrow, concrete landing zone beneath the suspension cables of the pedestrian bridge spanning the Geylang River inlet.",
@@ -129,7 +129,7 @@
         "factType": "historical",
         "content": "Tanjong Rhu transitioned from a major 19th-century shipbuilding and marine repair yard enclave into a high-density residential waterfront sector in the 1990s.",
         "verified": true,
-        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Kallang-and-Tanjong-Rhu](https://www.google.com/search?q=https://www.roots.gov.sg/stories-stories/landscapes/Kallang-and-Tanjong-Rhu)"
+        "sourceUrl": "https://www.roots.gov.sg/stories-stories/landscapes/Kallang-and-Tanjong-Rhu"
       },
       {
         "factType": "sensory",
@@ -166,7 +166,7 @@
       "atmosphere": {
         "emotionalTone": "Tropical Heaviness",
         "ambientProfile": "The smell of rain-soaked earth, damp lime wash, and old brick dust. The sound of heavy monsoon rainwater dropping from zinc gutter downpipes into deep concrete drains.",
-        "timeOfDayAffinity": "dusk",
+        "timeOfDayAffinity": "evening",
         "movementContext": "slow walk",
         "intensityLevel": 3,
         "environmentalTexture": "scabbed plaster, mossy pebble-dash pillars, wet asphalt",
@@ -180,7 +180,7 @@
         "factType": "historical",
         "content": "The residential blocks along Commonwealth Drive were developed in the early 1960s to handle overspill populations from the central city districts.",
         "verified": true,
-        "sourceUrl": "[https://infopedia.nlb.gov.sg/infopedia_articles_2010-06-11.html](https://www.google.com/search?q=https://infopedia.nlb.gov.sg/infopedia_articles_2010-06-11.html)"
+        "sourceUrl": "https://infopedia.nlb.gov.sg/infopedia_articles_2010-06-11.html"
       },
       {
         "factType": "sensory",
@@ -231,7 +231,7 @@
         "factType": "historical",
         "content": "Upper Serangoon Road stands as one of the island's primary historic northern arterial tracks, formalized in the 19th century to connect town centers with rural ports.",
         "verified": true,
-        "sourceUrl": "[https://www.roots.gov.sg/stories-stories/landscapes/Serangoon]()"
+        "sourceUrl": "https://www.roots.gov.sg/stories-stories/landscapes/Serangoon"
       },
       {
         "factType": "sensory",
@@ -247,8 +247,8 @@
       }
     ],
     "whisper": {
-      "text": "The yellow paint on the ground is mostly gone ... rubbed away by years of heavy work boots scuffing the concrete. Up on the main road, the late buses are empty, their interior lights throwing white shapes across the closed shopfronts. Down in this pocket, the air doesn’t move at all. It just holds the smell of burnt tobacco and wet earth from the culvert. A single red ember drops into the rusted oil drum ... a tiny hiss, then nothing. We’re all just waiting out the hours ... watching the smoke rise up into the dark leaves of the overhanging trees.",
-      "audioScript": "The yellow paint on the ground is mostly gone ... rubbed away by years of heavy work boots scuffing the concrete. Up on the main road, the late buses are empty, their interior lights throwing white shapes across the closed shopfronts. Down in this pocket, the air doesn’t move at all. It just holds the smell of burnt tobacco and wet earth from the culvert. A single red ember drops into the rusted oil drum ... a tiny hiss, then nothing. We’re all just waiting out the hours ... watching the smoke rise up into the dark leaves of the overhanging trees.",
+      "text": "The yellow paint on the ground is mostly gone ... rubbed away by years of heavy work boots scuffing the concrete. Up on the main road, the late buses are empty, their interior lights throwing white shapes across the closed shopfronts. Down in this pocket, the air doesn't move at all. It just holds the smell of burnt tobacco and wet earth from the culvert. A single red ember drops into the rusted oil drum ... a tiny hiss, then nothing. We're all just waiting out the hours ... watching the smoke rise up into the dark leaves of the overhanging trees.",
+      "audioScript": "The yellow paint on the ground is mostly gone ... rubbed away by years of heavy work boots scuffing the concrete. Up on the main road, the late buses are empty, their interior lights throwing white shapes across the closed shopfronts. Down in this pocket, the air doesn't move at all. It just holds the smell of burnt tobacco and wet earth from the culvert. A single red ember drops into the rusted oil drum ... a tiny hiss, then nothing. We're all just waiting out the hours ... watching the smoke rise up into the dark leaves of the overhanging trees.",
       "voice": "Declan Sage",
       "durationSeconds": 48.0,
       "audioFileName": "sg-serangoon-smoking-alcove-v1.mp3"

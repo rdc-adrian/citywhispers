@@ -127,6 +127,8 @@ async function main() {
     'poi-production-1.json',
     'poi-production-2.json',
     'poi-production-3.json',
+    'poi-production-4.json',
+    'poi-production-5.json',
   ]
 
   const resourceDir = path.join(__dirname, '../../../resources/pois')
