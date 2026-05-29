@@ -36,6 +36,7 @@
 | **E**   | Journal redesign            | Memory-cabinet layout, city grouping, replay from Journal, real category + timeSlot from API     |
 | **F**   | AI whisper generation       | Gemini/Anthropic provider, prompt pipeline, draft/approve workflow, quality scoring, 14 tests    |
 | **G**   | TTS & audio pipeline        | GCP Chirp3-HD Aoede, SSML builder, 27 phoneme overrides, Supabase audio storage, E2E validated   |
+| **H**   | Spatial density & territory | Density service, editorial 409 gate, suppressOverlap filter, 60s cooldown, anchor silence        |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
@@ -185,6 +186,20 @@
 
 ---
 
+## ✅ Sprint H: Spatial Density & Emotional Territory — Complete (2026-05-29)
+
+- [x] `packages/types` — `PoiCategory`, `NarrativeConflictWarning`, `DensityCheckResult` types; `PoiSummary`/`PoiDetail` extended with `emotionalWeight`, `poiCategory`, `minSeparationMeters`, `allowCluster`
+- [x] Schema migration — four new `Poi` fields with defaults (`drift` / `5` / `120` / `false`); `20260529022227_add_spatial_density_fields` applied
+- [x] `services/density.ts` — `checkPoiDensity` with haversine + bounding-box pre-filter; conflict threshold = `max(incoming, existing.minSeparationMeters)` so anchor 300m zone applies regardless of incoming category; 5 unit tests green
+- [x] `POST /admin/pois` — density check before insert; `409 density_conflict` with warnings if conflict; `overrideConflict: true` bypasses with audit log; full atmospheric + density field set accepted
+- [x] `POST /admin/pois/bulk` — per-POI density check, conflict report printed to stdout, import never aborted
+- [x] `GET /pois/nearby` — `emotionalWeight`, `poiCategory`, `minSeparationMeters` in every response; `?suppressOverlap=true` post-filter keeps higher-weight winner; `id` tiebreaker prevents marker flicker under distance jitter
+- [x] Mobile `api.ts` — `fetchNearbyPois` sends `suppressOverlap=true` by default
+- [x] `useWhisperStore` — `lastWhisperTriggeredAt` + `lastAnchorTriggeredAt` with setters
+- [x] `map.tsx` — 60s cooldown silently skips rapid re-triggers; anchor whispers start 5-min silence; `setTimeout` schedules exact re-render when silence expires; epoch-timestamp comparison correct after app backgrounding
+
+---
+
 ## ✅ Sprint G: TTS & Audio Pipeline — Complete (2026-05-29)
 
 - [x] GCP Chirp3-HD Aoede as primary narrator — `services/media/tts.ts`
@@ -202,7 +217,7 @@
 
 - [ ] **Rotate `ANTHROPIC_API_KEY`** — exposed in Claude Code session (2026-05-29). Rotate at console.anthropic.com → API Keys. Update Render + local `.env`.
 - [ ] **Rotate `SUPABASE_SERVICE_ROLE_KEY`** — exposed in same session. Rotate in Supabase dashboard → Project Settings → API. Update Render + local `.env`.
-- [ ] **Wire Charon narrator for nighttime whispers** — profile registered in `NARRATOR_PROFILES`, not yet connected to content path. Persona-based selection (Charon for `timeSlot: night`) deferred to future sprint.
+- [ ] **Wire Charon narrator for nighttime whispers** — profile registered in `NARRATOR_PROFILES`, not yet connected to content path. See backlog under Map & Markers for Sprint I candidate.
 
 ---
 
@@ -210,8 +225,9 @@
 
 ### Map & Markers
 
-- [ ] Marker visual hierarchy by POI importance
+- [ ] Marker visual hierarchy by `poiCategory` — anchor markers visually distinct from drift/echo (size, glow, pulse); `emotionalWeight` now available for scaling
 - [ ] Richer discovered-state marker styling (beyond opacity dimming)
+- [ ] Wire Charon narrator for nighttime anchor whispers — `poiCategory: anchor` + `timeSlot: night` → `narratorId: charon`
 
 ### Singapore MVP Content
 
