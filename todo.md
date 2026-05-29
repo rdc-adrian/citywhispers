@@ -18,7 +18,7 @@
 | **5** | Discovery & Journal — persistence + journal redesign complete (E-1 through E-3)           | ✅ Complete | —           |
 | **6** | Whisper Content — schemas + admin routes done; AI generation pipeline complete            | ✅ Complete | Sprint G    |
 | **7** | Audio & TTS — GCP Chirp3-HD Aoede pipeline; SSML pacing; phoneme overrides; E2E validated 2026-05-29 | ✅ Complete | —           |
-| **8** | Singapore Content — 9 POIs seeded; expand to 15–20 curated POIs + whisper copy pending    | 🔄 Partial  | Backlog     |
+| **8** | Singapore Content — 15 atmospheric POIs live; TTS audio approved; density system validated end-to-end | ✅ Complete | —           |
 | **9** | Future Features — trails, offline, monetization, social, gamification                     | ⏳ Deferred | Backlog     |
 
 ---
@@ -37,6 +37,7 @@
 | **F**   | AI whisper generation       | Gemini/Anthropic provider, prompt pipeline, draft/approve workflow, quality scoring, 14 tests    |
 | **G**   | TTS & audio pipeline        | GCP Chirp3-HD Aoede, SSML builder, 27 phoneme overrides, Supabase audio storage, E2E validated   |
 | **H**   | Spatial density & territory | Density service, editorial 409 gate, suppressOverlap filter, 60s cooldown, anchor silence        |
+| **I**   | Singapore content seed      | 15 atmospheric POIs seeded; density cycle tested; TTS batch-approved; Render build fixed         |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 

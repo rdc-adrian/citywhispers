@@ -17,6 +17,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "db:seed-all": "tsx prisma/seed-all.ts",
     "db:seed-pois": "tsx scripts/seed-poi-production.ts",
+    "db:approve-sg": "tsx scripts/approve-sg-whispers.ts",
     "backup:snapshot": "tsx scripts/backup-snapshot.ts",
     "reset:storage": "tsx scripts/cleanup-storage.ts",
     "reset:content": "tsx scripts/reset-content.ts"
