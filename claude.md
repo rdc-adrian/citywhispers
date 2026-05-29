@@ -313,6 +313,196 @@ Audio delivery should never sound finished. Sentence endings soften rather than 
 
 ---
 
+## POI Search & Emotional Density Rules
+
+> These rules govern how new POIs are discovered, selected, and approved for CityWhispers. A POI is not valuable because it is famous, historically important, or visually impressive. A POI is valuable if it can hold emotional residue.
+
+The goal is not coverage of Singapore. The goal is emotional cartography.
+
+### Core Selection Principle
+
+A POI must contain at least one of the following:
+
+* visible tension between old and new
+* recurring human rhythms
+* signs of persistence or disappearance
+* strong sensory identity
+* emotional ambiguity
+* infrastructural intimacy
+* unnoticed daily ritual
+* physical texture that carries memory
+
+If a location feels explainable in a tourist brochure, it is usually the wrong POI.
+
+If a location feels like something overheard while walking alone, it is usually closer.
+
+---
+
+### Preferred POI Categories
+
+Researchers should prioritize:
+
+* void decks
+* aging coffee shops
+* wet markets
+* overhead bridges
+* underpasses
+* older malls
+* bus interchanges
+* industrial edges
+* stairwells
+* back lanes
+* waterfront fringes
+* hawker overflow spaces
+* HDB transition corridors
+* sheltered walkways
+* MRT perimeter spaces
+* forgotten civic infrastructure
+* partially obsolete commercial zones
+* liminal green spaces
+* places active at unusual hours
+
+These spaces usually contain stronger emotional layering than polished landmarks.
+
+---
+
+### Avoid These POIs
+
+Avoid locations that are primarily:
+
+* tourist photo destinations
+* visually iconic but emotionally empty
+* luxury retail environments
+* generic modern developments
+* spectacle-driven attractions
+* highly commercialized installations
+* spaces designed mainly for consumption
+* places with no lingering human rhythm
+
+A famous place may still qualify — but only if the emotional texture is stronger than the landmark identity.
+
+---
+
+### Emotional Density Rules
+
+CityWhispers should feel sparse, discovered, and breathable.
+
+The map must never feel crowded with whispers.
+
+POIs are not distributed by geographic fairness. They are distributed by emotional necessity.
+
+#### Core Principle
+
+Two POIs may be geographically close if they produce clearly different emotional experiences.
+
+Two POIs must not coexist if they produce the same emotional register, even when physically separate.
+
+Emotional collision matters more than physical distance.
+
+---
+
+### Minimum Spacing Rules
+
+These are soft-authoritative rules, not hard blockers.
+
+| Environment Type         | Recommended Minimum Distance |
+| ------------------------ | ---------------------------- |
+| Dense HDB / urban fabric | 120–180m                     |
+| Commercial districts     | 180–250m                     |
+| Open parks / waterfronts | 250–400m                     |
+| Major landmark zones     | 300m+                        |
+
+Researchers may intentionally violate spacing rules only if the emotional identities are clearly distinct.
+
+Example:
+
+* a wet market loading bay at 5am
+* an overhead bridge above the same market at midnight
+
+These may coexist despite proximity because the emotional experience differs completely.
+
+---
+
+### Emotional Collision Rules
+
+A new POI should be rejected or merged if it overlaps heavily with nearby POIs in:
+
+* emotional tone
+* sensory texture
+* social rhythm
+* narrative tension
+* environmental atmosphere
+* movement pattern
+* time-of-day identity
+
+Examples of emotional collision:
+
+* two nostalgic coffee shops on the same street
+* three similar aging HDB void decks within one block cluster
+* multiple "lonely industrial" spaces in the same warehouse zone
+* several waterfront melancholy whispers competing within earshot
+
+The issue is not duplication of geography.
+The issue is duplication of feeling.
+
+---
+
+### Emotional Contrast Encouraged
+
+Strong local contrast is desirable.
+
+Good emotional adjacency:
+
+* crowded hawker centre ↔ silent overhead bridge
+* humid market ↔ over-airconditioned dead mall
+* bright daytime corridor ↔ empty nighttime interchange
+* ritual-heavy temple edge ↔ nearby construction noise
+
+The city should feel emotionally layered rather than tonally repetitive.
+
+---
+
+### Density Escalation Rules
+
+If a district already contains multiple approved POIs:
+
+Researchers must justify:
+
+* why this location deserves presence
+* what emotional territory is still uncovered
+* why an existing nearby POI cannot absorb this perspective
+
+Once an area begins feeling "fully mapped," researchers should move elsewhere.
+
+CityWhispers benefits from absence.
+
+Unmapped silence is part of the product.
+
+---
+
+### Research Evaluation Questions
+
+Before submitting a POI, researchers should ask:
+
+* What emotional residue exists here?
+* What persists here despite change?
+* What happens here repeatedly?
+* What texture or rhythm would disappear if this place vanished?
+* Does this feel emotionally different from nearby POIs?
+* Would removing this POI reduce the emotional map of the city?
+
+If the answer is weak, the POI should not be submitted.
+
+---
+
+### Final Principle
+
+The goal is not to document Singapore.
+
+The goal is to make users feel like the city remembers things.
+
+---
+
 ## Research Team — POI Submission Format
 
 > This section is for researchers sourcing new points of interest. Submit one JSON object per POI. Engineers seed it directly via the admin API or `prisma/seed.ts`. Read the tonal brief before writing whisper text.
