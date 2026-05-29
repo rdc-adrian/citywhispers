@@ -9,7 +9,7 @@
     "postinstall": "npx patch-package",
     "dev:api": "npm run dev --workspace=@citywhispers/api",
     "dev:mobile": "npm run start --workspace=mobile",
-    "build:api": "npm run build --workspace=@citywhispers/api",
+    "build:api": "npm run build --workspace=@citywhispers/types && npm run build --workspace=@citywhispers/api",
     "lint": "npm run lint --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present"
   },

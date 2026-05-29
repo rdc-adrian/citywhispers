@@ -1,5 +1,6 @@
 node_modules/
 dist/
+!packages/types/dist/
 .expo/
 .env
 .env.local
