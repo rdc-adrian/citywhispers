@@ -32,6 +32,7 @@ interface FetchNearbyPoisParams {
   radius?: number;
   limit?: number;
   token?: string | null;
+  suppressOverlap?: boolean;
 }
 
 export async function fetchNearbyPois({
@@ -40,12 +41,14 @@ export async function fetchNearbyPois({
   radius = 2000,
   limit = 10,
   token,
+  suppressOverlap = true,
 }: FetchNearbyPoisParams): Promise<PoiSummary[]> {
   const params = new URLSearchParams({
     lat: lat.toString(),
     lng: lng.toString(),
     radius: radius.toString(),
     limit: limit.toString(),
+    suppressOverlap: suppressOverlap.toString(),
   });
 
   const response = await fetchWithTimeout(`${BASE_URL}/pois/nearby?${params}`, {

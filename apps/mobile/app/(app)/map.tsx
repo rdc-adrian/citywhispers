@@ -62,6 +62,32 @@ export default function MapScreen() {
 
   const openWhisper = useWhisperStore((s) => s.openWhisper)
   const discoveredPoiIds = useWhisperStore((s) => s.discoveredPoiIds)
+  const lastWhisperTriggeredAt = useWhisperStore((s) => s.lastWhisperTriggeredAt)
+  const setLastWhisperTriggeredAt = useWhisperStore((s) => s.setLastWhisperTriggeredAt)
+  const lastAnchorTriggeredAt = useWhisperStore((s) => s.lastAnchorTriggeredAt)
+  const setLastAnchorTriggeredAt = useWhisperStore((s) => s.setLastAnchorTriggeredAt)
+
+  const COOLDOWN_MS = 60_000
+  const ANCHOR_SILENCE_MS = 5 * 60_000
+
+  // Dummy state used only to trigger a re-render when the silence window expires.
+  // The tick value itself is never read — inAnchorSilence always recomputes from
+  // Date.now() so it's correct on every render regardless of how the render fired.
+  const [, setAnchorSilenceTick] = useState(0)
+
+  useEffect(() => {
+    if (!lastAnchorTriggeredAt) return
+    const remaining = ANCHOR_SILENCE_MS - (Date.now() - lastAnchorTriggeredAt)
+    if (remaining <= 0) return
+    const timer = setTimeout(() => setAnchorSilenceTick((n) => n + 1), remaining)
+    return () => clearTimeout(timer)
+  }, [lastAnchorTriggeredAt])
+
+  // Epoch-timestamp comparison: correct after backgrounding because Date.now()
+  // always reflects wall-clock time, not active-foreground time.
+  const inAnchorSilence = lastAnchorTriggeredAt
+    ? Date.now() - lastAnchorTriggeredAt < ANCHOR_SILENCE_MS
+    : false
 
   // Animate to user location on first GPS fix
   useEffect(() => {
@@ -89,6 +115,12 @@ export default function MapScreen() {
   // Tap a marker → fetch whisper → open card
   const handlePoiPress = useCallback(async (poi: PoiSummary) => {
     if (loadingPoiId === poi.id) return
+
+    // Cooldown: silently skip if a whisper triggered within the last 60 seconds
+    const timeSinceLast = lastWhisperTriggeredAt
+      ? Date.now() - lastWhisperTriggeredAt
+      : Infinity
+    if (timeSinceLast < COOLDOWN_MS) return
 
     const isRevisit = discoveredPoiIds.has(poi.id)
 
@@ -121,6 +153,12 @@ export default function MapScreen() {
         nearby,
         isRevisit,
       })
+
+      const now = Date.now()
+      setLastWhisperTriggeredAt(now)
+      if (poi.poiCategory === 'anchor') {
+        setLastAnchorTriggeredAt(now)
+      }
     } catch (err) {
       console.warn('⚠️ Failed to fetch whisper for', poi.name, err)
       // Open card with text-only fallback so the user sees something
@@ -140,7 +178,7 @@ export default function MapScreen() {
     } finally {
       setLoadingPoiId(null)
     }
-  }, [pois, getToken, openWhisper, loadingPoiId, discoveredPoiIds])
+  }, [pois, getToken, openWhisper, loadingPoiId, discoveredPoiIds, lastWhisperTriggeredAt, COOLDOWN_MS, setLastWhisperTriggeredAt, setLastAnchorTriggeredAt])
 
   // Nearby whisper tap inside the card — look up and open
   const handleNearbyPress = useCallback(async (poiId: string) => {
@@ -177,7 +215,10 @@ export default function MapScreen() {
         }}
         onRegionChangeComplete={handleRegionChangeComplete}
       >
-        {pois?.map((poi) => (
+        {(inAnchorSilence
+          ? pois?.filter((p) => p.poiCategory === 'anchor')
+          : pois
+        )?.map((poi) => (
           <PoiMarker
             key={poi.id}
             poi={poi}

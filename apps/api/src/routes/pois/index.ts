@@ -27,12 +27,14 @@ export async function poisRoutes(app: FastifyInstance) {
       lng: string
       radius?: string
       limit?: string
+      suppressOverlap?: string
     }
   }>('/nearby', async (request) => {
     const lat = parseFloat(request.query.lat)
     const lng = parseFloat(request.query.lng)
     const radius = parseInt(request.query.radius ?? '500')
     const limit = parseInt(request.query.limit ?? '20')
+    const suppressOverlap = request.query.suppressOverlap === 'true'
 
     if (isNaN(lat) || isNaN(lng)) {
       throw new Error('Invalid lat/lng')
@@ -49,7 +51,6 @@ export async function poisRoutes(app: FastifyInstance) {
       },
       include: {
         generatedWhispers: {
-          // G-3: include audioUrl so mobile can preload audio for nearby POIs
           where: { isStale: false, status: 'approved' } as any,
           select: { id: true, audioUrl: true },
           orderBy: { qualityScore: 'desc' },
@@ -77,12 +78,55 @@ export async function poisRoutes(app: FastifyInstance) {
           distanceMeters,
           importanceScore: poi.importanceScore,
           visited: false,
+          // Sprint H — spatial density fields
+          emotionalWeight: poi.emotionalWeight,
+          poiCategory: poi.poiCategory,
+          minSeparationMeters: poi.minSeparationMeters,
         }
       })
       .filter((poi) => poi.distanceMeters <= radius)
       .sort((a, b) => a.distanceMeters - b.distanceMeters)
       .slice(0, limit)
 
-    return { data: nearby }
+    if (!suppressOverlap) {
+      return { data: nearby }
+    }
+
+    // Server-side overlap suppression: for any two POIs within each other's
+    // minSeparationMeters, keep only the one with the higher emotionalWeight.
+    const suppressed = new Set<string>()
+
+    for (let i = 0; i < nearby.length; i++) {
+      if (suppressed.has(nearby[i].id)) continue
+
+      for (let j = i + 1; j < nearby.length; j++) {
+        if (suppressed.has(nearby[j].id)) continue
+
+        const dist = Math.round(
+          haversineDistance(
+            nearby[i].latitude, nearby[i].longitude,
+            nearby[j].latitude, nearby[j].longitude
+          )
+        )
+
+        const threshold = Math.max(
+          nearby[i].minSeparationMeters,
+          nearby[j].minSeparationMeters
+        )
+
+        if (dist <= threshold) {
+          // Higher emotionalWeight wins. On a tie, lower id wins (lexicographic)
+          // so the result is deterministic regardless of distance sort order — prevents
+          // markers flickering when small user movement swaps the distance ranking.
+          const iWins =
+            nearby[i].emotionalWeight > nearby[j].emotionalWeight ||
+            (nearby[i].emotionalWeight === nearby[j].emotionalWeight &&
+              nearby[i].id < nearby[j].id)
+          suppressed.add(iWins ? nearby[j].id : nearby[i].id)
+        }
+      }
+    }
+
+    return { data: nearby.filter((p) => !suppressed.has(p.id)) }
   })
 }

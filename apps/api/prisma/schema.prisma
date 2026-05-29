@@ -60,6 +60,12 @@ model Poi {
   reviewStatus         String   @default("draft") @map("review_status")
   contentOwner         String?  @map("content_owner")
 
+  // ── Sprint H: Spatial Density & Emotional Territory ─────────────────────
+  emotionalWeight     Int     @default(5) @map("emotional_weight")
+  poiCategory         String  @default("drift") @map("poi_category")
+  minSeparationMeters Int     @default(120) @map("min_separation_meters")
+  allowCluster        Boolean @default(false) @map("allow_cluster")
+
   city              City               @relation(fields: [cityId], references: [id])
   poiFacts          PoiFact[]
   generatedWhispers GeneratedWhisper[]

@@ -2,6 +2,27 @@
 // ========================================
 // POI Types
 // ========================================
+
+export type PoiCategory = 'anchor' | 'drift' | 'echo'
+
+export type NarrativeConflictWarning = {
+  severity: 'high' | 'medium' | 'low'
+  message: string
+  conflictingPoi: {
+    id: string
+    name: string
+    distanceMeters: number
+    poiCategory: PoiCategory
+    emotionalWeight: number
+  }
+}
+
+export type DensityCheckResult = {
+  clear: boolean
+  warnings: NarrativeConflictWarning[]
+  nearbyPois: PoiSummary[]
+}
+
 export interface PoiSummary {
   id: string;
   name: string;
@@ -17,6 +38,10 @@ export interface PoiSummary {
   audioUrl?: string | null;
   hasWhisper?: boolean;
   visited?: boolean;
+  // Sprint H — spatial density fields
+  emotionalWeight?: number;
+  poiCategory?: PoiCategory;
+  minSeparationMeters?: number;
 }
 export interface PoiAtmosphere {
   /** Dominant emotional register e.g. "Obsolescence", "Isolation" */
@@ -45,6 +70,11 @@ export interface PoiDetail extends PoiSummary, PoiAtmosphere {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
+  // Sprint H — spatial density fields (non-optional on full detail)
+  emotionalWeight: number;
+  poiCategory: PoiCategory;
+  minSeparationMeters: number;
+  allowCluster: boolean;
 }
 // ========================================
 // Whisper Types

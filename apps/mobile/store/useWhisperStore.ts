@@ -32,6 +32,12 @@ type WhisperStore = {
   completedWhisperIds: Set<string>
   hydrateDiscovered: (whispers: DiscoveredWhisper[]) => void
   markCompleted: (whisperId: string, poiId: string) => void
+
+  // — Sprint H: cooldown + anchor silence —
+  lastWhisperTriggeredAt: number | null
+  setLastWhisperTriggeredAt: (ts: number) => void
+  lastAnchorTriggeredAt: number | null
+  setLastAnchorTriggeredAt: (ts: number) => void
 }
 
 // Base store implementation (not exported under the public name)
@@ -58,6 +64,12 @@ const baseWhisperStore = create<WhisperStore>((set) => ({
     completedWhisperIds: new Set([...state.completedWhisperIds, whisperId]),
     discoveredPoiIds: new Set([...state.discoveredPoiIds, poiId]),
   })),
+
+  // — Sprint H: cooldown + anchor silence —
+  lastWhisperTriggeredAt: null,
+  setLastWhisperTriggeredAt: (ts) => set({ lastWhisperTriggeredAt: ts }),
+  lastAnchorTriggeredAt: null,
+  setLastAnchorTriggeredAt: (ts) => set({ lastAnchorTriggeredAt: ts }),
 }))
 
 // Backwards-compatibility: expose legacy names used across older components
@@ -68,8 +80,6 @@ export type WhisperStoreLegacy = WhisperStore & {
   markDiscovered: (poiId: string) => void
 
   // — Nearby press handler —
-  // Registered by the map screen on mount; null when not on the map tab.
-  // WhisperCard calls this when a nearby suggestion is tapped.
   nearbyPressHandler: ((poiId: string) => void) | null
   setNearbyPressHandler: (fn: ((poiId: string) => void) | null) => void
 }
@@ -96,6 +106,12 @@ export const useWhisperStoreLegacy = create<WhisperStoreLegacy>((set) => ({
     completedWhisperIds: new Set([...state.completedWhisperIds, whisperId]),
     discoveredPoiIds: new Set([...state.discoveredPoiIds, poiId]),
   })),
+
+  // — Sprint H: cooldown + anchor silence —
+  lastWhisperTriggeredAt: null,
+  setLastWhisperTriggeredAt: (ts) => set({ lastWhisperTriggeredAt: ts }),
+  lastAnchorTriggeredAt: null,
+  setLastAnchorTriggeredAt: (ts) => set({ lastAnchorTriggeredAt: ts }),
 
   // legacy
   audioOpen: false,
