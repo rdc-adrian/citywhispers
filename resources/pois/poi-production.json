@@ -1,0 +1,257 @@
+[
+  {
+    "poi": {
+      "name": "Golden Mile Tower Lower Level Basement Carpark",
+      "slug": "sg-golden-mile-tower-basement",
+      "citySlug": "singapore",
+      "description": "The deep, dimly lit sub-basement parking tier of a 1970s mega-structure, featuring stained concrete ramps and low-slung pipework.",
+      "lat": 1.3022,
+      "lng": 103.8641,
+      "triggerRadiusMeters": 80,
+      "category": "building",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Obsolescence",
+        "ambientProfile": "A stagnant air layer smelling of exhaust fumes, damp mold, and tire rubber. The hollow, repeating echo of water dripping onto concrete mixes with a distant, structural ventilation drone.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "standing",
+        "intensityLevel": 4,
+        "environmentalTexture": "oil-stained asphalt, flaking plaster, damp lime encrustations",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "architectural",
+        "content": "Golden Mile Tower was completed in 1974, standing as a prominent specimen of commercial brutalist architecture utilizing extensive raw concrete forms.",
+        "verified": true,
+        "sourceUrl": "https://www.roots.gov.sg/places/places-of-interest/golden-mile-complex-and-golden-mile-tower"
+      },
+      {
+        "factType": "sensory",
+        "content": "Mineral-rich groundwater leaks through foundation seams, forming delicate, chalky white stalactites along the low overhead beams.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Night shift building technicians use the secluded dead-end parking bays to store obsolete corporate signage and broken office chairs.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The air has been trapped down here since nineteen seventy-four. It feels heavy ... tasting of old carbon and cold stone that never sees the sun. Up on the highway, the city is racing past, but under these low pipes, time just pools like the water in the corner. Every tyre mark on the ramp is a car that left hours ago ... leaving behind nothing but the smell of burnt rubber and oil. The fluorescent tubes overhead have a rhythmic flicker ... a dry click that cuts through the dark. It feels like the whole building is holding its breath ... waiting to settle another inch into the mud.",
+      "audioScript": "The air has been trapped down here since nineteen seventy-four. It feels heavy ... tasting of old carbon and cold stone that never sees the sun. Up on the highway, the city is racing past, but under these low pipes, time just pools like the water in the corner. Every tyre mark on the ramp is a car that left hours ago ... leaving behind nothing but the smell of burnt rubber and oil. The fluorescent tubes overhead have a rhythmic flicker ... a dry click that cuts through the dark. It feels like the whole building is holding its breath ... waiting to settle another inch into the mud.",
+      "voice": "Declan Sage",
+      "durationSeconds": 47.6,
+      "audioFileName": "sg-golden-mile-tower-basement-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Tanglin Halt Block 49 Void Deck",
+      "slug": "sg-tanglin-halt-block-49",
+      "citySlug": "singapore",
+      "description": "An empty, scheduled-for-demolition public housing void deck featuring original tiled mosaic checkers tables.",
+      "lat": 1.2991,
+      "lng": 103.7984,
+      "triggerRadiusMeters": 80,
+      "category": "neighbourhood",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Decline",
+        "ambientProfile": "A stark, open-air silence punctuated by distant construction hoarding boards. The scent of old dust and lime wash lingering around empty concrete pillars.",
+        "timeOfDayAffinity": "anytime",
+        "movementContext": "slow walk",
+        "intensityLevel": 5,
+        "environmentalTexture": "weathered concrete, peeling paint layers, smooth ceramic tiles",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "Tanglin Halt was one of Singapore's earliest housing estates, constructed in the 1960s and designated for large-scale redevelopment under the Selective En bloc Redevelopment Scheme.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "sensory",
+        "content": "The absence of domestic life leaves a distinct acoustic void where bird calls from the perimeter trees echo clearly against the bare ceilings.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "The square concrete tables remain permanently etched with faint pencil markings from decades of informal neighborhood games.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The families are all gone now ... but their shadows are still stuck to these blue pillars. You can see where the washing lines used to clip into the concrete, where the children scraped their bicycles against the low walls. These little ceramic checkers tables ... nobody is coming back to play on them. The silence here isn't peaceful ... it's just waiting for the iron balls and the excavators to arrive. The wind blows straight through the empty elevator shafts ... a hollow sound that carries the dust of forty years of afternoon conversations out onto the grass.",
+      "audioScript": "The families are all gone now ... but their shadows are still stuck to these blue pillars. You can see where the washing lines used to clip into the concrete, where the children scraped their bicycles against the low walls. These little ceramic checkers tables ... nobody is coming back to play on them. The silence here isn't peaceful ... it's just waiting for the iron balls and the excavators to arrive. The wind blows straight through the empty elevator shafts ... a hollow sound that carries the dust of forty years of afternoon conversations out onto the grass.",
+      "voice": "Arabella",
+      "durationSeconds": 48.8,
+      "audioFileName": "sg-tanglin-halt-block-49-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Kallang River Drainage Culvert Edge",
+      "slug": "sg-kallang-culvert-edge",
+      "citySlug": "singapore",
+      "description": "A wide concrete storm drain juncture where urban runoff meets the main river channel beneath the PIE flyover.",
+      "lat": 1.3262,
+      "lng": 103.8655,
+      "triggerRadiusMeters": 120,
+      "category": "waterfront",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Infrastructural Solitude",
+        "ambientProfile": "The roar of overhead highway traffic echoing inside concrete channels, mixed with the steady, wet rush of drainage water. Air carries a damp moss and iron oxide scent.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "standing",
+        "intensityLevel": 4,
+        "environmentalTexture": "scabbed concrete, moss growths, rusted iron grates",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The Kallang River basin underwent extensive canalization and concrete lining during the late 1960s and 1970s to combat severe regional flooding.",
+        "verified": true,
+        "sourceUrl": "https://infopedia.nlb.gov.sg/infopedia_articles_2011-03-04.html"
+      },
+      {
+        "factType": "sensory",
+        "content": "The deep concrete walls vibrate continuously in response to heavy transport vehicles crossing the expansion joints of the expressway above.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Herons regularly track the edge of the shallow water line at midnight, remaining perfectly motionless against the raw stone embankment.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The city handles its water with cold iron and concrete lines. Everything is directed, shaped, pushed out toward the sea ... but down here by the culvert mouth, things slow down. The rumble from the expressway bridges never breaks ... it vibrates right into your collarbone. You can see lines on the walls where the last storm crest reached ... a dark mark left by the mud. A plastic storage bin lid is jammed into the iron grate ... rocking slightly in the steady flow. Nobody comes down to these slopes. We just listen to the traffic rolling overhead, watching the river swallow the rain.",
+      "audioScript": "The city handles its water with cold iron and concrete lines. Everything is directed, shaped, pushed out toward the sea ... but down here by the culvert mouth, things slow down. The rumble from the expressway bridges never breaks ... it vibrates right into your collarbone. You can see lines on the walls where the last storm crest reached ... a dark mark left by the mud. A plastic storage bin lid is jammed into the iron grate ... rocking slightly in the steady flow. Nobody comes down to these slopes. We just listen to the traffic rolling overhead, watching the river swallow the rain.",
+      "voice": "Declan Sage",
+      "durationSeconds": 47.2,
+      "audioFileName": "sg-kallang-culvert-edge-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Kampong Bahru Road Shophouse Five-Foot-Way",
+      "slug": "sg-kampong-bahru-five-foot-way",
+      "citySlug": "singapore",
+      "description": "A continuous, shadowed pedestrian arcade fronting a row of early 20th-century residential shophouses.",
+      "lat": 1.2758,
+      "lng": 103.8315,
+      "triggerRadiusMeters": 80,
+      "category": "street",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Tropical Heaviness",
+        "ambientProfile": "The scent of damp plaster, stale rain, and faint incense from upper-floor windows. A soft acoustic background of slow, passing city traffic muffled by masonry pillars.",
+        "timeOfDayAffinity": "evening",
+        "movementContext": "slow walk",
+        "intensityLevel": 3,
+        "environmentalTexture": "worn encaustic tiles, peeling whitewash, exposed timber rafters",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Arabella"
+      }
+    },
+    "facts": [
+      {
+        "factType": "historical",
+        "content": "The shophouses along Kampong Bahru Road were predominantly built in the 1920s, reflecting the architectural transition toward the Late Shophouse style.",
+        "verified": true,
+        "sourceUrl": "https://www.ura.gov.sg/Corporate/Guidelines/Conservation/Conservation-Areas/Downtown-Core/Blair-Plain"
+      },
+      {
+        "factType": "sensory",
+        "content": "The old tiled floors retain a cool surface temperature even during late afternoon humidity spikes due to the deep overhang of the upper stories.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Stray cats habitually congregate around the base of the fluted pillars at dusk, waiting for residents to leave small plastic dishes of food.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The columns hold up more than just the floors above ... they hold onto the heat of the whole afternoon. Walking under these low arches feels like stepping inside someone else's memory. The tiles under your shoes are cracked ... worn down in the center where decades of footsteps have smoothed out the patterns. Someone has left a wooden stool out by the pillar ... its paint blistered and flaking. The evening is settling in, turning the corners dark. Up above, the timber shutters are closed tight ... keeping in the small noises of dinners being made and televisions turning on.",
+      "audioScript": "The columns hold up more than just the floors above ... they hold onto the heat of the whole afternoon. Walking under these low arches feels like stepping inside someone else's memory. The tiles under your shoes are cracked ... worn down in the center where decades of footsteps have smoothed out the patterns. Someone has left a wooden stool out by the pillar ... its paint blistered and flaking. The evening is settling in, turning the corners dark. Up above, the timber shutters are closed tight ... keeping in the small noises of dinners being made and televisions turning on.",
+      "voice": "Arabella",
+      "durationSeconds": 46.8,
+      "audioFileName": "sg-kampong-bahru-five-foot-way-v1.mp3"
+    }
+  },
+  {
+    "poi": {
+      "name": "Eunos Bus Interchange Off-Hours Layover Bay",
+      "slug": "sg-eunos-interchange-layover",
+      "citySlug": "singapore",
+      "description": "The rear vehicular parking bays of the interchange, marked by traditional Minangkabau roof geometries sheltering empty transit vehicles.",
+      "lat": 1.3229,
+      "lng": 103.9031,
+      "triggerRadiusMeters": 80,
+      "category": "infrastructure",
+      "imageUrl": "",
+      "atmosphere": {
+        "emotionalTone": "Suspended Movement",
+        "ambientProfile": "The smell of heavy diesel exhaust, hot asphalt, and industrial coolant. The pneumatic hiss of bus brakes releasing and the low idling drone of heavy engines.",
+        "timeOfDayAffinity": "night",
+        "movementContext": "standing",
+        "intensityLevel": 3,
+        "environmentalTexture": "oil-streaked asphalt, yellow safety paint, corrugated metal roofing",
+        "sourceAttribution": "CityWhispers Research Unit",
+        "reviewStatus": "draft",
+        "contentOwner": "Declan Sage"
+      }
+    },
+    "facts": [
+      {
+        "factType": "architectural",
+        "content": "Eunos Bus Interchange was constructed in 1989, uniquely incorporating traditional Malay roof profiles to harmonize with the neighboring Geylang Serai district.",
+        "verified": true,
+        "sourceUrl": "https://www.roots.gov.sg/stories-stories/landscapes/Geylang-Serai"
+      },
+      {
+        "factType": "sensory",
+        "content": "The concrete parking bays feature a permanent dark gloss from decades of slow hydraulic oil leaks from parked vehicles.",
+        "verified": false,
+        "sourceUrl": null
+      },
+      {
+        "factType": "social",
+        "content": "Bus captains utilize the metal benches near the staff office around midnight, sitting in quiet clusters while drinking tea from steel flasks.",
+        "verified": false,
+        "sourceUrl": null
+      }
+    ],
+    "whisper": {
+      "text": "The big engines never really sleep here. They just sit in the dark, vibrating against the asphalt ... sending a low, steady thrum through the benches. The last commuters have already gone up the escalators to the trains, leaving the platforms completely open. The yellow light from the digital route boards reflects off the wet lanes ... showing where the rain swept in under the high timber eaves. A single driver is wiping his dashboard with a yellow cloth ... his face lit by the green instrument dials. It's that hour when the island is just resetting itself ... waiting for the first routes to start again.",
+      "audioScript": "The big engines never really sleep here. They just sit in the dark, vibrating against the asphalt ... sending a low, steady thrum through the benches. The last commuters have already gone up the escalators to the trains, leaving the platforms completely open. The yellow light from the digital route boards reflects off the wet lanes ... showing where the rain swept in under the high timber eaves. A single driver is wiping his dashboard with a yellow cloth ... his face lit by the green instrument dials. It's that hour when the island is just resetting itself ... waiting for the first routes to start again.",
+      "voice": "Declan Sage",
+      "durationSeconds": 48.4,
+      "audioFileName": "sg-eunos-interchange-layover-v1.mp3"
+    }
+  }
+]

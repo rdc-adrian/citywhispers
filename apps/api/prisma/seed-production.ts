@@ -123,15 +123,10 @@ async function main() {
   if (!persona) throw new Error('No active persona found — run seed.ts first.')
   console.log(`Persona: ${persona.name} (${persona.slug})\n`)
 
-  const POI_FILES = [
-    'poi-production-1.json',
-    'poi-production-2.json',
-    'poi-production-3.json',
-    'poi-production-4.json',
-    'poi-production-5.json',
-  ]
-
   const resourceDir = path.join(__dirname, '../../../resources/pois')
+  const POI_FILES = fs.readdirSync(resourceDir)
+    .filter(f => f.endsWith('.json'))
+    .sort()
   const conflicts: ConflictWarning[] = []
   let created = 0
   let skipped = 0
