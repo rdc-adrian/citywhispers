@@ -38,6 +38,7 @@
 | **G**   | TTS & audio pipeline        | GCP Chirp3-HD Aoede, SSML builder, 27 phoneme overrides, Supabase audio storage, E2E validated   |
 | **H**   | Spatial density & territory | Density service, editorial 409 gate, suppressOverlap filter, 60s cooldown, anchor silence        |
 | **I**   | Singapore content seed      | 15 atmospheric POIs seeded; density cycle tested; TTS batch-approved; Render build fixed         |
+| **J**   | Marker visual hierarchy     | CATEGORY_STYLE constant; size + glow + opacity per poiCategory; discovered dimming compounded; on-device confirmed |
 
 > **G.0 note:** Reanimated 4 compiles `withTiming`/`withSpring` callbacks as UI-thread worklets — JS functions called from them require `runOnJS`. Deprecation warnings are type-level only; runtime is stable.
 
@@ -222,11 +223,24 @@
 
 ---
 
+## ✅ Sprint J: Marker Visual Hierarchy — Complete (2026-05-30)
+
+- [x] `CATEGORY_STYLE` constant added to `PoiMarker.tsx` — single source of truth for size, glowOpacity, dotOpacity per category
+- [x] `catStyle` resolved from `poi.poiCategory ?? 'drift'` at render time — no new prop needed (already on `PoiSummary`)
+- [x] Inner dot size varies by category: anchor 10px / drift 8px / echo 6px
+- [x] Shadow glow opacity varies by category: anchor 0.35 / drift 0.18 / echo 0.08
+- [x] Discovered-state dimming compounds with category: `catStyle.dotOpacity * 0.3` (not a flat override)
+- [x] Anchor silence dimming (Sprint H) unaffected — handled by POI filter in `map.tsx`, not in `PoiMarker`
+- [x] No new animations, colour changes, labels, badges, or legends introduced
+- [x] On-device review confirmed — hierarchy legible; atmosphere preserved
+
+---
+
 ## 📋 Backlog
 
 ### Map & Markers
 
-- [ ] Marker visual hierarchy by `poiCategory` — anchor markers visually distinct from drift/echo (size, glow, pulse); `emotionalWeight` now available for scaling
+- [x] Marker visual hierarchy by `poiCategory` — anchor markers visually distinct from drift/echo (size, glow, pulse); `emotionalWeight` now available for scaling ✅ Sprint J
 - [ ] Richer discovered-state marker styling (beyond opacity dimming)
 - [ ] Wire Charon narrator for nighttime anchor whispers — `poiCategory: anchor` + `timeSlot: night` → `narratorId: charon`
 
@@ -234,10 +248,10 @@
 
 > Emotional palette: humidity and memory, the persistence of old things inside new cities, the texture of daily life in a place that moves fast. Whispers should feel overheard, not narrated. Favour layered, ambiguous places over clean tourist sites. Factual sourcing should serve atmosphere, not accuracy for its own sake.
 
-- [ ] Curate whisper copy for all 9 seeded POIs against emotional palette
-- [ ] Expand to 15–20 POIs — prioritise layered, lived-in places over landmarks
-- [ ] Write POI facts that serve atmospheric generation, not encyclopaedic coverage
-- [ ] Review all generated whispers against emotional palette before approval
+- [x] Curate whisper copy for all seeded POIs against emotional palette — 34 approved whispers across 32 POIs ✅ Sprint I
+- [x] Expand to 15–20 POIs — 32 active POIs, exceeds target ✅ Sprint I
+- [x] Write POI facts that serve atmospheric generation, not encyclopaedic coverage — 2–4 facts per POI across all seed batches ✅ Sprint I
+- [x] Review all generated whispers against emotional palette before approval — 34 approved, 0 drafts pending ✅ Sprint I
 
 ### Future / Deferred
 
